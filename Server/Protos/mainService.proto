@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+option csharp_namespace = "GrpcService";
+
+package mainService;
+
+service MainController {
+  rpc Connect(stream ClientMessage) returns (stream ServerMessage);
+}
+
+// From client
+
+message ClientMessage {
+  oneof Payload {
+    Configuration configuration = 1;
+    GameEvent gameEvent = 2;
+    Greeting greeting = 3;
+    Connect connect = 4;
+  }
+}
+
+// Greeting
+
+message Greeting {
+  string PlayerName = 1;
+}
+
+// Configs
+
+message Configuration {
+  oneof GameConfiguration {
+    ClickGameConfiguration clickGameConfiguration = 1;
+  }
+}
+
+message ClickGameConfiguration {
+  int32 incrementValue = 1;
+}
+
+// Connect
+
+message Connect {
+  string GameCode = 1;
+}
+
+// Game events
+
+message GameEvent {
+  oneof Event {
+    ClickGameEvent clickGameEvent = 1;
+  }
+}
+
+message ClickGameEvent {
+  oneof Event {
+    IncrementEvent incrementEvent = 1;
+  }
+}
+
+message IncrementEvent {
+  
+}
+
+// From server
+
+message ServerMessage {
+  string message = 1;
+}
