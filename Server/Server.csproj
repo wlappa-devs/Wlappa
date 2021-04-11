@@ -13,18 +13,35 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="protobuf-net.Grpc" Version="1.0.152" />
+        <PackageReference Include="protobuf-net.Grpc.AspNetCore" Version="1.0.152" />
         <PackageReference Include="System.Reactive" Version="5.0.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <Protobuf Include="Protos\mainService.proto">
-            <GrpcServices>Both</GrpcServices>
-            <Access>Public</Access>
-            <ProtoCompile>True</ProtoCompile>
-            <ProtoRoot></ProtoRoot>
-            <CompileOutputs>True</CompileOutputs>
-            <OutputDir>obj\Debug\net5.0\</OutputDir>
-        </Protobuf>
+      <ProjectReference Include="..\Shared\Shared.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Protobuf Include="Protos\mainService.proto">
+        <Generator>MSBuild:Compile</Generator>
+      </Protobuf>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="https\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="https\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="https\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="https\**" />
     </ItemGroup>
 
 </Project>

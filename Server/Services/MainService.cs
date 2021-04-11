@@ -10,6 +10,7 @@ using Server.Routing;
 using Server.Routing.Helpers;
 using Server.Utils;
 using MainController = GrpcService.MainController;
+using ServerMessage = GrpcService.ServerMessage;
 
 namespace Server.Services
 {
