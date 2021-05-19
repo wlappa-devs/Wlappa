@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.ServiceModel;
+using ProtoBuf;
 using ProtoBuf.Grpc;
 
 namespace Server.Routing
@@ -15,12 +16,14 @@ namespace Server.Routing
     [DataContract]
     public class ClientMessageProtobufNet
     {
+        [ProtoMember(1)]
         public string Data;
     }
 
     [DataContract]
     public class ServerMessageProtobufNet
     {
+        [ProtoMember(1)]
         public string Data;
     }
 }

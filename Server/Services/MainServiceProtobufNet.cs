@@ -11,7 +11,10 @@ namespace Server.Services
         {
             await foreach (var e in request)
             {
-                yield return new ServerMessageProtobufNet();
+                yield return new ServerMessageProtobufNet
+                {
+                    Data = e.Data
+                };
             }
         }
     }
