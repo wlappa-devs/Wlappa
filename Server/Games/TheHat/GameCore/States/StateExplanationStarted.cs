@@ -7,7 +7,7 @@ namespace Server.Games.TheHat.GameCore.States
         public IState GetNextState(IStateCommand command, HatGame game) => command switch
         {
             EndExplanation endExplanation => new StateInit(),
-            PickWord pickWord => new StateWordPicked(),
+            PickWord pickWord => game.WordsRemaining > 0 ? new StateWordPicked() : throw new InvalidOperationException("The hat is empty."),
             _ => throw new ArgumentOutOfRangeException(nameof(command))
         };
     }

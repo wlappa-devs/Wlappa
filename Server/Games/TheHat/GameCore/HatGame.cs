@@ -21,7 +21,8 @@ namespace Server.Games.TheHat.GameCore
         public int LapCount { get; private set; }
 
         private readonly List<Word> _words;
-        public Word CurrentWord { get; private set; }
+        public int WordsRemaining => _words.Count;
+        public Word? CurrentWord { get; private set; }
         private readonly List<Word> _guessedWords;
         public IReadOnlyList<Word> GuessedWords => _guessedWords;
         public (int explainerIndex, int understanderIndex) CurrentPair { get; set; }
@@ -48,16 +49,23 @@ namespace Server.Games.TheHat.GameCore
             CurrentState = CurrentState.ChangeState(command, this);
         }
 
-        public Word TakeWord()
+        public Word? TakeWord()
         {
+            if (WordsRemaining==0)
+                return CurrentWord;
+            
             var randomIndex = _random.Next(0, _words.Count);
             (_words[^1], _words[randomIndex]) = (_words[randomIndex], _words[^1]);
             _words[^1].AddGuessTry();
             return CurrentWord = _words.RemoveAtAndReturn(_words.Count - 1);
-            
         }
 
-        public void AddWord(Word word) => _words.Add(word);
+        public void ReturnWord()
+        {
+            if (CurrentWord is null) return;
+            _words.Add(CurrentWord);
+            CurrentWord = null;
+        }
 
         private int IncrementLapCount() => ++LapCount;
         
@@ -66,6 +74,9 @@ namespace Server.Games.TheHat.GameCore
                 ? IncrementLapCount()
                 : -1;
 
-        public void AddGuessedWord() => _guessedWords.Add(CurrentWord);
+        public void AddGuessedWord() {
+            _guessedWords.Add(CurrentWord!);
+            CurrentWord = null;
+        }
     }
 }

@@ -56,7 +56,10 @@ namespace Server.Games.TheHat.GameCore
 
     public class EndExplanation : IStateCommand
     {
-        public void Apply(HatGame game) { }
+        public void Apply(HatGame game)
+        {
+            game.ReturnWord();
+        }
     }
 
     public class PickWord : IStateCommand

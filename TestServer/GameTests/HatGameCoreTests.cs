@@ -80,7 +80,7 @@ namespace TestServer.GameTests
             EmulateGuessingWords(2);
             EmulateGuessingWords(1);
             Assert.AreEqual(_gameInstance.CurrentPair, (0,2));
-            while (_gameInstance.WordsRemaining > 1)
+            while (_gameInstance.WordsRemaining > 0)
             {
                 EmulateGuessingWords(1);
             }
@@ -97,7 +97,10 @@ namespace TestServer.GameTests
             for (var _ = 0; _ < numOfWords; _++)
             {
                 _gameInstance.TreatCommand(new GuessRight());
-                _gameInstance.TreatCommand(new PickWord());
+                if (_gameInstance.WordsRemaining > 0)
+                    _gameInstance.TreatCommand(new PickWord());
+                else
+                    _gameInstance.TreatCommand(new EndGame());
             }
             _gameInstance.TreatCommand(_timer.CallBack());
             _gameInstance.TreatCommand(new MoveToNextPlayerPair());
