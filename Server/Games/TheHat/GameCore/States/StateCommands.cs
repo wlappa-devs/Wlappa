@@ -53,7 +53,7 @@ namespace Server.Games.TheHat.GameCore
     {
         public void Apply(HatGame game)
         {
-            game.Timer.RequestEventIn(game.TimeToExplain, new EndExplanation());
+            // game.Timer.RequestEventIn(game.TimeToExplain, new EndExplanation());
         }
     }
 

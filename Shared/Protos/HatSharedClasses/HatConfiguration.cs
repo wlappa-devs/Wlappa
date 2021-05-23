@@ -8,9 +8,35 @@ namespace Shared.Protos.HatSharedClasses
     public class HatConfiguration : GameConfiguration
     {
         [ProtoMember(1)] public Duration TimeToExplain { get; init; }
-        
-        [ProtoMember(2)] public PairChoosingMode PairChoosingMode { get; init; }
-        
+
+        [ProtoMember(2)] public HatGameModeConfiguration HatGameModeConfiguration { get; init; }
+
         [ProtoMember(3)] public int WordsToBeWritten { get; init; }
+    }
+
+    [DataContract]
+    [ProtoInclude(1, typeof(HatPairChoosingModeConfiguration))]
+    [ProtoInclude(2, typeof(HatCircleChoosingModeConfiguration))]
+    public abstract class HatGameModeConfiguration
+    {
+        [ProtoMember(1)] public PairChoosingMode PairChoosingMode { get; init; }
+
+        public abstract bool GameIsOver(int lapCount, int explainerIndex, int playersCount);
+    }
+
+    [DataContract]
+    public class HatPairChoosingModeConfiguration : HatGameModeConfiguration
+    {
+        [ProtoMember(1)] public int NumberOfLapsToPlay { get; init; }
+
+        public override bool GameIsOver(int lapCount, int explainerIndex, int playersCount) =>
+            lapCount == NumberOfLapsToPlay && explainerIndex == playersCount - 1;
+    }
+
+    [DataContract]
+    public class HatCircleChoosingModeConfiguration : HatGameModeConfiguration
+    {
+        public override bool GameIsOver(int lapCount, int explainerIndex, int playersCount) =>
+            lapCount == playersCount - 1 && explainerIndex == playersCount - 1;
     }
 }

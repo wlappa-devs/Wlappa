@@ -26,25 +26,25 @@ namespace Server.Games.TheHat.HatIGameStates
                 {
                     if (!_understanderIsReady)
                         return new WaitingForPLayersToGetReady(true, false, _game);
-                    return BothAreReady();
+                    return await BothAreReady();
                 }
 
                 if (client.Id == _game.CurrentPair.understanderIndex)
                 {
                     if (!_explainerIsReady)
                         return new WaitingForPLayersToGetReady(false, true, _game);
-                    return BothAreReady();
+                    return await BothAreReady();
                 }
             }
 
             throw new ArgumentOutOfRangeException(nameof(e), "Unexpected command");
         }
 
-        private IHatGameState BothAreReady()
+        private async Task<IHatGameState> BothAreReady()
         {
             _game.SetTimerForExplanation();
-            _game.TellToExplainer(new WordToGuess {Value = _game.TakeWord()?.Value});
-            return new ExplanationInProcess();
+            await _game.TellToExplainer(new WordToGuess {Value = _game.TakeWord()?.Value});
+            return new ExplanationInProcess(_game);
         }
     }
 }

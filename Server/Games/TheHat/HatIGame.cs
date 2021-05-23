@@ -23,7 +23,7 @@ namespace Server.Games.TheHat
         private readonly Random _random;
         private readonly ILogger<HatIGame> _logger;
         private readonly int _wordsToBeWritten;
-        private readonly PairChoosingMode _mode;
+        private readonly HatGameModeConfiguration _mode;
         private readonly Duration _timeToExplain;
 
         private IHatGameState _currentState;
@@ -32,21 +32,26 @@ namespace Server.Games.TheHat
         private readonly List<HatPlayer> _players;
         private readonly List<Word> _words;
 
+
+        private HatPlayer Understander => _players[CurrentPair.understanderIndex];
+        private HatPlayer Explainer => _players[CurrentPair.explainerIndex];
         public Word? CurrentWord { get; private set; }
         public int WordsRemaining => _words.Count;
         public (int explainerIndex, int understanderIndex) CurrentPair { get; set; }
         public int PlayersCount => _players.Count;
+        public int LapCount { get; private set; } = 1;
 
         public HatIGame(HatConfiguration configuration, GameCreationPayload payload,
             IReadOnlyCollection<Client> players, Func<Task> finished, ITimer timer, Random random,
             ILogger<HatIGame> logger)
         {
+            //TODO Decompose payload
             _finished = finished;
             _timer = timer;
             _random = random;
             _logger = logger;
             _wordsToBeWritten = configuration.WordsToBeWritten;
-            _mode = configuration.PairChoosingMode;
+            _mode = configuration.HatGameModeConfiguration;
             _timeToExplain = configuration.TimeToExplain;
 
             _allPlayers = new MulticastGroup(players);
@@ -71,33 +76,34 @@ namespace Server.Games.TheHat
                 _words.AddRange(words.Select(x => new Word(x, author)));
                 return 1;
             }
-            else
-            {
-                await author.HandleServerMessage(new WrongWordsAmount());
-                return 0;
-            }
+
+            await author.HandleServerMessage(new InvalidWordsSet());
+            return 0;
         }
 
         public Task SendMulticastMessage(HatServerMessage message) =>
             _allPlayers.SendMulticastEvent(message);
 
         public Task AnnounceCurrentPair() =>
-            _allPlayers.SendMulticastEvent(new AnnounceNextPair
+            SendMulticastMessage(new AnnounceNextPair
             {
-                Explainer = _players[CurrentPair.explainerIndex].Client.Id,
-                Understander = _players[CurrentPair.understanderIndex].Client.Id
+                Explainer = Explainer.Client.Id,
+                Understander = Understander.Client.Id
             });
 
         public void SetTimerForExplanation()
         {
             _timer.RequestEventIn(_timeToExplain, new TimerFinish());
-            _allPlayers.SendMulticastEvent(new ExplanationStarted());
+            SendMulticastMessage(new ExplanationStarted());
         }
 
         public Word? TakeWord()
         {
             if (WordsRemaining == 0)
+            {
+                SendMulticastMessage(new NoWordsLeft());
                 return CurrentWord;
+            }
 
             var randomIndex = _random.Next(0, _words.Count);
             (_words[^1], _words[randomIndex]) = (_words[randomIndex], _words[^1]);
@@ -105,11 +111,65 @@ namespace Server.Games.TheHat
             return CurrentWord = _words.RemoveAtAndReturn(_words.Count - 1);
         }
 
-        public Task TellToExplainer(HatServerMessage message) =>
-            _players[CurrentPair.explainerIndex].HandleServerMessage(message);
+        public Task TellToExplainer(HatServerMessage message) => Explainer.HandleServerMessage(message);
 
-        public Task TellToUnderstander(HatServerMessage message) =>
-            _players[CurrentPair.understanderIndex].HandleServerMessage(message);
+        public Task TellToUnderstander(HatServerMessage message) => Understander.HandleServerMessage(message);
+
+        public void GuessCurrentWord()
+        {
+            Explainer.IncrementScore();
+            Understander.IncrementScore();
+            CurrentWord = null;
+        }
+
+        public void MoveToNextPair()
+        {
+            if (_mode.GameIsOver(LapCount, CurrentPair.explainerIndex, PlayersCount))
+            {
+                SendMulticastMessage(new RotationFinished());
+                return;
+            }                
+            if (_mode is HatCircleChoosingModeConfiguration)
+                CurrentPair = GetNextPairCircle();
+            if (_mode is HatPairChoosingModeConfiguration)
+                CurrentPair = GetNextPairPairs();
+        }
+        
+        private (int, int) GetNextPairCircle()
+        {
+            var lapChanged = IncrementLapCountIfNeeded();
+            var currentPair = CurrentPair;
+            if (lapChanged != -1)
+                currentPair = (currentPair.explainerIndex, (currentPair.understanderIndex + 1) % PlayersCount);
+            return currentPair.Select(x => (x + 1) % PlayersCount);
+        }
+
+        private (int, int) GetNextPairPairs()
+        {
+            IncrementLapCountIfNeeded();
+            var nextPair = CurrentPair.Select(x => (x + 2) % PlayersCount);
+            if (LapCount % 2 == 1)
+                (nextPair.explainerIndex, nextPair.understanderIndex) =
+                    (nextPair.understanderIndex, nextPair.explainerIndex);
+            return nextPair;
+        }
+        
+        
+        private int IncrementLapCount() => ++LapCount;
+        
+        public int IncrementLapCountIfNeeded() =>
+            CurrentPair.explainerIndex == PlayersCount - 1
+                ? IncrementLapCount()
+                : -1;
+
+        public void ReturnCurrentWordInHatIfNeeded()
+        {
+            if (CurrentWord is not null)
+            {
+                _words.Add(CurrentWord);
+                CurrentWord = null;
+            } 
+        }
     }
 
     public class HatGameFactory : IGameFactory
