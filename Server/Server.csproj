@@ -23,12 +23,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Protobuf Include="Protos\mainService.proto">
-        <Generator>MSBuild:Compile</Generator>
-      </Protobuf>
-    </ItemGroup>
-
-    <ItemGroup>
       <Compile Remove="https\**" />
     </ItemGroup>
 
