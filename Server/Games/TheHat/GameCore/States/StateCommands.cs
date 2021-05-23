@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Server.Utils;
+using Shared.Protos.HatSharedClasses;
 
 namespace Server.Games.TheHat.GameCore
 {
@@ -77,6 +80,30 @@ namespace Server.Games.TheHat.GameCore
             game.Players[game.CurrentPair.explainerIndex].IncrementScore();
             game.Players[game.CurrentPair.understanderIndex].IncrementScore();
             game.AddGuessedWord();
+        }
+    }
+    
+    public class AddWords : IStateCommand
+    {
+        private readonly IReadOnlyList<string> _words;
+        private readonly HatPlayer _author;
+
+        public AddWords(IEnumerable<string> words, HatPlayer author)
+        {
+            _words = words.ToList();
+            _author = author;
+        }
+        public void Apply(HatGame game)
+        {
+            foreach (var word in _words) game.AddWord(new Word(word, _author));
+        }
+    }
+
+    public class ChooseFirstPair : IStateCommand
+    {
+        public void Apply(HatGame game)
+        {
+            game.CurrentPair = (0, 1);
         }
     }
 }

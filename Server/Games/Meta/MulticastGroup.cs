@@ -1,6 +1,9 @@
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Server.Routing;
 using Server.Routing.Helpers;
+using Shared.Protos;
 
 namespace Server.Games.Meta
 {
@@ -13,12 +16,7 @@ namespace Server.Games.Meta
             _players = players;
         }
 
-        public async void SendMulticastEvent(InGameServerMessage e)
-        {
-            foreach (var player in _players)
-            {
-                await player.HandleInGameMessage(e);
-            }
-        }
+        public Task SendMulticastEvent(InGameServerMessage e) => 
+            Task.WhenAll(_players.Select(player => player.HandleInGameMessage(e)));
     }
 }

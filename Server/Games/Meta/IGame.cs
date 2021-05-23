@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Server.Routing;
 using Server.Routing.Helpers;
+using Shared.Protos;
 
 namespace Server.Games.Meta
 {

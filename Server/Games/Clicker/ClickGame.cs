@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Server.Games.Meta;
 using Server.Routing;
 using Server.Routing.Helpers;
+using Shared.Protos;
 
 namespace Server.Games.Clicker
 {

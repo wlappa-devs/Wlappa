@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Server.Routing;
 using Server.Routing.Helpers;
+using Shared.Protos;
 
 namespace Server.Games.Meta
 {
@@ -73,14 +74,14 @@ namespace Server.Games.Meta
 
         private async Task HandleGameFinish()
         {
-            _game = null;
+            _game = null; //TODO Remove player.InGameEventListener
             var notification = new GameFinished();
             await Task.WhenAll(_players.Select(p => p.HandleLobbyMessage(notification)));
         }
 
         private async Task LobbyEventListener(Client client, LobbyClientMessage message)
         {
-            if (client.Id != Host) return;
+            if (client.Id != Host) return; //TODO
             switch (message)
             {
                 case ChangeRole m:

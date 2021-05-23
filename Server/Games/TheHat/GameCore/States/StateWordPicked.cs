@@ -6,18 +6,10 @@ namespace Server.Games.TheHat.GameCore.States
     {
         public IState GetNextState(IStateCommand command, HatGame game)
         {
-            if (game.WordsRemaining > 0)
-            {
-                return command switch
-                {
-                    GuessRight guessRight => new StateExplanationStarted(),
-                    EndExplanation endExplanation => new StateInit(),
-                    _ => throw new ArgumentOutOfRangeException(nameof(command))
-                };
-            }
             return command switch
             {
-                GuessRight guessRight => new StateGameEnded(),
+                GuessRight guessRight =>
+                    game.WordsRemaining > 0 ? new StateExplanationStarted() : new StateGameEnded(),
                 EndExplanation endExplanation => new StateInit(),
                 _ => throw new ArgumentOutOfRangeException(nameof(command))
             };

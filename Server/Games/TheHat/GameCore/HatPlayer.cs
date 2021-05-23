@@ -1,17 +1,25 @@
+using System.Threading.Tasks;
+using Server.Routing.Helpers;
+using Shared.Protos.HatSharedClasses;
+
 namespace Server.Games.TheHat.GameCore
 {
     public struct HatPlayer
     {
-        public string Name { get; }
-        
         public int Score { get; private set; }
+        public Client Client { get; }
         public int Id { get; }
 
-        public HatPlayer(string name, int id)
+        public HatPlayer(Client client, int id)
         {
-            Name = name;
+            Client = client;
             Id = id;
             Score = 0;
+        }
+
+        public async Task HandleServerMessage(HatServerMessage message)
+        {
+            await Client.HandleInGameMessage(message);
         }
 
         public int IncrementScore() => ++Score;

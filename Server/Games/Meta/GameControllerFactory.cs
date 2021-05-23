@@ -1,6 +1,7 @@
 using System;
 using Microsoft.Extensions.Logging;
 using Server.Routing;
+using Shared.Protos;
 
 namespace Server.Games.Meta
 {

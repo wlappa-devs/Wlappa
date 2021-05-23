@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using ProtoBuf.Grpc;
 using Server.Routing;
 using Server.Routing.Helpers;
+using Shared.Protos;
 
 namespace Server.Services
 {

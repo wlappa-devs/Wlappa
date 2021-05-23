@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 using Grpc.Net.Client;
 using ProtoBuf.Grpc;
 using ProtoBuf.Grpc.Client;
-using Server.Routing;
-using Greeting = Server.Routing.Greeting;
+using Shared.Protos;
+using Greeting = Shared.Protos.Greeting;
 
 namespace Client
 {

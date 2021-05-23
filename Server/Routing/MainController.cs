@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Server.Games.Meta;
 using Server.Routing.Helpers;
+using Shared.Protos;
 
 namespace Server.Routing
 {

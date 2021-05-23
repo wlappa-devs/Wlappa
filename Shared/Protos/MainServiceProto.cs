@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.ServiceModel;
 using ProtoBuf.Grpc;
 
-namespace Server.Routing
+namespace Shared.Protos
 {
     [ServiceContract(Name = "MainServiceProtobufNet")]
     public interface IMainServiceContract

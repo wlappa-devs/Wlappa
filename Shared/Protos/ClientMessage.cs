@@ -1,8 +1,9 @@
 using System;
 using System.Runtime.Serialization;
+using Shared.Protos.HatSharedClasses;
 using ProtoBuf;
 
-namespace Server.Routing
+namespace Shared.Protos
 {
     [DataContract]
     [ProtoInclude(1, typeof(PreGameClientMessage))]
@@ -36,11 +37,13 @@ namespace Server.Routing
 
     public enum GameTypes
     {
-        Clicker = 0
+        Clicker = 0,
+        TheHat = 1
     }
 
     [DataContract]
     [ProtoInclude(1, typeof(ClickGameConfiguration))]
+    [ProtoInclude(2, typeof(HatConfiguration))]
     public abstract class GameConfiguration
     {
     }
@@ -77,6 +80,7 @@ namespace Server.Routing
 
     [DataContract]
     [ProtoInclude(1, typeof(ClickerClientMessage))]
+    [ProtoInclude(2, nameof(HatClientMessage))]
     public class InGameClientMessage : ClientMessage
     {
     }

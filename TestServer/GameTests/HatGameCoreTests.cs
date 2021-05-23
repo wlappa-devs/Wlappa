@@ -3,6 +3,7 @@ using System.Linq;
 using Google.Protobuf.WellKnownTypes;
 using NUnit.Framework;
 using Server.Games.TheHat.GameCore;
+using Shared.Protos.HatSharedClasses;
 
 namespace TestServer.GameTests
 {

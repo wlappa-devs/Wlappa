@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ProtoBuf;
+using Shared.Protos.HatSharedClasses;
 
-namespace Server.Routing
+namespace Shared.Protos
 {
     [DataContract]
     [ProtoInclude(1, typeof(PreGameServerMessage))]
@@ -94,6 +95,7 @@ namespace Server.Routing
 
     [DataContract]
     [ProtoInclude(1, typeof(ClickerServerMessage))]
+    [ProtoInclude(2, typeof(HatServerMessage))]
     public class InGameServerMessage : ServerMessage
     {
     }

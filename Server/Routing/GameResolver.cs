@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Server.Games.Meta;
+using Shared.Protos;
 
 namespace Server.Routing
 {

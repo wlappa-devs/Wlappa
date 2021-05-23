@@ -6,6 +6,7 @@ using Server.Games.Meta;
 using Server.Games.TheHat.GameCore.States;
 using Server.Games.TheHat.GameCore.Timer;
 using Server.Utils;
+using Shared.Protos.HatSharedClasses;
 
 namespace Server.Games.TheHat.GameCore
 {
@@ -29,7 +30,7 @@ namespace Server.Games.TheHat.GameCore
         public IState CurrentState { get; private set; }
         private Random _random;
 
-        public HatGame(IEnumerable<HatPlayer> players, IEnumerable<Word> words, PairChoosingMode mode,  
+        public HatGame(IEnumerable<HatPlayer> players, int wordsToBeWritten, PairChoosingMode mode,  
             Random random, ITimer timer, Duration timeToExplain, Action<IHatGameReport> endGameEvent)
         {
             Mode = mode;
@@ -37,11 +38,16 @@ namespace Server.Games.TheHat.GameCore
             TimeToExplain = timeToExplain;
             EndGameEvent = endGameEvent;
             _random = random;
-            CurrentState = new StatePairChosen();
-            CurrentPair = (0, 1);
-            _words = words.ToList();
+            CurrentPair = (0, 0);
+            CurrentState = new StateWritingWords();
+            _words = new List<Word>();
             _guessedWords = new List<Word>();
             Players = players.OrderBy(x => x.Id).ToList();
+        }
+
+        public void AddWord(Word word)
+        {
+            _words.Add(word);
         }
 
         public void TreatCommand(IStateCommand command)

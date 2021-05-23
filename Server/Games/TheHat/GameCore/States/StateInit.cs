@@ -6,6 +6,7 @@ namespace Server.Games.TheHat.GameCore.States
     {
         public IState GetNextState(IStateCommand command, HatGame game) => command switch
         {
+            ChooseFirstPair chooseFirstPair => new StatePairChosen(),
             MoveToNextPlayerPair moveToNextPlayerPair => new StatePairChosen(),
             EndGame endGame => new StateGameEnded(),
             _ => throw new ArgumentOutOfRangeException(nameof(command))

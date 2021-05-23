@@ -1,7 +1,7 @@
 using System.Runtime.Serialization;
 using ProtoBuf;
 
-namespace Server.Routing
+namespace Shared.Protos
 {
     [DataContract]
     public class ClickGameConfiguration : GameConfiguration
