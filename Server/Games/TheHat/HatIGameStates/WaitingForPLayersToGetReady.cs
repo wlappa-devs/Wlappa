@@ -18,24 +18,28 @@ namespace Server.Games.TheHat.HatIGameStates
             _game = game;
         }
 
-        public async Task<IHatGameState> HandleEvent(HatPlayer client, HatClientMessage e)
+        public async Task<IHatGameState> HandleEvent(HatMember client, HatClientMessage e)
         {
-            if (e is ClientIsReady)
+            if (client is HatPlayer player)
             {
-                if (client.Id == _game.CurrentPair.explainerIndex)
+                if (e is ClientIsReady)
                 {
-                    if (!_understanderIsReady)
-                        return new WaitingForPLayersToGetReady(true, false, _game);
-                    return await BothAreReady();
-                }
+                    if (player.Id == _game.CurrentPair.explainerIndex)
+                    {
+                        if (!_understanderIsReady)
+                            return new WaitingForPLayersToGetReady(true, false, _game);
+                        return await BothAreReady();
+                    }
 
-                if (client.Id == _game.CurrentPair.understanderIndex)
-                {
-                    if (!_explainerIsReady)
-                        return new WaitingForPLayersToGetReady(false, true, _game);
-                    return await BothAreReady();
+                    if (player.Id == _game.CurrentPair.understanderIndex)
+                    {
+                        if (!_explainerIsReady)
+                            return new WaitingForPLayersToGetReady(false, true, _game);
+                        return await BothAreReady();
+                    }
                 }
             }
+            //TODO Manager Ready
 
             throw new ArgumentOutOfRangeException(nameof(e), "Unexpected command");
         }
@@ -43,7 +47,7 @@ namespace Server.Games.TheHat.HatIGameStates
         private async Task<IHatGameState> BothAreReady()
         {
             _game.SetTimerForExplanation();
-            await _game.TellToExplainer(new WordToGuess {Value = _game.TakeWord()?.Value});
+            await _game.TellTheWord(new HatWordToGuess {Value = _game.TakeWord()?.Value});
             return new ExplanationInProcess(_game);
         }
     }

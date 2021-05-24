@@ -40,6 +40,7 @@ namespace Server.Games.Meta
             }
 
             _players.Add(player);
+            _playersToRoles[player.Id] = _factory.DefaultRole;
             player.LobbyEventListener = LobbyEventListener;
             await player.HandleLobbyMessage(new JoinedLobby()
             {

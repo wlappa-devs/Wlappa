@@ -28,13 +28,19 @@ namespace Server.Games.TheHat
 
         private IHatGameState _currentState;
         private readonly Dictionary<IInGameClient, HatPlayer> _clientToPlayerMapping;
-        private readonly MulticastGroup _allPlayers;
-        private readonly List<HatPlayer> _players;
         private readonly List<Word> _words;
 
+        public bool IsManged => Manger is not null;
+        public HatMember? Manger;
+        private readonly List<HatPlayer> _players = new();
+        private readonly List<HatMember> _observers = new();
+        private readonly List<HatMember> _kukolds = new();
 
-        private HatPlayer Understander => _players[CurrentPair.understanderIndex];
-        private HatPlayer Explainer => _players[CurrentPair.explainerIndex];
+        private MulticastGroup _membersWhoNeedsToKnowTheWordExceptExplainer;
+        private readonly MulticastGroup _allMembers;
+
+        public HatPlayer Understander => _players[CurrentPair.understanderIndex];
+        public HatPlayer Explainer => _players[CurrentPair.explainerIndex];
         public Word? CurrentWord { get; private set; }
         public int WordsRemaining => _words.Count;
         public (int explainerIndex, int understanderIndex) CurrentPair { get; set; }
@@ -45,27 +51,52 @@ namespace Server.Games.TheHat
             IReadOnlyCollection<IInGameClient> players, Func<Task> finished, ITimer timer, Random random,
             ILogger<HatIGame> logger)
         {
-            //TODO Decompose payload
             _finished = finished;
             _timer = timer;
             _random = random;
             _logger = logger;
-            _words = new List<Word>();
             _wordsToBeWritten = configuration.WordsToBeWritten;
             _mode = configuration.HatGameModeConfiguration;
             _timeToExplain = configuration.TimeToExplain;
 
-            _allPlayers = new MulticastGroup(players);
-            _players = players.Select((x, i) => new HatPlayer(x, i)).ToList();
+            #region PayLoad Deconstruction
+
+            players.Select((player, index) =>
+            {
+                var playerRole = HatRole.GetRoleByString(payload.PlayerToRole[player.Id]);
+                if (playerRole is HatRolePlayer)
+                    _players.Add(new HatPlayer(player, index, playerRole));
+                else if (playerRole is HatRoleObserver)
+                    _observers.Add(new HatMember(player, playerRole));
+                else if (playerRole is HatRoleKukold)
+                    _kukolds.Add(new HatMember(player, playerRole));
+                else if (playerRole is HatRoleManager)
+                    Manger = new HatMember(player, playerRole);
+
+                return 1;
+            }).ToList();
+
+            #endregion
+
+            _allMembers = new MulticastGroup(players);
+            _membersWhoNeedsToKnowTheWordExceptExplainer = new MulticastGroup(_kukolds.Select(x => x.Client).ToList());
+
+            _words = new List<Word>();
             _clientToPlayerMapping = _players
                 .ToDictionary(player => player.Client, player => player);
             _currentState = new AddingWordsState(0, this);
         }
 
-        public async Task HandleEvent(IInGameClient client, InGameClientMessage e)
+        public async Task HandleEvent(IInGameClient? client, InGameClientMessage e)
         {
             if (e is HatClientMessage hatClientMessage)
-                _currentState = await _currentState.HandleEvent(_clientToPlayerMapping[client], hatClientMessage);
+                if (client is null)
+#pragma warning disable 8625
+                    _currentState = await _currentState.HandleEvent(null, hatClientMessage);
+#pragma warning restore 8625
+
+                else
+                    _currentState = await _currentState.HandleEvent(_clientToPlayerMapping[client], hatClientMessage);
             else
                 throw new Exception("Wrong game, dude");
         }
@@ -80,15 +111,15 @@ namespace Server.Games.TheHat
                 return 1;
             }
 
-            await author.HandleServerMessage(new InvalidWordsSet());
+            await author.HandleServerMessage(new HatInvalidWordsSet());
             return 0;
         }
 
         public Task SendMulticastMessage(HatServerMessage message) =>
-            _allPlayers.SendMulticastEvent(message);
+            _allMembers.SendMulticastEvent(message);
 
         public Task AnnounceCurrentPair() =>
-            SendMulticastMessage(new AnnounceNextPair
+            SendMulticastMessage(new HatAnnounceNextPair
             {
                 Explainer = Explainer.Client.Id,
                 Understander = Understander.Client.Id
@@ -97,14 +128,14 @@ namespace Server.Games.TheHat
         public void SetTimerForExplanation()
         {
             _timer.RequestEventIn(_timeToExplain, new TimerFinish());
-            SendMulticastMessage(new ExplanationStarted());
+            SendMulticastMessage(new HatExplanationStarted());
         }
 
         public Word? TakeWord()
         {
             if (WordsRemaining == 0)
             {
-                SendMulticastMessage(new NoWordsLeft());
+                SendMulticastMessage(new HatNoWordsLeft());
                 _finished();
                 return CurrentWord;
             }
@@ -115,7 +146,13 @@ namespace Server.Games.TheHat
             return CurrentWord = _words.RemoveAtAndReturn(_words.Count - 1);
         }
 
-        public Task TellToExplainer(HatServerMessage message) => Explainer.HandleServerMessage(message);
+        public async Task TellTheWord(HatServerMessage message)
+        {
+            await Explainer.HandleServerMessage(message);
+            await _membersWhoNeedsToKnowTheWordExceptExplainer.SendMulticastEvent(message);
+            if (IsManged)
+                await Manger!.HandleServerMessage(message);
+        }
 
         public Task TellToUnderstander(HatServerMessage message) => Understander.HandleServerMessage(message);
 
@@ -130,15 +167,16 @@ namespace Server.Games.TheHat
         {
             if (_mode.GameIsOver(LapCount, CurrentPair.explainerIndex, PlayersCount))
             {
-                SendMulticastMessage(new RotationFinished());
+                SendMulticastMessage(new HatRotationFinished());
                 return;
-            }                
+            }
+
             if (_mode is HatCircleChoosingModeConfiguration)
                 CurrentPair = GetNextPairCircle();
             if (_mode is HatPairChoosingModeConfiguration)
                 CurrentPair = GetNextPairPairs();
         }
-        
+
         private (int, int) GetNextPairCircle()
         {
             var lapChanged = IncrementLapCountIfNeeded();
@@ -157,10 +195,10 @@ namespace Server.Games.TheHat
                     (nextPair.understanderIndex, nextPair.explainerIndex);
             return nextPair;
         }
-        
-        
+
+
         private int IncrementLapCount() => ++LapCount;
-        
+
         public int IncrementLapCountIfNeeded() =>
             CurrentPair.explainerIndex == PlayersCount - 1
                 ? IncrementLapCount()
@@ -172,45 +210,13 @@ namespace Server.Games.TheHat
             {
                 _words.Add(CurrentWord);
                 CurrentWord = null;
-            } 
-        }
-    }
-
-    public class HatGameFactory : IGameFactory
-    {
-        private readonly ILogger<HatIGame> _logger;
-
-        public HatGameFactory(ILogger<HatIGame> logger)
-        {
-            _logger = logger;
+            }
         }
 
-        public IGame Create(GameConfiguration config, GameCreationPayload payload, IReadOnlyCollection<IInGameClient> clients,
-            Func<Task> finished) => config switch
-        {
-            HatConfiguration hatConfiguration =>
-                new HatIGame(hatConfiguration, payload, clients, finished,
-                    new GovnoTimer(), new Random(), _logger),
-            _ => throw new ArgumentOutOfRangeException(nameof(config))
-        };
-
-        public IReadOnlyList<string> Roles => new[] {"player"}; //TODO "observer", "manager"
-        public GameTypes Type => GameTypes.TheHat;
-
-        public string? ValidateConfig(GameConfiguration config, GameCreationPayload payload) =>
-            config switch
-            {
-                HatConfiguration hatConfiguration => ValidateConfig(hatConfiguration, payload),
-                _ => "Game configuration from another game"
-            };
-
-        public string? ValidateConfig(HatConfiguration config, GameCreationPayload payload)
-        {
-            if (config.TimeToExplain.Seconds < 1)
-                return "Time to explain should be at least 1 second. U r not FLASH";
-            if (config.WordsToBeWritten < 1)
-                return "Words to be written should be at least 1. U r not dumb, I hope";
-            return null;
-        }
+        public Dictionary<Guid, int> GenerateGuidToPoints() =>
+            _players.ToDictionary(
+                x => x.Client.Id,
+                x => x.Score
+            );
     }
 }

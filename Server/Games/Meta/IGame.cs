@@ -9,7 +9,7 @@ namespace Server.Games.Meta
 {
     public interface IGame
     {
-        Task HandleEvent(IInGameClient client, InGameClientMessage e);
+        Task HandleEvent(IInGameClient? client, InGameClientMessage e);
     }
 
     public class GameCreationPayload
@@ -24,6 +24,7 @@ namespace Server.Games.Meta
 
     public interface IGameFactory
     {
+        public string DefaultRole { get; }
         IGame Create(GameConfiguration config, GameCreationPayload payload, IReadOnlyCollection<IInGameClient> clients,
             Func<Task> finished);
 

@@ -16,17 +16,34 @@ namespace Server.Games.TheHat.HatIGameStates
             _game = game;
         }
 
-        public async Task<IHatGameState> HandleEvent(HatPlayer client, HatClientMessage e)
+        public async Task<IHatGameState> HandleEvent(HatMember client, HatClientMessage e)
         {
             switch (e)
             {
                 case GuessRight:
+                    if (_game.IsManged)
+                    {
+                        if (client != _game.Manger)
+                            return this;
+                    }
+                    else if (client is HatPlayer player)
+                        if (player != _game.Explainer)
+                            return this;
+
                     _game.GuessCurrentWord();
-                    await _game.TellToExplainer(new WordToGuess {Value = _game.TakeWord()?.Value});
+                    await _game.SendMulticastMessage(new HatPointsUpdated()
+                    {
+                        GuidToPoints = _game.GenerateGuidToPoints()
+                    });
+                    await _game.TellTheWord(new HatWordToGuess {Value = _game.TakeWord()?.Value});
                     _alreadyGuessed++;
                     return this;
                 case TimerFinish:
-                    await _game.SendMulticastMessage(new TimeIsUp());
+                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                    if (client is not null)
+                        return this;
+                    
+                    await _game.SendMulticastMessage(new HatTimeIsUp());
                     _game.ReturnCurrentWordInHatIfNeeded();
                     _game.MoveToNextPair();
                     await _game.AnnounceCurrentPair();

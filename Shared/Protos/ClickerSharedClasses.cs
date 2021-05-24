@@ -11,25 +11,25 @@ namespace Shared.Protos
     }
 
     [DataContract]
-    [ProtoInclude(1, typeof(NewValueEvent))]
+    [ProtoInclude(1, typeof(ClickerNewValueEvent))]
     public class ClickerServerMessage : InGameServerMessage
     {
     }
 
     [DataContract]
-    public class NewValueEvent : ClickerServerMessage
+    public class ClickerNewValueEvent : ClickerServerMessage
     {
         [ProtoMember(1)] public long Value { get; init; }
     }
 
     [DataContract]
-    [ProtoInclude(1, typeof(IncrementEvent))]
+    [ProtoInclude(1, typeof(ClickerIncrementEvent))]
     public class ClickerClientMessage : InGameClientMessage
     {
     }
 
     [DataContract]
-    public class IncrementEvent : ClickerClientMessage
+    public class ClickerIncrementEvent : ClickerClientMessage
     {
     }
 }

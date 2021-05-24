@@ -6,6 +6,6 @@ namespace Server.Games.TheHat.HatIGameStates
 {
     public interface IHatGameState
     {
-        public Task<IHatGameState> HandleEvent(HatPlayer client, HatClientMessage e);
+        public Task<IHatGameState> HandleEvent(HatMember client, HatClientMessage e);
     }
 }

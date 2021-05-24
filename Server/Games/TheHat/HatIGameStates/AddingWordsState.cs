@@ -17,20 +17,25 @@ namespace Server.Games.TheHat.HatIGameStates
             _game = game;
         }
 
-        public async Task<IHatGameState> HandleEvent(HatPlayer client, HatClientMessage e)
+        public async Task<IHatGameState> HandleEvent(HatMember client, HatClientMessage e)
         {
-            if (e is AddWords addWords)
+            if (client is HatPlayer player)
             {
-                var addingResult = await _game.AddWords(addWords.Value, client);
-                if (_authorsReady + addingResult == _game.PlayersCount)
+                if (e is AddWords addWords)
                 {
-                    await _game.SendMulticastMessage(new StartGame());
-                    _game.CurrentPair = (0, 1);
-                    await _game.AnnounceCurrentPair();
-                    return new WaitingForPLayersToGetReady(false, false, _game);
+                    var addingResult = await _game.AddWords(addWords.Value, player);
+                    if (_authorsReady + addingResult == _game.PlayersCount)
+                    {
+                        await _game.SendMulticastMessage(new HatStartGame());
+                        _game.CurrentPair = (0, 1);
+                        await _game.AnnounceCurrentPair();
+                        return new WaitingForPLayersToGetReady(false, false, _game);
+                    }
+
+                    return new AddingWordsState(_authorsReady + 1, _game);
                 }
-                return new AddingWordsState(_authorsReady + 1, _game);
             }
+            else return this;
 
             throw new ArgumentOutOfRangeException(nameof(e), "Unexpected command");
         }

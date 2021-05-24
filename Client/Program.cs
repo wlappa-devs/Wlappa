@@ -152,7 +152,7 @@ namespace Client
                 while (true)
                 {
                     var next = await reader.ReadAsync();
-                    if (next is NewValueEvent e)
+                    if (next is ClickerNewValueEvent e)
                     {
                         await Console.Out.WriteLineAsync(e.Value.ToString());
                     }
@@ -169,7 +169,7 @@ namespace Client
             {
                 await Console.In.ReadLineAsync();
                 await Console.Out.WriteLineAsync("Sending increment");
-                await requestStreamWriter.WriteAsync(new IncrementEvent());
+                await requestStreamWriter.WriteAsync(new ClickerIncrementEvent());
                 await Task.Delay(1000);
             }
         }

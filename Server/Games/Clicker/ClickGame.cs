@@ -27,14 +27,14 @@ namespace Server.Games.Clicker
             _allPlayers = new MulticastGroup(players);
         }
 
-        public async Task HandleEvent(IInGameClient client, InGameClientMessage e)
+        public async Task HandleEvent(IInGameClient? client, InGameClientMessage e)
         {
             _logger.LogInformation("Got increment");
             switch (e)
             {
-                case IncrementEvent:
+                case ClickerIncrementEvent:
                     _currentValue += _config.IncrementValue;
-                    _allPlayers.SendMulticastEvent(new NewValueEvent()
+                    _allPlayers.SendMulticastEvent(new ClickerNewValueEvent()
                     {
                         Value = _currentValue
                     });
@@ -55,6 +55,7 @@ namespace Server.Games.Clicker
             _logger = logger;
         }
 
+
         public IGame Create(GameConfiguration config, GameCreationPayload payload, IReadOnlyCollection<IInGameClient> clients,
             Func<Task> finished)
         {
@@ -64,6 +65,7 @@ namespace Server.Games.Clicker
         }
 
         public IReadOnlyList<string> Roles { get; } = new[] {"Clicker"};
+        public string DefaultRole => Roles.First();
 
         public GameTypes Type => GameTypes.Clicker;
 

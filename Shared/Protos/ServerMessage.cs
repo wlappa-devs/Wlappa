@@ -10,7 +10,7 @@ namespace Shared.Protos
     [ProtoInclude(1, typeof(PreGameServerMessage))]
     [ProtoInclude(2, typeof(LobbyServerMessage))]
     [ProtoInclude(3, typeof(InGameServerMessage))]
-    public class ServerMessage
+    public abstract class ServerMessage
     {
     }
 
@@ -96,7 +96,8 @@ namespace Shared.Protos
     [DataContract]
     [ProtoInclude(1, typeof(ClickerServerMessage))]
     [ProtoInclude(2, typeof(HatServerMessage))]
-    public class InGameServerMessage : ServerMessage
+    public abstract class InGameServerMessage : ServerMessage
     {
+        [ProtoMember(1)] public Dictionary<Guid, int> GuidToPoints { get; init; }
     }
 }

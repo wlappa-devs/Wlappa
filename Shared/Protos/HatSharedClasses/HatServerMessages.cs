@@ -5,64 +5,71 @@ using ProtoBuf;
 namespace Shared.Protos.HatSharedClasses
 {
     [DataContract]
-    [ProtoInclude(1, typeof(StartGame))]
-    [ProtoInclude(2, typeof(AnnounceNextPair))]
-    [ProtoInclude(3, typeof(ExplanationStarted))]
-    [ProtoInclude(4, typeof(WordToGuess))]
-    [ProtoInclude(5, typeof(TimeIsUp))]
-    [ProtoInclude(6, typeof(InvalidWordsSet))]
-    [ProtoInclude(7, typeof(FinishMessage))]
-    public class HatServerMessage : InGameServerMessage
+    [ProtoInclude(1, typeof(HatStartGame))]
+    [ProtoInclude(2, typeof(HatAnnounceNextPair))]
+    [ProtoInclude(3, typeof(HatExplanationStarted))]
+    [ProtoInclude(4, typeof(HatWordToGuess))]
+    [ProtoInclude(5, typeof(HatTimeIsUp))]
+    [ProtoInclude(6, typeof(HatInvalidWordsSet))]
+    [ProtoInclude(7, typeof(HatFinishMessage))]
+    [ProtoInclude(8, typeof(HatPointsUpdated))]
+    public abstract class HatServerMessage : InGameServerMessage
     {
     }
 
     [DataContract]
-    public class StartGame : HatServerMessage
+    public class HatStartGame : HatServerMessage
     {
     }
 
     [DataContract]
-    public class AnnounceNextPair : HatServerMessage
+    public class HatAnnounceNextPair : HatServerMessage
     {
         [ProtoMember(1)] public Guid Explainer { get; init; }
         [ProtoMember(2)] public Guid Understander { get; init; }
     }
 
     [DataContract]
-    public class ExplanationStarted : HatServerMessage
+    public class HatExplanationStarted : HatServerMessage
     {
     }
 
     [DataContract]
-    public class WordToGuess : HatServerMessage
+    public class HatWordToGuess : HatServerMessage
     {
         [ProtoMember(1)] public string Value { get; init; }
     }
 
     [DataContract]
-    public class TimeIsUp : HatServerMessage
+    public class HatTimeIsUp : HatServerMessage
     {
     }
 
     [DataContract]
-    public class InvalidWordsSet : HatServerMessage
+    public class HatInvalidWordsSet : HatServerMessage
     {
     }
 
     [DataContract]
-    [ProtoInclude(1, typeof(NoWordsLeft))]
-    [ProtoInclude(2, typeof(RotationFinished))]
-    public class FinishMessage : HatServerMessage
+    public class HatPointsUpdated : HatServerMessage
+    {
+        
+    }
+
+    [DataContract]
+    [ProtoInclude(1, typeof(HatNoWordsLeft))]
+    [ProtoInclude(2, typeof(HatRotationFinished))]
+    public abstract class HatFinishMessage : HatServerMessage
     {
     }
 
     [DataContract]
-    public class NoWordsLeft : FinishMessage
+    public class HatNoWordsLeft : HatFinishMessage
     {
     }
 
     [DataContract]
-    public class RotationFinished : FinishMessage
+    public class HatRotationFinished : HatFinishMessage
     {
     }
 }
