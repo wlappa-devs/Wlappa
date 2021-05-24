@@ -1,21 +1,22 @@
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Server.Routing;
+using Server.Routing.Helpers;
+using Shared.Protos;
 
 namespace Server.Games.Meta
 {
     public class MulticastGroup
     {
-        private readonly IReadOnlyCollection<IPlayer> _players;
-        public MulticastGroup(IReadOnlyCollection<IPlayer> players)
+        private readonly IReadOnlyCollection<IInGameClient> _players;
+
+        public MulticastGroup(IReadOnlyCollection<IInGameClient> players)
         {
             _players = players;
         }
 
-        public void SendMulticastEvent(IToPlayerEvent e)
-        {
-            foreach (var player in _players)
-            {
-                player.HandleEvent(e);
-            }
-        }
+        public Task SendMulticastEvent(InGameServerMessage e) => 
+            Task.WhenAll(_players.Select(player => player.HandleInGameMessage(e)));
     }
 }

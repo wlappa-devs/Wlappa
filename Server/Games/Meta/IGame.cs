@@ -1,34 +1,37 @@
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Server.Routing;
+using Server.Routing.Helpers;
+using Shared.Protos;
 
 namespace Server.Games.Meta
 {
     public interface IGame
     {
-        void HandleEvent(IGameEvent e);
-    }
-
-    public interface IGameConfiguration
-    {
+        Task HandleEvent(IInGameClient? client, InGameClientMessage e);
     }
 
     public class GameCreationPayload
     {
-        public GameCreationPayload(IReadOnlyDictionary<IPlayer, string> playerToRole)
+        public GameCreationPayload(IReadOnlyDictionary<Guid, string> playerToRole)
         {
             PlayerToRole = playerToRole;
         }
 
-        public IReadOnlyDictionary<IPlayer, string> PlayerToRole { get; }
-    }
-
-    public interface IGameFactoryMark<T> where T : IGame
-    {
+        public IReadOnlyDictionary<Guid, string> PlayerToRole { get; }
     }
 
     public interface IGameFactory
     {
-        IGame Create(IGameConfiguration config, GameCreationPayload payload);
+        public string DefaultRole { get; }
+        IGame Create(GameConfiguration config, GameCreationPayload payload, IReadOnlyCollection<IInGameClient> clients,
+            Func<Task> finished);
+
         IReadOnlyList<string> Roles { get; }
+        GameTypes Type { get; }
+
+        string? ValidateConfig(GameConfiguration config, GameCreationPayload payload);
     }
 
     public interface IGameEvent

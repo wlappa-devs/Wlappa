@@ -22,17 +22,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Protobuf Include="..\Server\Protos\mainService.proto">
-            <GrpcServices>Both</GrpcServices>
-            <Access>Public</Access>
-            <ProtoCompile>True</ProtoCompile>
-            <ProtoRoot></ProtoRoot>
-            <CompileOutputs>True</CompileOutputs>
-            <OutputDir>obj\Debug\net5.0\</OutputDir>
-        </Protobuf>
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\Shared\Shared.csproj" />
     </ItemGroup>
 
