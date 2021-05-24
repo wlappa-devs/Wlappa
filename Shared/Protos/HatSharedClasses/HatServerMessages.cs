@@ -25,7 +25,7 @@ namespace Shared.Protos.HatSharedClasses
     public class AnnounceNextPair : HatServerMessage
     {
         [ProtoMember(1)] public Guid Explainer { get; init; }
-        [ProtoMember(1)] public Guid Understander { get; init; }
+        [ProtoMember(2)] public Guid Understander { get; init; }
     }
 
     [DataContract]
@@ -51,7 +51,7 @@ namespace Shared.Protos.HatSharedClasses
 
     [DataContract]
     [ProtoInclude(1, typeof(NoWordsLeft))]
-    [ProtoInclude(1, typeof(RotationFinished))]
+    [ProtoInclude(2, typeof(RotationFinished))]
     public class FinishMessage : HatServerMessage
     {
     }

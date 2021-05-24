@@ -19,8 +19,6 @@ namespace Shared.Protos.HatSharedClasses
     [ProtoInclude(2, typeof(HatCircleChoosingModeConfiguration))]
     public abstract class HatGameModeConfiguration
     {
-        [ProtoMember(1)] public PairChoosingMode PairChoosingMode { get; init; }
-
         public abstract bool GameIsOver(int lapCount, int explainerIndex, int playersCount);
     }
 

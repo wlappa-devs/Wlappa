@@ -80,7 +80,7 @@ namespace Shared.Protos
 
     [DataContract]
     [ProtoInclude(1, typeof(ClickerClientMessage))]
-    [ProtoInclude(2, nameof(HatClientMessage))]
+    [ProtoInclude(2, typeof(HatClientMessage))]
     public class InGameClientMessage : ClientMessage
     {
     }

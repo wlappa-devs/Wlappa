@@ -15,7 +15,9 @@
         </PackageReference>
         <PackageReference Include="protobuf-net.Grpc" Version="1.0.152" />
         <PackageReference Include="protobuf-net.Grpc.AspNetCore" Version="1.0.152" />
+        <PackageReference Include="protobuf-net.Grpc.Reflection" Version="1.0.152" />
         <PackageReference Include="System.Reactive" Version="5.0.0" />
+        <PackageReference Include="System.ServiceModel.Primitives" Version="4.8.1" />
     </ItemGroup>
 
     <ItemGroup>
