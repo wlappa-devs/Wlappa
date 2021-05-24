@@ -18,7 +18,6 @@ namespace TestServer.GameTests
         private List<MockInGameClient> _clients;
         private bool _hasFinished;
         private MockTimer _timer;
-        private MockInGameClient _timerEventSender;
         private ICollection<string> _words;
         
         [SetUp]
@@ -39,7 +38,6 @@ namespace TestServer.GameTests
             };
             _words = new[] {"kek", "cheburek", "lol", "arbidol", "dirokol", "honker"};
             _timer = new MockTimer();
-            _timerEventSender = new MockInGameClient("__TIMER_777___");
             _hiddenHatGame = new HatIGame(
                 _configuration, 
                 new GameCreationPayload(new Dictionary<Guid, string>()),
