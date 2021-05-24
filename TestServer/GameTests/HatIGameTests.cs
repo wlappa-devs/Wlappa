@@ -20,7 +20,6 @@ namespace TestServer.GameTests
         private bool _hasFinished;
         private HatGameFactory _factory;
         private MockTimer _timer;
-        private MockInGameClient _timerEventSender;
         private ICollection<string> _words;
 
         [SetUp]
@@ -42,7 +41,6 @@ namespace TestServer.GameTests
             };
             _words = new[] {"kek", "cheburek", "lol", "arbidol", "dirokol", "honker"};
             _timer = new MockTimer();
-            _timerEventSender = new MockInGameClient("__TIMER_777___");
             _hiddenHatGame = new HatIGame(
                 _configuration,
                 new GameCreationPayload(_clients.ToDictionary(x => x.Id, x => _factory.DefaultRole)),
