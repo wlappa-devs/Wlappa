@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Channels;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Shared.Protos;
 
@@ -23,7 +22,7 @@ namespace Server.Routing.Helpers
             ChannelWriter<ServerMessage> response) => new(request, response, _logger, _mainController);
     }
 
-    public class Client
+    public class Client: ILobbyClient
     {
         private readonly IAsyncEnumerable<ClientMessage> _request;
         private readonly ChannelWriter<ServerMessage> _response;

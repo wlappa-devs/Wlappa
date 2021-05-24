@@ -9,9 +9,9 @@ namespace Server.Games.Meta
 {
     public class MulticastGroup
     {
-        private readonly IReadOnlyCollection<Client> _players;
+        private readonly IReadOnlyCollection<IInGameClient> _players;
 
-        public MulticastGroup(IReadOnlyCollection<Client> players)
+        public MulticastGroup(IReadOnlyCollection<IInGameClient> players)
         {
             _players = players;
         }

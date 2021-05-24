@@ -19,7 +19,7 @@ namespace Server.Games.Clicker
         private readonly MulticastGroup _allPlayers;
 
         public ClickGame(ClickGameConfiguration config, GameCreationPayload payload,
-            IReadOnlyCollection<Client> players, Func<Task> finished, ILogger<ClickGame> logger)
+            IReadOnlyCollection<IInGameClient> players, Func<Task> finished, ILogger<ClickGame> logger)
         {
             _config = config;
             _finished = finished;
@@ -27,7 +27,7 @@ namespace Server.Games.Clicker
             _allPlayers = new MulticastGroup(players);
         }
 
-        public async Task HandleEvent(Client client, InGameClientMessage e)
+        public async Task HandleEvent(IInGameClient client, InGameClientMessage e)
         {
             _logger.LogInformation("Got increment");
             switch (e)
@@ -55,7 +55,7 @@ namespace Server.Games.Clicker
             _logger = logger;
         }
 
-        public IGame Create(GameConfiguration config, GameCreationPayload payload, IReadOnlyCollection<Client> clients,
+        public IGame Create(GameConfiguration config, GameCreationPayload payload, IReadOnlyCollection<IInGameClient> clients,
             Func<Task> finished)
         {
             if (config is not ClickGameConfiguration correctConfig)

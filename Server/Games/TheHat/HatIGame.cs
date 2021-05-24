@@ -27,7 +27,7 @@ namespace Server.Games.TheHat
         private readonly Duration _timeToExplain;
 
         private IHatGameState _currentState;
-        private readonly Dictionary<Client, HatPlayer> _clientToPlayerMapping;
+        private readonly Dictionary<IInGameClient, HatPlayer> _clientToPlayerMapping;
         private readonly MulticastGroup _allPlayers;
         private readonly List<HatPlayer> _players;
         private readonly List<Word> _words;
@@ -42,7 +42,7 @@ namespace Server.Games.TheHat
         public int LapCount { get; private set; } = 1;
 
         public HatIGame(HatConfiguration configuration, GameCreationPayload payload,
-            IReadOnlyCollection<Client> players, Func<Task> finished, ITimer timer, Random random,
+            IReadOnlyCollection<IInGameClient> players, Func<Task> finished, ITimer timer, Random random,
             ILogger<HatIGame> logger)
         {
             //TODO Decompose payload
@@ -50,16 +50,19 @@ namespace Server.Games.TheHat
             _timer = timer;
             _random = random;
             _logger = logger;
+            _words = new List<Word>();
             _wordsToBeWritten = configuration.WordsToBeWritten;
             _mode = configuration.HatGameModeConfiguration;
             _timeToExplain = configuration.TimeToExplain;
 
             _allPlayers = new MulticastGroup(players);
             _players = players.Select((x, i) => new HatPlayer(x, i)).ToList();
+            _clientToPlayerMapping = _players
+                .ToDictionary(player => player.Client, player => player);
             _currentState = new AddingWordsState(0, this);
         }
 
-        public async Task HandleEvent(Client client, InGameClientMessage e)
+        public async Task HandleEvent(IInGameClient client, InGameClientMessage e)
         {
             if (e is HatClientMessage hatClientMessage)
                 _currentState = await _currentState.HandleEvent(_clientToPlayerMapping[client], hatClientMessage);
@@ -102,6 +105,7 @@ namespace Server.Games.TheHat
             if (WordsRemaining == 0)
             {
                 SendMulticastMessage(new NoWordsLeft());
+                _finished();
                 return CurrentWord;
             }
 
@@ -181,7 +185,7 @@ namespace Server.Games.TheHat
             _logger = logger;
         }
 
-        public IGame Create(GameConfiguration config, GameCreationPayload payload, IReadOnlyCollection<Client> clients,
+        public IGame Create(GameConfiguration config, GameCreationPayload payload, IReadOnlyCollection<IInGameClient> clients,
             Func<Task> finished) => config switch
         {
             HatConfiguration hatConfiguration =>
