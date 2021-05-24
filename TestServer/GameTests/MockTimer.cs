@@ -1,23 +1,23 @@
 ﻿using Google.Protobuf.WellKnownTypes;
-using Server.Games.TheHat.GameCore;
 using Server.Games.TheHat.GameCore.Timer;
+using Shared.Protos;
 
 namespace TestServer.GameTests
 {
     public class MockTimer: ITimer
     {
-        public IStateCommand CommandToExecute { get; private set; }
+        private InGameClientMessage commandToExecute;
 
-        public void RequestEventIn(Duration duration, IStateCommand command)
+        public InGameClientMessage CallBack()
         {
-            CommandToExecute = command;
+            var output = commandToExecute;
+            commandToExecute = null;
+            return output;
         }
 
-        public IStateCommand CallBack()
+        public void RequestEventIn(Duration duration, InGameClientMessage command)
         {
-            var output = CommandToExecute;
-            CommandToExecute = null;
-            return output;
+            commandToExecute = command;
         }
     }
 }
