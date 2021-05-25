@@ -13,7 +13,7 @@ namespace TestServer.GameTests
 {
     public class HatIGameTests
     {
-        private IGame _gameInstance;
+        private Game _gameInstance;
         private HatIGame _hiddenHatGame;
         private HatConfiguration _configuration;
         private List<MockInGameClient> _clients;
@@ -29,7 +29,7 @@ namespace TestServer.GameTests
             _hasFinished = false;
             _configuration = new HatConfiguration
             {
-                TimeToExplain = Duration.FromTimeSpan(new TimeSpan(0, 0, 30)),
+                TimeToExplain = new TimeSpan(0, 0, 30),
                 HatGameModeConfiguration = new HatCircleChoosingModeConfiguration(),
                 WordsToBeWritten = 2
             };

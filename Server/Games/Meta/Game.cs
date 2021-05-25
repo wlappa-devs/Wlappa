@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Server.Routing;
 using Server.Routing.Helpers;
@@ -7,9 +8,11 @@ using Shared.Protos;
 
 namespace Server.Games.Meta
 {
-    public interface IGame
+    public abstract class Game
     {
-        Task HandleEvent(IInGameClient? client, InGameClientMessage e);
+        public abstract Task HandleEvent(IInGameClient? client, InGameClientMessage e);
+
+        public SemaphoreSlim semaphore { get; } = new SemaphoreSlim(1, 1);
     }
 
     public class GameCreationPayload
@@ -25,7 +28,7 @@ namespace Server.Games.Meta
     public interface IGameFactory
     {
         public string DefaultRole { get; }
-        IGame Create(GameConfiguration config, GameCreationPayload payload, IReadOnlyCollection<IInGameClient> clients,
+        Game Create(GameConfiguration config, GameCreationPayload payload, IReadOnlyCollection<IInGameClient> clients,
             Func<Task> finished);
 
         IReadOnlyList<string> Roles { get; }

@@ -6,6 +6,7 @@ using ProtoBuf;
 namespace Shared.Protos
 {
     [DataContract]
+    [ProtoContract]
     [ProtoInclude(1, typeof(PreGameClientMessage))]
     [ProtoInclude(2, typeof(LobbyClientMessage))]
     [ProtoInclude(3, typeof(InGameClientMessage))]
@@ -14,6 +15,7 @@ namespace Shared.Protos
     }
 
     [DataContract]
+    [ProtoContract]
     [ProtoInclude(1, typeof(Greeting))]
     [ProtoInclude(2, typeof(CreateLobby))]
     [ProtoInclude(3, typeof(JoinGame))]
@@ -22,6 +24,7 @@ namespace Shared.Protos
     }
 
     [DataContract]
+    [ProtoContract]
     [ProtoInclude(1, typeof(ChangeRole))]
     [ProtoInclude(2, typeof(StartGame))]
     [ProtoInclude(3, typeof(Disconnect))]
@@ -30,18 +33,26 @@ namespace Shared.Protos
     }
 
     [DataContract]
+    [ProtoContract]
     public class Greeting : PreGameClientMessage
     {
         [ProtoMember(1)] public string Name { get; init; }
     }
 
+    [DataContract]
+    [ProtoContract]
     public enum GameTypes
     {
+        [EnumMember]
+        [ProtoEnum]
         Clicker = 0,
+        [EnumMember]
+        [ProtoEnum]
         TheHat = 1
     }
 
     [DataContract]
+    [ProtoContract]
     [ProtoInclude(1, typeof(ClickGameConfiguration))]
     [ProtoInclude(2, typeof(HatConfiguration))]
     public abstract class GameConfiguration
@@ -49,6 +60,7 @@ namespace Shared.Protos
     }
 
     [DataContract]
+    [ProtoContract]
     public class CreateLobby : PreGameClientMessage
     {
         [ProtoMember(1)] public GameTypes Type { get; init; }
@@ -56,12 +68,14 @@ namespace Shared.Protos
     }
 
     [DataContract]
+    [ProtoContract]
     public class JoinGame : PreGameClientMessage
     {
         [ProtoMember(1)] public Guid Id { get; init; }
     }
 
     [DataContract]
+    [ProtoContract]
     public class ChangeRole : LobbyClientMessage
     {
         [ProtoMember(1)] public Guid PlayerId { get; init; }
@@ -69,16 +83,19 @@ namespace Shared.Protos
     }
 
     [DataContract]
+    [ProtoContract]
     public class StartGame : LobbyClientMessage
     {
     }
 
     [DataContract]
+    [ProtoContract]
     public class Disconnect : LobbyClientMessage
     {
     }
 
     [DataContract]
+    [ProtoContract]
     [ProtoInclude(1, typeof(ClickerClientMessage))]
     [ProtoInclude(2, typeof(HatClientMessage))]
     public class InGameClientMessage : ClientMessage

@@ -5,7 +5,7 @@ namespace Server.Games.TheHat
 {
     public interface HatRole
     {
-        public static string Value { get; }
+        public static string Value => "player";
 
         public static HatRole GetRoleByString(string role) => role switch
         {

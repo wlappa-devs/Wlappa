@@ -22,7 +22,7 @@ namespace Server.Routing.Helpers
             ChannelWriter<ServerMessage> response) => new(request, response, _logger, _mainController);
     }
 
-    public class Client: ILobbyClient
+    public class Client : ILobbyClient
     {
         private readonly IAsyncEnumerable<ClientMessage> _request;
         private readonly ChannelWriter<ServerMessage> _response;
@@ -31,8 +31,8 @@ namespace Server.Routing.Helpers
         public Guid Id { get; } = Guid.NewGuid();
         public string? Name { get; private set; }
 
-        public Func<Client, LobbyClientMessage, Task> LobbyEventListener { private get; set; }
-        public Func<Client, InGameClientMessage, Task> InGameEventListener { private get; set; }
+        public Func<Client, LobbyClientMessage, Task>? LobbyEventListener { private get; set; }
+        public Func<Client, InGameClientMessage, Task>? InGameEventListener { private get; set; }
 
         public Client(IAsyncEnumerable<ClientMessage> request,
             ChannelWriter<ServerMessage> response, ILogger<Client> logger, MainController mainController)
@@ -55,11 +55,13 @@ namespace Server.Routing.Helpers
                         break;
                     case LobbyClientMessage e:
                         _logger.LogInformation("Got event lobby");
-                        await LobbyEventListener(this, e);
+                        if (LobbyEventListener is not null)
+                            await LobbyEventListener(this, e);
                         break;
                     case InGameClientMessage e:
                         _logger.LogInformation("Got event ingame");
-                        await InGameEventListener(this, e);
+                        if (InGameEventListener is not null)
+                            await InGameEventListener(this, e);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -69,6 +71,7 @@ namespace Server.Routing.Helpers
 
         private async Task HandlePregameMessage(PreGameClientMessage message)
         {
+            _logger.LogInformation(message.ToString());
             switch (message)
             {
                 case Greeting m:

@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.Logging;
 using Server.Games.Meta;
 using Server.Games.TheHat.GameCore;
-using Server.Games.TheHat.GameCore.Timer;
 using Server.Games.TheHat.HatIGameStates;
 using Server.Routing;
 using Server.Routing.Helpers;
@@ -16,15 +16,16 @@ using Shared.Protos.HatSharedClasses;
 
 namespace Server.Games.TheHat
 {
-    public class HatIGame : IGame
+    public class HatIGame : Game
     {
+        // TODO Add explanation cancellation
         private readonly Func<Task> _finished;
         private readonly ITimer _timer;
         private readonly Random _random;
         private readonly ILogger<HatIGame> _logger;
         private readonly int _wordsToBeWritten;
         private readonly HatGameModeConfiguration _mode;
-        private readonly Duration _timeToExplain;
+        private readonly TimeSpan _timeToExplain;
 
         private IHatGameState _currentState;
         private readonly Dictionary<IInGameClient, HatPlayer> _clientToPlayerMapping;
@@ -87,7 +88,7 @@ namespace Server.Games.TheHat
             _currentState = new AddingWordsState(0, this);
         }
 
-        public async Task HandleEvent(IInGameClient? client, InGameClientMessage e)
+        public override async Task HandleEvent(IInGameClient? client, InGameClientMessage e)
         {
             if (e is HatClientMessage hatClientMessage)
                 if (client is null)
@@ -127,7 +128,7 @@ namespace Server.Games.TheHat
 
         public void SetTimerForExplanation()
         {
-            _timer.RequestEventIn(_timeToExplain, new TimerFinish());
+            _timer.RequestEventIn(_timeToExplain, new TimerFinish(), Guid.NewGuid()); // TODO Correct Guid management
             SendMulticastMessage(new HatExplanationStarted());
         }
 

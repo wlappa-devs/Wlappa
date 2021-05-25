@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ProtoBuf;
 
 namespace Shared.Protos.HatSharedClasses
 {
     [DataContract]
+    [ProtoContract]
     [ProtoInclude(1, typeof(HatStartGame))]
     [ProtoInclude(2, typeof(HatAnnounceNextPair))]
     [ProtoInclude(3, typeof(HatExplanationStarted))]
@@ -18,11 +20,13 @@ namespace Shared.Protos.HatSharedClasses
     }
 
     [DataContract]
+    [ProtoContract]
     public class HatStartGame : HatServerMessage
     {
     }
 
     [DataContract]
+    [ProtoContract]
     public class HatAnnounceNextPair : HatServerMessage
     {
         [ProtoMember(1)] public Guid Explainer { get; init; }
@@ -30,33 +34,40 @@ namespace Shared.Protos.HatSharedClasses
     }
 
     [DataContract]
+    [ProtoContract]
     public class HatExplanationStarted : HatServerMessage
     {
     }
 
     [DataContract]
+    [ProtoContract]
     public class HatWordToGuess : HatServerMessage
     {
         [ProtoMember(1)] public string Value { get; init; }
     }
 
     [DataContract]
+    [ProtoContract]
     public class HatTimeIsUp : HatServerMessage
     {
     }
 
     [DataContract]
+    [ProtoContract]
     public class HatInvalidWordsSet : HatServerMessage
     {
     }
 
     [DataContract]
+    [ProtoContract]
     public class HatPointsUpdated : HatServerMessage
     {
-        
+        [ProtoMember(1)] public Dictionary<Guid, int> GuidToPoints { get; init; }
+
     }
 
     [DataContract]
+    [ProtoContract]
     [ProtoInclude(1, typeof(HatNoWordsLeft))]
     [ProtoInclude(2, typeof(HatRotationFinished))]
     public abstract class HatFinishMessage : HatServerMessage
@@ -64,11 +75,13 @@ namespace Shared.Protos.HatSharedClasses
     }
 
     [DataContract]
+    [ProtoContract]
     public class HatNoWordsLeft : HatFinishMessage
     {
     }
 
     [DataContract]
+    [ProtoContract]
     public class HatRotationFinished : HatFinishMessage
     {
     }
