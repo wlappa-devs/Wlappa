@@ -7,8 +7,8 @@ namespace Shared.Protos
     [ProtoContract]
     public class ClickGameConfiguration : GameConfiguration
     {
-        [ProtoMember(1)] public int IncrementValue { get; init; }
-        [ProtoMember(2)] public int ClicksToWin { get; init; }
+        [ProtoMember(1)] public int IncrementValue { get; set; }
+        [ProtoMember(2)] public int ClicksToWin { get; set; }
     }
 
     [DataContract]
@@ -22,7 +22,7 @@ namespace Shared.Protos
     [ProtoContract]
     public class ClickerNewValueEvent : ClickerServerMessage
     {
-        [ProtoMember(1)] public long Value { get; init; }
+        [ProtoMember(1)] public long Value { get; set; }
     }
 
     [DataContract]

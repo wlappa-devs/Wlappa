@@ -41,14 +41,14 @@ namespace Shared.Protos
     [ProtoContract]
     public class GreetingSuccessful : PreGameServerMessage
     {
-        [ProtoMember(1)] public Guid Guid { get; init; }
+        [ProtoMember(1)] public Guid Guid { get; set; }
     }
 
     [DataContract]
     [ProtoContract]
     public class LobbyCreated : PreGameServerMessage
     {
-        [ProtoMember(1)] public Guid Guid { get; init; }
+        [ProtoMember(1)] public Guid Guid { get; set; }
     }
 
     [DataContract]
@@ -61,9 +61,9 @@ namespace Shared.Protos
     [ProtoContract]
     public class JoinedLobby : LobbyServerMessage
     {
-        [ProtoMember(1)] public GameTypes Type { get; init; }
-        [ProtoMember(2)] public bool IsHost { get; init; }
-        [ProtoMember(3)] public IReadOnlyList<string> AvailableRoles { get; init; }
+        [ProtoMember(1)] public GameTypes Type { get; set; }
+        [ProtoMember(2)] public bool IsHost { get; set; }
+        [ProtoMember(3)] public IReadOnlyList<string> AvailableRoles { get; set; }
     }
 
     [DataContract]
@@ -76,23 +76,23 @@ namespace Shared.Protos
     [ProtoContract]
     public class PlayerInLobby
     {
-        [ProtoMember(1)] public Guid Id { get; init; }
-        [ProtoMember(2)] public string Name { get; init; }
-        [ProtoMember(3)] public string Role { get; init; }
+        [ProtoMember(1)] public Guid Id { get; set; }
+        [ProtoMember(2)] public string Name { get; set; }
+        [ProtoMember(3)] public string Role { get; set; }
     }
 
     [DataContract]
     [ProtoContract]
     public class LobbyUpdate : LobbyServerMessage
     {
-        [ProtoMember(1)] public IReadOnlyCollection<PlayerInLobby> Players { get; init; }
+        [ProtoMember(1)] public IReadOnlyCollection<PlayerInLobby> Players { get; set; }
     }
 
     [DataContract]
     [ProtoContract]
     public class ConfigurationInvalid : LobbyServerMessage
     {
-        public string Message { get; init; }
+        public string Message { get; set; }
     }
 
     [DataContract]

@@ -18,7 +18,7 @@ namespace Shared.Protos.HatSharedClasses
     [ProtoContract]
     public class AddWords : HatClientMessage
     {
-        [ProtoMember(1)] public IReadOnlyList<string> Value { get; init; }
+        [ProtoMember(1)] public IReadOnlyList<string> Value { get; set; }
     }
 
     [DataContract]

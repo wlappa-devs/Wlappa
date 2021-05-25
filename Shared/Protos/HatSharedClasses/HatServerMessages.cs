@@ -29,8 +29,8 @@ namespace Shared.Protos.HatSharedClasses
     [ProtoContract]
     public class HatAnnounceNextPair : HatServerMessage
     {
-        [ProtoMember(1)] public Guid Explainer { get; init; }
-        [ProtoMember(2)] public Guid Understander { get; init; }
+        [ProtoMember(1)] public Guid Explainer { get; set; }
+        [ProtoMember(2)] public Guid Understander { get; set; }
     }
 
     [DataContract]
@@ -43,7 +43,7 @@ namespace Shared.Protos.HatSharedClasses
     [ProtoContract]
     public class HatWordToGuess : HatServerMessage
     {
-        [ProtoMember(1)] public string Value { get; init; }
+        [ProtoMember(1)] public string Value { get; set; }
     }
 
     [DataContract]
@@ -62,7 +62,7 @@ namespace Shared.Protos.HatSharedClasses
     [ProtoContract]
     public class HatPointsUpdated : HatServerMessage
     {
-        [ProtoMember(1)] public Dictionary<Guid, int> GuidToPoints { get; init; }
+        [ProtoMember(1)] public Dictionary<Guid, int> GuidToPoints { get; set; }
 
     }
 
