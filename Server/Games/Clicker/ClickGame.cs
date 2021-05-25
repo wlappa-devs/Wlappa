@@ -10,31 +10,36 @@ using Shared.Protos;
 
 namespace Server.Games.Clicker
 {
-    public class ClickGame : IGame
+    public class ClickGame : Game
     {
         private readonly ClickGameConfiguration _config;
+        private readonly ITimer _timer;
         private readonly Func<Task> _finished;
         private readonly ILogger<ClickGame> _logger;
         private long _currentValue;
         private readonly MulticastGroup _allPlayers;
 
-        public ClickGame(ClickGameConfiguration config, GameCreationPayload payload,
+        public ClickGame(ClickGameConfiguration config, GameCreationPayload payload, ITimer timer,
             IReadOnlyCollection<IInGameClient> players, Func<Task> finished, ILogger<ClickGame> logger)
         {
             _config = config;
+            _timer = timer;
             _finished = finished;
             _logger = logger;
             _allPlayers = new MulticastGroup(players);
         }
 
-        public async Task HandleEvent(IInGameClient? client, InGameClientMessage e)
+        public override async Task HandleEvent(IInGameClient? client, InGameClientMessage e)
         {
             _logger.LogInformation("Got increment");
             switch (e)
             {
                 case ClickerIncrementEvent:
+                    _timer.RequestEventIn(TimeSpan.FromSeconds(5), new ClickerTimePassedEvent(), Guid.NewGuid());
+                    break;
+                case ClickerTimePassedEvent:
                     _currentValue += _config.IncrementValue;
-                    _allPlayers.SendMulticastEvent(new ClickerNewValueEvent()
+                    await _allPlayers.SendMulticastEvent(new ClickerNewValueEvent()
                     {
                         Value = _currentValue
                     });
@@ -56,12 +61,16 @@ namespace Server.Games.Clicker
         }
 
 
-        public IGame Create(GameConfiguration config, GameCreationPayload payload, IReadOnlyCollection<IInGameClient> clients,
+        public Game Create(GameConfiguration config, GameCreationPayload payload,
+            IReadOnlyCollection<IInGameClient> clients,
             Func<Task> finished)
         {
             if (config is not ClickGameConfiguration correctConfig)
                 throw new ArgumentException("Provided invalid configuration");
-            return new ClickGame(correctConfig, payload, clients, finished, _logger);
+            var timer = new Timer();
+            var instance = new ClickGame(correctConfig, payload, timer, clients, finished, _logger);
+            timer.Game = instance;
+            return instance;
         }
 
         public IReadOnlyList<string> Roles { get; } = new[] {"Clicker"};

@@ -18,7 +18,7 @@ namespace Server.Games.Meta
         private readonly ILogger _logger;
         private readonly Action _finished;
         public Guid Host { get; set; }
-        private IGame? _game;
+        private Game? _game;
         public GameTypes Type => _factory.Type;
 
         public GameController(IGameFactory factory, GameConfiguration config, Guid initialHost, ILogger logger,
@@ -62,8 +62,9 @@ namespace Server.Games.Meta
                 await Task.WhenAll(_players.Select(p => p.HandleLobbyMessage(notification)));
                 foreach (var player in _players)
                 {
-                    player.InGameEventListener = _game.HandleEvent;
+                    player.InGameEventListener = HandleGameEvent;
                 }
+
                 return;
             }
 
@@ -71,6 +72,20 @@ namespace Server.Games.Meta
             {
                 Message = message
             });
+        }
+
+        private async Task HandleGameEvent(IInGameClient client, InGameClientMessage message)
+        {
+            if (_game is null) return;
+            await _game.semaphore.WaitAsync();
+            try
+            {
+                await _game.HandleEvent(client, message);
+            }
+            finally
+            {
+                _game.semaphore.Release();
+            }
         }
 
         private async Task HandleGameFinish()

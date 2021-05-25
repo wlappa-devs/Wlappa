@@ -21,15 +21,22 @@ namespace Server.Games.TheHat
 
         public string DefaultRole => HatRolePlayer.Value;
 
-        public IGame Create(GameConfiguration config, GameCreationPayload payload,
+        public Game Create(GameConfiguration config, GameCreationPayload payload,
             IReadOnlyCollection<IInGameClient> clients,
-            Func<Task> finished) => config switch
+            Func<Task> finished)
         {
-            HatConfiguration hatConfiguration =>
-                new HatIGame(hatConfiguration, payload, clients, finished,
-                    new GovnoTimer(), new Random(), _logger),
-            _ => throw new ArgumentOutOfRangeException(nameof(config))
-        };
+            switch (config)
+            {
+                case HatConfiguration hatConfiguration:
+                    var timer = new Timer();
+                    var instance = new HatIGame(hatConfiguration, payload, clients, finished, timer, new Random(),
+                        _logger);
+                    timer.Game = instance;
+                    return instance;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(config));
+            }
+        }
 
         public IReadOnlyList<string> Roles =>
             new[] {HatRolePlayer.Value, HatRoleManager.Value, HatRoleObserver.Value, HatRoleKukold.Value};

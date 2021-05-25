@@ -1,5 +1,6 @@
-﻿using Google.Protobuf.WellKnownTypes;
-using Server.Games.TheHat.GameCore.Timer;
+﻿using System;
+using Google.Protobuf.WellKnownTypes;
+using Server.Games.Meta;
 using Shared.Protos;
 
 namespace TestServer.GameTests
@@ -15,9 +16,14 @@ namespace TestServer.GameTests
             return output;
         }
 
-        public void RequestEventIn(Duration duration, InGameClientMessage command)
+        public void RequestEventIn(TimeSpan duration, InGameClientMessage command, Guid eventId)
         {
             commandToExecute = command;
+        }
+
+        public void CancelEvent(Guid eventId)
+        {
+            // TODO Mock timer event cancellation;
         }
     }
 }

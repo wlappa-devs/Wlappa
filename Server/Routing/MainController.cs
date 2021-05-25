@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -13,7 +14,7 @@ namespace Server.Routing
         private readonly ILogger<MainController> _logger;
         private readonly GameResolver _gameResolver;
         private readonly GameControllerFactory _gameControllerFactory;
-        private static Dictionary<Guid, GameController> _games = new();
+        private readonly ConcurrentDictionary<Guid, GameController> _games = new();
 
         public MainController(ILogger<MainController> logger, GameResolver gameResolver,
             GameControllerFactory gameControllerFactory)
@@ -29,6 +30,7 @@ namespace Server.Routing
             {
                 await player.HandleLobbyMessage(new LobbyNotFound());
             }
+
             await _games[gameId].ConnectPlayer(player);
         }
 
@@ -36,7 +38,8 @@ namespace Server.Routing
         {
             var gameFactory = _gameResolver.FindGameFactory(type);
             var newId = Guid.NewGuid();
-            var gameController = _gameControllerFactory.Create(gameFactory, config, hostId, () => _games.Remove(newId));
+            var gameController =
+                _gameControllerFactory.Create(gameFactory, config, hostId, () => _games.Remove(newId, out _));
             _games[newId] = gameController;
             return newId;
         }
