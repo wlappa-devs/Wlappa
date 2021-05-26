@@ -9,11 +9,11 @@ namespace Client
 {
     public class UsingLib
     {
-        static async Task Main(string[] args)
+        static async Task Main3(string[] args)
         {
             var name = Console.ReadLine()!;
             var client = new Client_lib.Client(name);
-            await client.ConnectToServer("localhost:5000");
+            await client.ConnectToServer("127.0.0.1:5000");
 
             var command = Console.ReadLine()!;
             Guid id;

@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.Serialization;
 using ProtoBuf;
 using ProtoBuf.WellKnownTypes;
@@ -8,7 +9,7 @@ namespace Shared.Protos.HatSharedClasses
     [ProtoContract]
     public class HatConfiguration : GameConfiguration
     {
-        [ProtoMember(1)] public Duration TimeToExplain { get; set; }
+        [ProtoMember(1)] public TimeSpan TimeToExplain { get; set; }
 
         [ProtoMember(2)] public HatGameModeConfiguration HatGameModeConfiguration { get; set; }
 
