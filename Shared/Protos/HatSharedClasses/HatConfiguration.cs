@@ -13,6 +13,8 @@ namespace Shared.Protos.HatSharedClasses
         [ProtoMember(2)] public HatGameModeConfiguration HatGameModeConfiguration { get; set; }
 
         [ProtoMember(3)] public int WordsToBeWritten { get; set; }
+
+        public override GameTypes Type => GameTypes.TheHat;
     }
 
     [DataContract]

@@ -15,7 +15,7 @@ namespace Client
 {
     class Program
     {
-        static async Task Main(string[] args)
+        static async Task Main2(string[] args)
         {
             using var channel = GrpcChannel.ForAddress("https://localhost:5001");
             var client = channel.CreateGrpcService<IMainServiceContract>();
@@ -45,7 +45,6 @@ namespace Client
             {
                 await requestStream.Writer.WriteAsync(new CreateLobby()
                 {
-                    Type = GameTypes.Clicker,
                     Configuration = new ClickGameConfiguration()
                     {
                         ClicksToWin = 15,
@@ -76,7 +75,7 @@ namespace Client
 
             await Console.Out.WriteLineAsync(id.ToString());
 
-            await requestStream.Writer.WriteAsync(new JoinGame()
+            await requestStream.Writer.WriteAsync(new JoinLobby()
             {
                 Id = id
             });

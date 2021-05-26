@@ -18,7 +18,7 @@ namespace Shared.Protos
     [ProtoContract]
     [ProtoInclude(1, typeof(Greeting))]
     [ProtoInclude(2, typeof(CreateLobby))]
-    [ProtoInclude(3, typeof(JoinGame))]
+    [ProtoInclude(3, typeof(JoinLobby))]
     public abstract class PreGameClientMessage : ClientMessage
     {
     }
@@ -57,19 +57,19 @@ namespace Shared.Protos
     [ProtoInclude(2, typeof(HatConfiguration))]
     public abstract class GameConfiguration
     {
+        public abstract GameTypes Type { get; }
     }
 
     [DataContract]
     [ProtoContract]
     public class CreateLobby : PreGameClientMessage
     {
-        [ProtoMember(1)] public GameTypes Type { get; set; }
-        [ProtoMember(2)] public GameConfiguration Configuration { get; set; }
+        [ProtoMember(1)] public GameConfiguration Configuration { get; set; }
     }
 
     [DataContract]
     [ProtoContract]
-    public class JoinGame : PreGameClientMessage
+    public class JoinLobby : PreGameClientMessage
     {
         [ProtoMember(1)] public Guid Id { get; set; }
     }

@@ -9,6 +9,8 @@ namespace Shared.Protos
     {
         [ProtoMember(1)] public int IncrementValue { get; set; }
         [ProtoMember(2)] public int ClicksToWin { get; set; }
+
+        public override GameTypes Type => GameTypes.Clicker;
     }
 
     [DataContract]
