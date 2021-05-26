@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <TableLayout 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content">
+        <TableRow>
+            <TextView
+                    android:text="Words pack"/>
+        </TableRow>
+        <TableRow>
+            <EditText/>
+        </TableRow>
+        <TableRow>
+            <Button android:text="Choose first pair!" android:id="@+id/start_choose_pairs_btn"/>
+        </TableRow>
+    </TableLayout>
+</LinearLayout>

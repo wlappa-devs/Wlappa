@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:id="@+id/main_layout">
+    <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <TableRow android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAlignment="center">
+            <Button
+                    android:text="Join server"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/join_server_btn" android:layout_alignParentBottom="true"
+            />
+        </TableRow>
+        
+        <TableRow android:layout_width="match_parent" android:layout_height="match_parent">
+            <Button
+                    android:text="Create server"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/choose_game_btn"/>
+        </TableRow>
+        
+        <TableRow android:layout_width="match_parent" android:layout_height="match_parent">
+            <TextView android:layout_width="match_parent" android:layout_height="match_parent" 
+            android:text="Enter your nickname"/>
+        </TableRow>
+        
+        <TableRow android:layout_width="match_parent" android:layout_height="match_parent">
+            <EditText android:layout_width="match_parent" android:layout_height="match_parent"
+                      android:id="@+id/nickname_tf">
+                
+            </EditText>
+        </TableRow>
+        
+        <TableRow android:layout_width="match_parent" android:layout_height="match_parent">
+            <Button
+                    android:text="Save nickname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/save_nickname_btn"/>
+        </TableRow>
+        
+    </TableLayout>
+</LinearLayout>

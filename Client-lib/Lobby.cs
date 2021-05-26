@@ -23,12 +23,15 @@ namespace Client_lib
 
         public IReadOnlyCollection<PlayerInLobby>? LastLobbyStatus { get; private set; }
         public bool GameIsGoing { get; private set; }
+        
+        public Guid Id { get; }
 
         public Lobby(GameTypes type, IReadOnlyList<string> availableRoles, bool amHost,
-            ChannelWriter<ClientMessage> request, ChannelReader<ServerMessage> response)
+            ChannelWriter<ClientMessage> request, ChannelReader<ServerMessage> response, Guid id)
         {
             _request = request;
             _response = response;
+            Id = id;
             Type = type;
             AvailableRoles = availableRoles;
             AmHost = amHost;

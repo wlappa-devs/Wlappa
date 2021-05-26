@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TableLayout 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:gravity="center">
+        <TableRow>
+            <TextView android:text="Lobby"/>
+        </TableRow>
+        <TableRow>
+            <TextView android:text="Players:"/>
+        </TableRow>
+        <TableRow>
+            <TextView android:text="Player1"/> <TextView android:text="Player2"/> <TextView android:text="Player3"/> <TextView android:text="Player4"/>
+        </TableRow>
+        <TableRow>
+            <TextView android:text="Код игры: "/><TextView android:text="1q2w3e"/>
+        </TableRow>
+        <TableRow>
+            <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/start_game_btn"
+                    android:text="start game"/>
+        </TableRow>
+    </TableLayout>
+</LinearLayout>

@@ -12,8 +12,8 @@ namespace Client
         static async Task Main3(string[] args)
         {
             var name = Console.ReadLine()!;
-            var client = new Client_lib.Client(name);
-            await client.ConnectToServer("127.0.0.1:5000");
+            var client = new Client_lib.Client();
+            await client.ConnectToServer("127.0.0.1:5000", name);
 
             var command = Console.ReadLine()!;
             Guid id;

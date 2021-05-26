@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+        
+        <TableRow android:layout_width="match_parent"
+                  android:layout_height="match_parent">
+            <TextView android:text="Enter server code"/>
+        </TableRow>
+        <TableRow android:layout_width="match_parent"
+                  android:layout_height="match_parent">
+            <EditText android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+            android:id="@+id/server_code_tf"/>
+        </TableRow>
+        <TableRow>
+            <Button 
+                    android:text="Join!"
+                    android:id="@+id/join_btn"/>
+        </TableRow>
+    </TableLayout>
+</LinearLayout>
