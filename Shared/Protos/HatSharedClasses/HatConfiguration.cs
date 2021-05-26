@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.Serialization;
 using ProtoBuf;
 using ProtoBuf.WellKnownTypes;
@@ -8,11 +9,13 @@ namespace Shared.Protos.HatSharedClasses
     [ProtoContract]
     public class HatConfiguration : GameConfiguration
     {
-        [ProtoMember(1)] public Duration TimeToExplain { get; init; }
+        [ProtoMember(1)] public TimeSpan TimeToExplain { get; set; }
 
-        [ProtoMember(2)] public HatGameModeConfiguration HatGameModeConfiguration { get; init; }
+        [ProtoMember(2)] public HatGameModeConfiguration HatGameModeConfiguration { get; set; }
 
-        [ProtoMember(3)] public int WordsToBeWritten { get; init; }
+        [ProtoMember(3)] public int WordsToBeWritten { get; set; }
+
+        public override GameTypes Type => GameTypes.TheHat;
     }
 
     [DataContract]
@@ -28,7 +31,7 @@ namespace Shared.Protos.HatSharedClasses
     [ProtoContract]
     public class HatPairChoosingModeConfiguration : HatGameModeConfiguration
     {
-        [ProtoMember(1)] public int NumberOfLapsToPlay { get; init; }
+        [ProtoMember(1)] public int NumberOfLapsToPlay { get; set; }
 
         public override bool GameIsOver(int lapCount, int explainerIndex, int playersCount) =>
             lapCount == NumberOfLapsToPlay && explainerIndex == playersCount - 1;

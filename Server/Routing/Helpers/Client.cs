@@ -82,13 +82,13 @@ namespace Server.Routing.Helpers
                     });
                     return;
                 case CreateLobby m:
-                    var gameId = _mainController.CreateGame(Id, m.Type, m.Configuration);
+                    var gameId = _mainController.CreateGame(Id, m.Configuration);
                     await _response.WriteAsync(new LobbyCreated()
                     {
                         Guid = gameId
                     });
                     return;
-                case JoinGame m:
+                case JoinLobby m:
                     await _mainController.ConnectClientToGame(this, m.Id);
                     return;
             }

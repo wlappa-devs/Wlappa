@@ -18,7 +18,7 @@ namespace Shared.Protos
     [ProtoContract]
     [ProtoInclude(1, typeof(Greeting))]
     [ProtoInclude(2, typeof(CreateLobby))]
-    [ProtoInclude(3, typeof(JoinGame))]
+    [ProtoInclude(3, typeof(JoinLobby))]
     public abstract class PreGameClientMessage : ClientMessage
     {
     }
@@ -36,7 +36,7 @@ namespace Shared.Protos
     [ProtoContract]
     public class Greeting : PreGameClientMessage
     {
-        [ProtoMember(1)] public string Name { get; init; }
+        [ProtoMember(1)] public string Name { get; set; }
     }
 
     [DataContract]
@@ -57,29 +57,29 @@ namespace Shared.Protos
     [ProtoInclude(2, typeof(HatConfiguration))]
     public abstract class GameConfiguration
     {
+        public abstract GameTypes Type { get; }
     }
 
     [DataContract]
     [ProtoContract]
     public class CreateLobby : PreGameClientMessage
     {
-        [ProtoMember(1)] public GameTypes Type { get; init; }
-        [ProtoMember(2)] public GameConfiguration Configuration { get; init; }
+        [ProtoMember(1)] public GameConfiguration Configuration { get; set; }
     }
 
     [DataContract]
     [ProtoContract]
-    public class JoinGame : PreGameClientMessage
+    public class JoinLobby : PreGameClientMessage
     {
-        [ProtoMember(1)] public Guid Id { get; init; }
+        [ProtoMember(1)] public Guid Id { get; set; }
     }
 
     [DataContract]
     [ProtoContract]
     public class ChangeRole : LobbyClientMessage
     {
-        [ProtoMember(1)] public Guid PlayerId { get; init; }
-        [ProtoMember(2)] public string NewRole { get; init; }
+        [ProtoMember(1)] public Guid PlayerId { get; set; }
+        [ProtoMember(2)] public string NewRole { get; set; }
     }
 
     [DataContract]

@@ -88,9 +88,10 @@ namespace Server.Games.Meta
             }
         }
 
+        // TODO disable players event listeners
         private async Task HandleGameFinish()
         {
-            _game = null; //TODO Remove player.InGameEventListener
+            _game = null;
             var notification = new GameFinished();
             await Task.WhenAll(_players.Select(p => p.HandleLobbyMessage(notification)));
         }

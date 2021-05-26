@@ -34,9 +34,9 @@ namespace Server.Routing
             await _games[gameId].ConnectPlayer(player);
         }
 
-        public Guid CreateGame(Guid hostId, GameTypes type, GameConfiguration config)
+        public Guid CreateGame(Guid hostId, GameConfiguration config)
         {
-            var gameFactory = _gameResolver.FindGameFactory(type);
+            var gameFactory = _gameResolver.FindGameFactory(config.Type);
             var newId = Guid.NewGuid();
             var gameController =
                 _gameControllerFactory.Create(gameFactory, config, hostId, () => _games.Remove(newId, out _));
