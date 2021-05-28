@@ -57,6 +57,7 @@ namespace Shared.Protos
     [ProtoInclude(2, typeof(HatConfiguration))]
     public abstract class GameConfiguration
     {
+        // TODO consider adding basic correctness validation method for use on client
         public abstract GameTypes Type { get; }
     }
 

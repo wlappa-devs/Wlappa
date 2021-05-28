@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using Server.Games.TheHat.GameCore;
 using Shared.Protos.HatSharedClasses;
-using GuessRight = Shared.Protos.HatSharedClasses.GuessRight;
 
 namespace Server.Games.TheHat.HatIGameStates
 {
@@ -20,7 +19,7 @@ namespace Server.Games.TheHat.HatIGameStates
         {
             switch (e)
             {
-                case GuessRight:
+                case HatGuessRight:
                     if (_game.IsManged)
                     {
                         if (client != _game.Manger)
@@ -31,14 +30,11 @@ namespace Server.Games.TheHat.HatIGameStates
                             return this;
 
                     _game.GuessCurrentWord();
-                    await _game.SendMulticastMessage(new HatPointsUpdated()
-                    {
-                        GuidToPoints = _game.GenerateGuidToPoints()
-                    });
+                    await _game.AnnounceScores();
                     await _game.TellTheWord(new HatWordToGuess {Value = _game.TakeWord()?.Value});
                     _alreadyGuessed++;
                     return this;
-                case TimerFinish:
+                case HatTimerFinish:
                     // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                     if (client is not null)
                         return this;

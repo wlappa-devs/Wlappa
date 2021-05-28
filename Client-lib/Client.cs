@@ -12,18 +12,15 @@ namespace Client_lib
 {
     public class Client
     {
-        public string Name { get; }
+        public string? Name { get; private set; }
         public Guid Id { get; private set; }
+        
+        
         private ChannelReader<ServerMessage>? _responseReader;
         private ChannelWriter<ClientMessage>? _requestWriter;
         private Grpc.Core.Channel? _channel;
 
-        public Client(string name)
-        {
-            Name = name;
-        }
-
-        public async Task ConnectToServer(string address)
+        public async Task ConnectToServer(string address, string name)
         {
             GrpcClientFactory.AllowUnencryptedHttp2 = true;
             _channel = new Grpc.Core.Channel(address, ChannelCredentials.Insecure);
@@ -32,14 +29,15 @@ namespace Client_lib
             var responseStream = grpcClient.Connect(request.AsAsyncEnumerable());
             _responseReader = responseStream.AsChannelReader();
             _requestWriter = request.Writer;
-            await ReceiveId();
+            await ReceiveId(name);
         }
 
-        private async Task ReceiveId()
+        private async Task ReceiveId(string name)
         {
+            Name = name;
             await _requestWriter!.WriteAsync(new Greeting()
             {
-                Name = Name,
+                Name = name,
             });
 
             var response = await _responseReader!.ReadAsync();
@@ -65,13 +63,13 @@ namespace Client_lib
             return lobbyCreated.Guid;
         }
 
-        public async Task<Lobby> JoinGame(Guid id)
+        public async Task<Lobby> JoinGame(Guid lobbyId)
         {
             if (_requestWriter is null || _responseReader is null)
                 throw new InvalidOperationException();
             await _requestWriter.WriteAsync(new JoinLobby()
             {
-                Id = id,
+                Id = lobbyId,
             });
 
             var response = await _responseReader.ReadAsync();
@@ -87,7 +85,7 @@ namespace Client_lib
                     throw new LobbyNotFoundException();
                 case JoinedLobby lobbyInfo:
                     return new Lobby(lobbyInfo.Type, lobbyInfo.AvailableRoles, lobbyInfo.IsHost, _requestWriter,
-                        _responseReader);;
+                        _responseReader, lobbyId, Id);
                 default:
                     throw new InvalidOperationException();
             }

@@ -17,18 +17,25 @@ namespace Client_lib
         public GameTypes Type { get; }
         public IReadOnlyList<string> AvailableRoles { get; }
         public bool AmHost { get; }
+        
         public event Action? LobbyUpdate;
         public event Action? GameFinished;
         public event Action<Game>? HandleGameStart;
+        public event Action<string>? ConfigurationInvalid; 
 
         public IReadOnlyCollection<PlayerInLobby>? LastLobbyStatus { get; private set; }
         public bool GameIsGoing { get; private set; }
+        
+        public Guid LobbyId { get; }
+        public Guid ClientId { get; }
 
         public Lobby(GameTypes type, IReadOnlyList<string> availableRoles, bool amHost,
-            ChannelWriter<ClientMessage> request, ChannelReader<ServerMessage> response)
+            ChannelWriter<ClientMessage> request, ChannelReader<ServerMessage> response, Guid lobbyId, Guid clientId)
         {
             _request = request;
             _response = response;
+            LobbyId = lobbyId;
+            ClientId = clientId;
             Type = type;
             AvailableRoles = availableRoles;
             AmHost = amHost;
@@ -44,7 +51,7 @@ namespace Client_lib
                 switch (message)
                 {
                     case GameCreated _:
-                        _gameInstance = new Game(_request);
+                        _gameInstance = new Game(_request, ClientId);
                         GameIsGoing = true;
                         HandleGameStart?.Invoke(_gameInstance);
                         continue;
@@ -89,6 +96,9 @@ namespace Client_lib
                 case LobbyUpdate update:
                     LastLobbyStatus = update.Players;
                     LobbyUpdate?.Invoke();
+                    return;
+                case Shared.Protos.ConfigurationInvalid msg :
+                    ConfigurationInvalid?.Invoke(msg.Message);
                     return;
                 case GameFinished _:
                     GameIsGoing = false;

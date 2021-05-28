@@ -19,6 +19,7 @@ namespace Server.Games.TheHat
     public class HatIGame : Game
     {
         // TODO Add explanation cancellation
+        // TODO Check hat words availability at the timer event
         private readonly Func<Task> _finished;
         private readonly ITimer _timer;
         private readonly Random _random;
@@ -126,9 +127,12 @@ namespace Server.Games.TheHat
                 Understander = Understander.Client.Id
             });
 
+        public Task AnnounceScores() =>
+            SendMulticastMessage(new HatPointsUpdated {GuidToPoints = GenerateGuidToPoints()});
+
         public void SetTimerForExplanation()
         {
-            _timer.RequestEventIn(_timeToExplain, new TimerFinish(), Guid.NewGuid()); // TODO Correct Guid management
+            _timer.RequestEventIn(_timeToExplain, new HatTimerFinish(), Guid.NewGuid()); // TODO Correct Guid management
             SendMulticastMessage(new HatExplanationStarted());
         }
 

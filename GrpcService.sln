@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestServer", "TestServer\Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client-lib", "Client-lib\Client-lib.csproj", "{0827E0AC-7553-48FC-A7AF-79BFC2346A0D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndroidBlankApp1", "AndroidBlankApp1\AndroidBlankApp1.csproj", "{819B5273-24B1-440D-80F7-69CD2B910749}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{0827E0AC-7553-48FC-A7AF-79BFC2346A0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0827E0AC-7553-48FC-A7AF-79BFC2346A0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0827E0AC-7553-48FC-A7AF-79BFC2346A0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{819B5273-24B1-440D-80F7-69CD2B910749}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{819B5273-24B1-440D-80F7-69CD2B910749}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{819B5273-24B1-440D-80F7-69CD2B910749}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{819B5273-24B1-440D-80F7-69CD2B910749}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

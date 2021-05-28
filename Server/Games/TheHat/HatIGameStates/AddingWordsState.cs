@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using Server.Games.TheHat.GameCore;
 using Shared.Protos.HatSharedClasses;
-using AddWords = Shared.Protos.HatSharedClasses.AddWords;
 
 namespace Server.Games.TheHat.HatIGameStates
 {
@@ -21,14 +20,25 @@ namespace Server.Games.TheHat.HatIGameStates
         {
             if (client is HatPlayer player)
             {
-                if (e is AddWords addWords)
+                if (e is HatAddWords addWords)
                 {
                     var addingResult = await _game.AddWords(addWords.Value, player);
-                    if (_authorsReady + addingResult == _game.PlayersCount)
+                    if (addingResult != 1) return this;
+                    await _game.SendMulticastMessage(new HatPlayerSuccessfullyAddedWords
+                    {
+                        AuthorId = client.Client.Id,
+                        TotalReady = _authorsReady + 1
+                    });
+                    if (_authorsReady + 1 == _game.PlayersCount)
                     {
                         await _game.SendMulticastMessage(new HatStartGame());
                         _game.CurrentPair = (0, 1);
+                        
+                        await _game.AnnounceScores();
+                        
                         await _game.AnnounceCurrentPair();
+                        
+                        
                         return new WaitingForPLayersToGetReady(false, false, _game);
                     }
 
@@ -40,4 +50,6 @@ namespace Server.Games.TheHat.HatIGameStates
             throw new ArgumentOutOfRangeException(nameof(e), "Unexpected command");
         }
     }
+
+
 }

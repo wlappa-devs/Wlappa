@@ -124,8 +124,8 @@ namespace TestServer.GameTests
             var currentPair = GetCurrentPair();
             var currentExplainer = _clients.First(client => client.Id == currentPair.Explainer);
             var currentUnderstander = _clients.First(client => client.Id == currentPair.Understander);
-            _gameInstance.HandleEvent(currentExplainer, new ClientIsReady()).Wait();
-            _gameInstance.HandleEvent(currentUnderstander, new ClientIsReady()).Wait();
+            _gameInstance.HandleEvent(currentExplainer, new HatClientIsReady()).Wait();
+            _gameInstance.HandleEvent(currentUnderstander, new HatClientIsReady()).Wait();
             return (currentExplainer, currentUnderstander);
         }
 
@@ -137,10 +137,10 @@ namespace TestServer.GameTests
             var (explainer, understander) = GetReady();
             for (var _ = 0; _ < correctlyGuessed; _++)
             {
-                _gameInstance.HandleEvent(explainer, new GuessRight()).Wait();
+                _gameInstance.HandleEvent(explainer, new HatGuessRight()).Wait();
             }
 
-            _gameInstance.HandleEvent(null, new TimerFinish())
+            _gameInstance.HandleEvent(null, new HatTimerFinish())
                 .Wait();
         }
 
@@ -150,7 +150,7 @@ namespace TestServer.GameTests
             foreach (var client in _clients)
             {
                 _gameInstance.HandleEvent(client,
-                    new AddWords {Value = new[] {wordsPool.Dequeue(), wordsPool.Dequeue()}}).Wait();
+                    new HatAddWords {Value = new[] {wordsPool.Dequeue(), wordsPool.Dequeue()}}).Wait();
             }
         }
     }
