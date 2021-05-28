@@ -61,16 +61,21 @@
         <Compile Include="Application.cs" />
         <Compile Include="Resource.Designer.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
-        <Compile Include="UI\ChooseGameActivity.cs" />
-        <Compile Include="UI\CreateServerActivity.cs" />
-        <Compile Include="UI\EndHatGameActivity.cs" />
-        <Compile Include="UI\HatPairChoosenActivity.cs" />
-        <Compile Include="UI\HatWordPickerPairActivity.cs" />
-        <Compile Include="UI\HatWordPickerRestActivity.cs" />
-        <Compile Include="UI\HatWordsChooserActivity.cs" />
-        <Compile Include="UI\JoinServerActivity.cs" />
-        <Compile Include="UI\LobbyActivity.cs" />
-        <Compile Include="UI\MainActivity.cs" />
+        <Compile Include="UI\GamesVIews\Hat\EndHatGameActivity.cs" />
+        <Compile Include="UI\GamesVIews\Hat\HatPairChoosenActivity.cs" />
+        <Compile Include="UI\GamesVIews\Hat\HatWordPickerPairActivity.cs" />
+        <Compile Include="UI\GamesVIews\Hat\HatWordPickerRestActivity.cs" />
+        <Compile Include="UI\GamesVIews\Hat\HatWordsChooserActivity.cs" />
+        <Compile Include="UI\InLobbyViews\ActivityForGameType.cs" />
+        <Compile Include="UI\InLobbyViews\LobbyActivity.cs" />
+        <Compile Include="UI\InLobbyViews\PlayerListViewHolder.cs" />
+        <Compile Include="UI\InLobbyViews\PlayersListAdapter.cs" />
+        <Compile Include="UI\PreLobbyViews\ChooseGameActivity.cs" />
+        <Compile Include="UI\PreLobbyViews\GameConfigurators\HatConfigurationActivity.cs" />
+        <Compile Include="UI\PreLobbyViews\JoinServerActivity.cs" />
+        <Compile Include="UI\PreLobbyViews\MainActivity.cs" />
+        <Compile Include="ViewModels\GameInstanceProvider.cs" />
+        <Compile Include="ViewModels\GameViewModels\HatViewModel.cs" />
         <Compile Include="ViewModels\LobbyProvider.cs" />
         <Compile Include="ViewModels\LobbyViewModel.cs" />
         <Compile Include="ViewModels\PreLobbyViewModel.cs" />
@@ -85,7 +90,7 @@
             <SubType>Designer</SubType>
         </AndroidResource>
         <AndroidResource Include="Resources\layout\choose_game.xml" />
-        <AndroidResource Include="Resources\layout\create_server.xml" />
+        <AndroidResource Include="Resources\layout\hat_configuration.xml" />
         <AndroidResource Include="Resources\layout\end_hat_game.xml" />
         <AndroidResource Include="Resources\layout\hat_pair_choosen.xml" />
         <AndroidResource Include="Resources\layout\hat_words_chooser.xml" />
@@ -93,6 +98,7 @@
         <AndroidResource Include="Resources\layout\hat_word_picker_rest.xml" />
         <AndroidResource Include="Resources\layout\join_server.axml" />
         <AndroidResource Include="Resources\layout\lobby.xml" />
+        <AndroidResource Include="Resources\layout\player_list_item.xml" />
         <AndroidResource Include="Resources\values\colors.xml" />
         <AndroidResource Include="Resources\values\ic_launcher_background.xml" />
         <AndroidResource Include="Resources\values\strings.xml" />
@@ -105,6 +111,11 @@
         <PackageReference Include="protobuf-net.Grpc.Native" Version="1.0.152" />
         <PackageReference Include="Unity" Version="5.11.10" />
         <PackageReference Include="Xamarin.Android.Support.Design" Version="28.0.0.3" />
+        <PackageReference Include="Xamarin.AndroidX.RecyclerView" Version="1.2.0" />
+        <!--hand-Made-->
+        <PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData" Version="2.3.1" />
+        <PackageReference Include="Xamarin.AndroidX.Legacy.Support.Core.UI" Version="1.0.0.8" />
+        <PackageReference Include="Xamarin.Google.Android.Material" Version="1.3.0.1" />
     </ItemGroup>
     <ItemGroup>
       <Folder Include="obj\Debug\110\designtime" />
@@ -130,4 +141,5 @@
       <Target Name="AfterBuild">
       </Target>
     -->
+    
 </Project>

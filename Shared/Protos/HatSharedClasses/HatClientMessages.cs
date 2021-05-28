@@ -6,30 +6,30 @@ namespace Shared.Protos.HatSharedClasses
 {
     [DataContract]
     [ProtoContract]
-    [ProtoInclude(1, typeof(AddWords))]
-    [ProtoInclude(2, typeof(ClientIsReady))]
-    [ProtoInclude(3, typeof(GuessRight))]
-    [ProtoInclude(4, typeof(TimerFinish))]
+    [ProtoInclude(1, typeof(HatAddWords))]
+    [ProtoInclude(2, typeof(HatClientIsReady))]
+    [ProtoInclude(3, typeof(HatGuessRight))]
+    [ProtoInclude(4, typeof(HatTimerFinish))]
     public class HatClientMessage : InGameClientMessage
     {
     }
 
     [DataContract]
     [ProtoContract]
-    public class AddWords : HatClientMessage
+    public class HatAddWords : HatClientMessage
     {
         [ProtoMember(1)] public IReadOnlyList<string> Value { get; set; }
     }
 
     [DataContract]
     [ProtoContract]
-    public class ClientIsReady : HatClientMessage { }
+    public class HatClientIsReady : HatClientMessage { }
     
     [DataContract]
     [ProtoContract]
-    public class GuessRight : HatClientMessage { }
+    public class HatGuessRight : HatClientMessage { }
     
     [DataContract]
     [ProtoContract]
-    public class TimerFinish : HatClientMessage { }
+    public class HatTimerFinish : HatClientMessage { }
 }

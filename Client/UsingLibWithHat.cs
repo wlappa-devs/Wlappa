@@ -132,15 +132,15 @@ namespace Client
                 if (cmd!.StartsWith("addWords"))
                 {
                     var words = cmd.Split(" ").Skip(1);
-                    await game.SendGameEvent(new AddWords
+                    await game.SendGameEvent(new HatAddWords
                     {
                         Value = words.ToList()
                     });
                 }
                 else if (cmd == "ready")
-                    await game.SendGameEvent(new ClientIsReady());
+                    await game.SendGameEvent(new HatClientIsReady());
                 else if (cmd == "+")
-                    await game.SendGameEvent(new GuessRight());
+                    await game.SendGameEvent(new HatGuessRight());
                 else
                     await AsyncPrint("Unknown command from player " + cmd);
             }

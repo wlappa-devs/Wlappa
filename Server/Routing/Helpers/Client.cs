@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Connections;
 using Microsoft.Extensions.Logging;
 using Shared.Protos;
 
@@ -45,28 +46,36 @@ namespace Server.Routing.Helpers
 
         public async Task StartProcessing()
         {
-            await foreach (var message in _request)
+            try
             {
-                switch (message)
+                await foreach (var message in _request)
                 {
-                    case PreGameClientMessage e:
-                        _logger.LogInformation("Got event pregame");
-                        await HandlePregameMessage(e);
-                        break;
-                    case LobbyClientMessage e:
-                        _logger.LogInformation("Got event lobby");
-                        if (LobbyEventListener is not null)
-                            await LobbyEventListener(this, e);
-                        break;
-                    case InGameClientMessage e:
-                        _logger.LogInformation("Got event ingame");
-                        if (InGameEventListener is not null)
-                            await InGameEventListener(this, e);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
+                    switch (message)
+                    {
+                        case PreGameClientMessage e:
+                            _logger.LogInformation("Got event pregame");
+                            await HandlePregameMessage(e);
+                            break;
+                        case LobbyClientMessage e:
+                            _logger.LogInformation("Got event lobby");
+                            if (LobbyEventListener is not null)
+                                await LobbyEventListener(this, e);
+                            break;
+                        case InGameClientMessage e:
+                            _logger.LogInformation("Got event ingame");
+                            if (InGameEventListener is not null)
+                                await InGameEventListener(this, e);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
                 }
             }
+            catch (ConnectionAbortedException e)
+            {
+                // TODO Notify about disconnect
+            }
+            
         }
 
         private async Task HandlePregameMessage(PreGameClientMessage message)

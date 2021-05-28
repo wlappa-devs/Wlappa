@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Grpc.Net.Client;
@@ -28,6 +29,7 @@ namespace Server.Services
         {
             var toClientChannel = Channel.CreateUnbounded<ServerMessage>();
             HandleClient(request, toClientChannel.Writer, context);
+
             return toClientChannel.Reader.ReadAllAsync();
         }
 

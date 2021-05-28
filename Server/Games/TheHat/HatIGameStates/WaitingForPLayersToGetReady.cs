@@ -22,7 +22,7 @@ namespace Server.Games.TheHat.HatIGameStates
         {
             if (client is HatPlayer player)
             {
-                if (e is ClientIsReady)
+                if (e is HatClientIsReady)
                 {
                     if (player.Id == _game.CurrentPair.explainerIndex)
                     {
@@ -47,6 +47,7 @@ namespace Server.Games.TheHat.HatIGameStates
         private async Task<IHatGameState> BothAreReady()
         {
             _game.SetTimerForExplanation();
+            await _game.AnnounceScores();
             await _game.TellTheWord(new HatWordToGuess {Value = _game.TakeWord()?.Value});
             return new ExplanationInProcess(_game);
         }

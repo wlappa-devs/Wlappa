@@ -14,6 +14,8 @@ namespace Client_lib
     {
         public string? Name { get; private set; }
         public Guid Id { get; private set; }
+        
+        
         private ChannelReader<ServerMessage>? _responseReader;
         private ChannelWriter<ClientMessage>? _requestWriter;
         private Grpc.Core.Channel? _channel;
@@ -83,7 +85,7 @@ namespace Client_lib
                     throw new LobbyNotFoundException();
                 case JoinedLobby lobbyInfo:
                     return new Lobby(lobbyInfo.Type, lobbyInfo.AvailableRoles, lobbyInfo.IsHost, _requestWriter,
-                        _responseReader, lobbyId);
+                        _responseReader, lobbyId, Id);
                 default:
                     throw new InvalidOperationException();
             }
