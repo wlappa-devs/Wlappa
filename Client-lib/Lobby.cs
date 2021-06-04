@@ -97,7 +97,7 @@ namespace Client_lib
                     LastLobbyStatus = update.Players;
                     LobbyUpdate?.Invoke();
                     return;
-                case Shared.Protos.ConfigurationInvalid msg :
+                case ConfigurationInvalid msg :
                     ConfigurationInvalid?.Invoke(msg.Message);
                     return;
                 case GameFinished _:

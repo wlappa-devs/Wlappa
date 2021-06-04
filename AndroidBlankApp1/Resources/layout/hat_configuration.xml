@@ -21,23 +21,31 @@
         </TableRow>
         <TableRow>
             <TextView android:text="Time to explain"/>
-            <EditText android:id="@+id/time_to_explain_field" android:inputType="number" android:maxLength="2"/>
+            <EditText android:id="@+id/time_to_explain_field"
+                      android:inputType="number"
+                      android:maxLength="2"/>
         </TableRow>
         <TableRow>
             <TextView android:text="Words to write"/>
-            <EditText android:id="@+id/words_to_write_field" android:inputType="number" android:maxLength="2"/>
+            <EditText android:id="@+id/words_to_write_field"
+                      android:inputType="number"
+                      android:maxLength="2"/>
         </TableRow>
         <TableRow>
             <TextView
                     android:text="Game mode"/>
-            <RadioGroup android:id="@+id/hat_game_mode_choice">
-                <RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
-                             android:text="pairs" android:id="@+id/hat_game_mode_choice_pairs"/>
-                <RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
-                             android:text="circle" android:id="@+id/hat_game_mode_choice_circle"/>
+            <RadioGroup android:id="@+id/hat_game_mode_choice"
+                        android:checkedButton="@id/hat_game_mode_choice_circle">
+                <!--TODO Implement pairs?-->
+                <!--                <RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"-->
+                <!--                             android:text="pairs" android:id="@+id/hat_game_mode_choice_pairs"/>-->
+                <RadioButton android:layout_width="wrap_content"
+                             android:layout_height="wrap_content"
+                             android:text="circle"
+                             android:id="@+id/hat_game_mode_choice_circle"/>
             </RadioGroup>
         </TableRow>
-        <Button android:id="@+id/create_server_btn" android:text="Create server"/>
+        <Button android:id="@+id/create_server_btn" android:text="Create lobby"/>
     </TableLayout>
 
 </LinearLayout>

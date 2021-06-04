@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Android.Util;
 using Android.Views;
 using Client_lib;
 using Shared.Protos;
@@ -23,6 +24,13 @@ namespace AndroidBlankApp1.ViewModels.GameViewModels
 
         public Guid Explainer { get; set; }
         public Guid Understander { get; set; }
+        
+        public Guid? Manager { get; set; }
+        
+        public string MyRole { get; set; }
+        public bool IsManaged => Manager.HasValue;
+
+        public bool AmManager => _gameInstance!.PlayerId == Manager;
 
         public bool AmInPair => AmExplainer || AmUnderstander;
 
@@ -30,41 +38,61 @@ namespace AndroidBlankApp1.ViewModels.GameViewModels
 
         public bool AmUnderstander => _gameInstance!.PlayerId == Understander;
 
+        public bool AmControllingExplanation => IsManaged ? AmManager : AmExplainer;
+
         private DateTime _timerStartMoment = DateTime.Now;
         public string TimerString => (DateTime.Now - _timerStartMoment).Seconds.ToString();
 
         public string CurrentWord { get; set; }
 
-        public event Action WordsSuccessfullyAddedByMe;
-        public event Action WordsSuccessfullyAddedBySomeOne;
-        public event Action AnnouncedNextPair;
-        public event Action ScoresUpdated;
-        public event Action InvalidWordSet;
-        public event Action StartExplanation;
-        public event Action GetWord;
-        public event Action TimeIsUp;
-        public event Action GameOver;
+        public Action WordsSuccessfullyAddedByMe { get; set; }
+        public Action WordsSuccessfullyAddedBySomeOne { get; set; }
+        public Action AnnouncedNextPair { get; set; }
+        public Action ScoresUpdated { get; set; }
+        public Action InvalidWordSet { get; set; }
+        public Action StartExplanation { get; set; }
+        public Action GetWord { get; set; }
+        public Action TimeIsUp { get; set; }
+        public Action GameOver { get; set; }
 
         public string WordsInput { get; set; }
-        public int AmountOfPlayersWithSelectedWords { get; private set; }
+        public int RemainingPlayersToWriteWords { get; private set; }
 
         public HatViewModel(GameInstanceProvider instanceProvider)
         {
             _gameInstance = instanceProvider.GameInstance;
             _players = instanceProvider.Players;
-            _gameInstance!.MessageFromServer += HandleGameEvent;
+            _gameInstance!.MessageFromServer = HandleGameEvent;
         }
 
-        public async void HandleGameEvent(InGameServerMessage message)
+        public void HandleGameEvent(InGameServerMessage message)
         {
             if (!(message is HatServerMessage hatServerMessage)) throw new ArgumentException();
-            await HandleGameEvent(hatServerMessage);
+            HandleGameEvent(hatServerMessage);
         }
 
-        public async Task HandleGameEvent(HatServerMessage message)
+        public async Task CancelExplanation()
+        {
+            if (AmControllingExplanation)
+            {
+                await _gameInstance!.SendGameEvent(new HatCancelExplanation());
+            }
+        }
+
+        private void HandleGameEvent(HatServerMessage message)
         {
             switch (message)
             {
+                case HatGameInitialInformationMessage informationMessage:
+                    Manager = informationMessage.ManagerId;
+                    MyRole = informationMessage.Role;
+                    RemainingPlayersToWriteWords = informationMessage.NumberOfPlayersInGame;
+                    Log.Info(nameof(HatViewModel), $"My role is {MyRole}");
+                    if (IsManaged)
+                        // ReSharper disable once PossibleInvalidOperationException
+                        Log.Info(nameof(HatViewModel), $"Manager exists, and his GUID is {Manager.Value}");
+                    WordsSuccessfullyAddedBySomeOne?.Invoke();
+                    break;
                 case HatAnnounceNextPair hatAnnounceNextPair:
                     Explainer = hatAnnounceNextPair.Explainer;
                     Understander = hatAnnounceNextPair.Understander;
@@ -80,6 +108,7 @@ namespace AndroidBlankApp1.ViewModels.GameViewModels
                 // case HatRotationFinished hatRotationFinished:
                     // break;
                 case HatFinishMessage hatFinishMessage:
+                    Log.Info(nameof(HatViewModel), "Should finish game");
                     GameOver?.Invoke();
                     break;
                 case HatInvalidWordsSet hatInvalidWordsSet:
@@ -104,7 +133,7 @@ namespace AndroidBlankApp1.ViewModels.GameViewModels
                         WordsSuccessfullyAddedByMe?.Invoke();
                     }
 
-                    AmountOfPlayersWithSelectedWords = playerSuccessfullyAddedWords.TotalReady;
+                    RemainingPlayersToWriteWords = playerSuccessfullyAddedWords.TotalNotReady;
                     WordsSuccessfullyAddedBySomeOne?.Invoke();
                     return;
                 default:

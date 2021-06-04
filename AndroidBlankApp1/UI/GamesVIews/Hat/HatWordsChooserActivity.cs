@@ -20,13 +20,19 @@ namespace AndroidBlankApp1
 
             var addWordsButton = FindViewById<Button>(Resource.Id.start_choose_pairs_btn);
             var wordsTextInput = FindViewById<EditText>(Resource.Id.words_input);
-            var numberOfPLayersReady = FindViewById<TextView>(Resource.Id.number_of_players_ready);
+            var numberOfPlayersRemaining = FindViewById<TextView>(Resource.Id.number_of_players_ready);
+
+            if (viewModel.MyRole != Shared.Protos.HatSharedClasses.HatRolePlayer.Value)
+            {
+                addWordsButton!.Visibility = ViewStates.Gone;
+                wordsTextInput!.Visibility = ViewStates.Gone;
+            }
             
             addWordsButton!.Click +=
                 async (sender, args) => await viewModel.SendWords(sender as View);
             
 
-            viewModel.WordsSuccessfullyAddedByMe += () =>
+            viewModel.WordsSuccessfullyAddedByMe = () =>
             {
                 RunOnUiThread(() =>
                 {
@@ -34,16 +40,16 @@ namespace AndroidBlankApp1
                     wordsTextInput!.Enabled = false;
                 });
             };
-            viewModel.WordsSuccessfullyAddedBySomeOne += () =>
+            viewModel.WordsSuccessfullyAddedBySomeOne = () =>
             {
-                RunOnUiThread(() => numberOfPLayersReady!.Text = viewModel.AmountOfPlayersWithSelectedWords.ToString());
+                RunOnUiThread(() => numberOfPlayersRemaining!.Text = viewModel.RemainingPlayersToWriteWords.ToString());
             };
-            viewModel.AnnouncedNextPair += () =>
+            viewModel.AnnouncedNextPair = () =>
             {
                 StartActivity(typeof(HatPairChoosenActivity));
                 Finish();
             };
-            viewModel.InvalidWordSet += () =>
+            viewModel.InvalidWordSet = () =>
             {
                 RunOnUiThread(() =>
                 {

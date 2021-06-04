@@ -50,7 +50,7 @@ namespace Server.Games.TheHat
                 _ => "Game configuration from another game"
             };
 
-        public string? ValidateConfig(HatConfiguration config, GameCreationPayload payload)
+        private static string? ValidateConfig(HatConfiguration config, GameCreationPayload payload)
         {
             if (config.TimeToExplain.Seconds < 1)
                 return "Time to explain should be at least 1 second. U r not FLASH";
@@ -61,6 +61,8 @@ namespace Server.Games.TheHat
                 return "Not even number of players";
             if (payload.PlayerToRole.Values.Count(x => x == HatRoleManager.Value) > 1)
                 return "Too many managers in the game";
+            if (payload.PlayerToRole.Values.Count(x => x == HatRolePlayer.Value) < 2)
+                return "Not enough players to play!";
             return null;
         }
     }

@@ -65,6 +65,9 @@ namespace Server.Games.Meta
                     player.InGameEventListener = HandleGameEvent;
                 }
 
+                await _game.Initialize();
+
+
                 return;
             }
 
@@ -77,15 +80,7 @@ namespace Server.Games.Meta
         private async Task HandleGameEvent(IInGameClient client, InGameClientMessage message)
         {
             if (_game is null) return;
-            await _game.semaphore.WaitAsync();
-            try
-            {
-                await _game.HandleEvent(client, message);
-            }
-            finally
-            {
-                _game.semaphore.Release();
-            }
+            await _game.HandleEvent(client, message);
         }
 
         // TODO disable players event listeners

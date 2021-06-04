@@ -11,13 +11,17 @@
             <TextView android:text="Choose game"/>
         </TableRow>
         <TableRow>
-            <RadioGroup android:id="@+id/game_choosing_group">
-                <RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
-                             android:text="The hat" android:id="@+id/game_choice_hat"/>
-                <RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
-                             android:text="Bomzh simulator" android:id="@+id/game_choice_bomzh"/>
-                <RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
-                             android:text="Clicker" android:id="@+id/game_choice_clicker"/>
+            <RadioGroup android:id="@+id/game_choosing_group"
+                        android:checkedButton="@id/game_choice_hat">
+                <RadioButton android:layout_width="wrap_content" 
+                             android:layout_height="wrap_content"
+                             android:text="The hat"
+                             android:id="@+id/game_choice_hat"/>
+<!--TODO Implement missing games!-->
+<!--                <RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"--> 
+<!--                             android:text="Bomzh simulator" android:id="@+id/game_choice_bomzh"/>-->
+<!--                <RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"-->
+<!--                             android:text="Clicker" android:id="@+id/game_choice_clicker"/>-->
             </RadioGroup>
         </TableRow>
         <TableRow>

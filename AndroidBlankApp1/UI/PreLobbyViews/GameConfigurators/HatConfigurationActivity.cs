@@ -14,6 +14,8 @@ namespace AndroidBlankApp1
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false)]
     public class HatConfigurationActivity : AppCompatActivity
     {
+        private static int _defaultTimeToExplain = 25;
+        private static int _defaultNumberOfWordsToBeWrittem = 10;
         protected override void OnCreate(Bundle? savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -22,24 +24,35 @@ namespace AndroidBlankApp1
             FindViewById<Button>(Resource.Id.create_server_btn)!.Click +=
                 async (sender, args) => await viewModel.CreateLobby(sender as View);
             var config = new HatConfiguration();
+
+            var timeInput = FindViewById<EditText>(Resource.Id.time_to_explain_field);
+            var wordsInput = FindViewById<EditText>(Resource.Id.words_to_write_field);
+            
+            config.TimeToExplain = TimeSpan.FromSeconds(_defaultTimeToExplain);
+            config.WordsToBeWritten = _defaultNumberOfWordsToBeWrittem;
+            config.HatGameModeConfiguration = new HatCircleChoosingModeConfiguration();
+
+            timeInput!.Hint = _defaultTimeToExplain.ToString();
+            wordsInput!.Hint = _defaultNumberOfWordsToBeWrittem.ToString();
+            
             viewModel.Configuration = config;
             viewModel.JoinedLobby += () => StartActivity(typeof(LobbyActivity));
             FindViewById<RadioGroup>(Resource.Id.hat_game_mode_choice)!.CheckedChange += (sender, args) =>
             {
                 config.HatGameModeConfiguration = args.CheckedId switch
                 {
-                    Resource.Id.hat_game_mode_choice_pairs => new HatPairChoosingModeConfiguration(),
+                    // Resource.Id.hat_game_mode_choice_pairs => new HatPairChoosingModeConfiguration(),
                     Resource.Id.hat_game_mode_choice_circle => new HatCircleChoosingModeConfiguration(),
                     _ => throw new ArgumentException()
                 };
             };
-            FindViewById<EditText>(Resource.Id.time_to_explain_field)!.TextChanged += (sender, args) =>
+            timeInput!.TextChanged += (sender, args) =>
             {
                 var str = string.Concat(args.Text!);
                 if (str.Length == 0) return;
                 config.TimeToExplain = TimeSpan.FromSeconds(int.Parse(str));
             };
-            FindViewById<EditText>(Resource.Id.words_to_write_field)!.TextChanged += (sender, args) =>
+            wordsInput!.TextChanged += (sender, args) =>
             {
                 var str = string.Concat(args.Text!);
                 if (str.Length == 0) return;

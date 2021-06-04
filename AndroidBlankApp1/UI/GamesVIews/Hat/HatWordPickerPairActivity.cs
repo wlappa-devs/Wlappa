@@ -15,7 +15,7 @@ namespace AndroidBlankApp1
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false)]
     public class HatWordPickerPairActivity : AppCompatActivity
     {
-        private bool _canceled = false;
+        private bool _canceledTimer = false;
 
         protected override void OnCreate(Bundle? savedInstanceState)
         {
@@ -26,35 +26,42 @@ namespace AndroidBlankApp1
             var wordTextView = FindViewById<TextView>(Resource.Id.word_to_guess);
             var scores = FindViewById<TextView>(Resource.Id.in_game_scores);
             scores!.Text = viewModel.LastScoresConcated;
-            var btn = FindViewById<Button>(Resource.Id.guess_btn);
+            var guesBtn = FindViewById<Button>(Resource.Id.guess_btn);
+            var cancelBtn = FindViewById<Button>(Resource.Id.cancel_btn);
             var gameTimer = FindViewById<TextView>(Resource.Id.game_timer);
             wordTextView!.Text = viewModel.CurrentWord;
-            viewModel.GetWord += () => RunOnUiThread(() => wordTextView!.Text = viewModel.CurrentWord);
+            viewModel.GetWord = () => RunOnUiThread(() => wordTextView!.Text = viewModel.CurrentWord);
 
-            if (!viewModel.AmExplainer) btn!.Visibility = ViewStates.Gone;
-            btn!.Click += async (sender, args) => await viewModel.GuessWord();
-
-            viewModel.TimeIsUp += () =>
+            if (!viewModel.AmControllingExplanation)
             {
-                RunOnUiThread(() =>
+                guesBtn!.Visibility = ViewStates.Gone;
+                cancelBtn!.Visibility = ViewStates.Gone;
+            }
+            
+            guesBtn!.Click += async (sender, args) => await viewModel.GuessWord();
+            cancelBtn!.Click += async (sender, args) => await viewModel.CancelExplanation();
+
+            viewModel.TimeIsUp = () =>
+            {
+                RunOnUiThread(() => 
                 {
-                    btn.Visibility = ViewStates.Gone;
-                    Snackbar.Make(btn, "Time is up", 2000);
+                    guesBtn.Visibility = ViewStates.Gone;
+                    Snackbar.Make(guesBtn, "Time is up", 2000);
                 });
             };
 
-            viewModel.AnnouncedNextPair += () =>
+            viewModel.AnnouncedNextPair = () =>
             {
                 StartActivity(typeof(HatPairChoosenActivity));
                 Finish();
             };
 
-            viewModel.ScoresUpdated += () => { RunOnUiThread(() => scores!.Text = viewModel.LastScoresConcated); };
+            viewModel.ScoresUpdated = () => { RunOnUiThread(() => scores!.Text = viewModel.LastScoresConcated); };
 
-            viewModel.GameOver += () =>
+            viewModel.GameOver = () =>
             {
                 StartActivity(typeof(EndHatGameActivity));
-                _canceled = true;
+                _canceledTimer = true;
                 Finish();
             };
 
@@ -64,13 +71,13 @@ namespace AndroidBlankApp1
 
         public async void ExecuteEvery(TimeSpan duration, Action callback)
         {
-            while (!_canceled)
+            while (!_canceledTimer)
             {
                 await Task.Delay(duration);
                 callback();
             }
 
-            _canceled = false;
+            _canceledTimer = false;
         }
     }
 }

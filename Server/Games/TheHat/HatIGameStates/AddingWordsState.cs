@@ -27,7 +27,7 @@ namespace Server.Games.TheHat.HatIGameStates
                     await _game.SendMulticastMessage(new HatPlayerSuccessfullyAddedWords
                     {
                         AuthorId = client.Client.Id,
-                        TotalReady = _authorsReady + 1
+                        TotalNotReady = _game.PlayersCount - _authorsReady - 1
                     });
                     if (_authorsReady + 1 == _game.PlayersCount)
                     {

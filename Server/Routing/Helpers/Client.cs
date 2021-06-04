@@ -53,16 +53,16 @@ namespace Server.Routing.Helpers
                     switch (message)
                     {
                         case PreGameClientMessage e:
-                            _logger.LogInformation("Got event pregame");
+                            _logger.LogInformation($"Got event pregame {e}");
                             await HandlePregameMessage(e);
                             break;
                         case LobbyClientMessage e:
-                            _logger.LogInformation("Got event lobby");
+                            _logger.LogInformation($"Got event lobby {e}");
                             if (LobbyEventListener is not null)
                                 await LobbyEventListener(this, e);
                             break;
                         case InGameClientMessage e:
-                            _logger.LogInformation("Got event ingame");
+                            _logger.LogInformation($"Got event ingame {e}");
                             if (InGameEventListener is not null)
                                 await InGameEventListener(this, e);
                             break;

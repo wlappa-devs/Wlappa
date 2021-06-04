@@ -10,9 +10,29 @@ namespace Server.Games.Meta
 {
     public abstract class Game
     {
-        public abstract Task HandleEvent(IInGameClient? client, InGameClientMessage e);
+        protected abstract Task UnsafeHandleEvent(IInGameClient? client, InGameClientMessage e);
 
-        public SemaphoreSlim semaphore { get; } = new SemaphoreSlim(1, 1);
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+
+        protected virtual Task UnsafeInitialize() => Task.CompletedTask;
+
+        private async Task PerformLockOperation(Func<Task> action)
+        {
+            await _semaphore.WaitAsync();
+            try
+            {
+                await action();
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
+        }
+
+        public Task Initialize() => PerformLockOperation(UnsafeInitialize);
+
+        public Task HandleEvent(IInGameClient? client, InGameClientMessage e) =>
+            PerformLockOperation(() => UnsafeHandleEvent(client, e));
     }
 
     public class GameCreationPayload
@@ -28,6 +48,7 @@ namespace Server.Games.Meta
     public interface IGameFactory
     {
         public string DefaultRole { get; }
+
         Game Create(GameConfiguration config, GameCreationPayload payload, IReadOnlyCollection<IInGameClient> clients,
             Func<Task> finished);
 

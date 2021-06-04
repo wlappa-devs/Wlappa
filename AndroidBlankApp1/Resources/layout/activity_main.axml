@@ -9,11 +9,19 @@
     <TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+        <TableRow android:layout_width="match_parent" android:layout_height="match_parent">
+            <EditText android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:id="@+id/nickname_tf"
+                      android:hint="Your nickname">
+
+            </EditText>
+        </TableRow>
 
         <TableRow android:layout_width="wrap_content" android:layout_height="wrap_content"
                   android:textAlignment="center">
             <Button
-                    android:text="Join server"
+                    android:text="Join lobby"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/join_server_btn"
                     android:layout_alignParentBottom="true"
@@ -22,21 +30,9 @@
 
         <TableRow android:layout_width="match_parent" android:layout_height="match_parent">
             <Button
-                    android:text="Create server"
+                    android:text="Create lobby"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/choose_game_btn"/>
-        </TableRow>
-
-        <TableRow android:layout_width="match_parent" android:layout_height="match_parent">
-            <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-                      android:text="Enter your nickname"/>
-        </TableRow>
-
-        <TableRow android:layout_width="match_parent" android:layout_height="match_parent">
-            <EditText android:layout_width="match_parent" android:layout_height="match_parent"
-                      android:id="@+id/nickname_tf">
-
-            </EditText>
         </TableRow>
     </TableLayout>
 </LinearLayout>

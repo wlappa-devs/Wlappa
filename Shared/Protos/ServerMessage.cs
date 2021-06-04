@@ -92,7 +92,7 @@ namespace Shared.Protos
     [ProtoContract]
     public class ConfigurationInvalid : LobbyServerMessage
     {
-        public string Message { get; set; }
+        [ProtoMember(1)] public string Message { get; set; }
     }
 
     [DataContract]

@@ -7,17 +7,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
         <TableRow>
-            <TextView
-                    android:text="Words pack"/>
+            <EditText android:id="@+id/words_input" 
+                      android:hint="Type your words, separated with space here"/>
         </TableRow>
         <TableRow>
-            <EditText android:id="@+id/words_input"/>
+            <Button android:text="I've finished" android:id="@+id/start_choose_pairs_btn"/>
         </TableRow>
         <TableRow>
-            <Button android:text="Choose first pair!" android:id="@+id/start_choose_pairs_btn"/>
-        </TableRow>
-        <TableRow>
-            <TextView android:text="Total players ready: s"/>
+            <TextView android:text="Players remaining: "/>
             <TextView android:text="0" android:id="@+id/number_of_players_ready"/>
         </TableRow>
     </TableLayout>

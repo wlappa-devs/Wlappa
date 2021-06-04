@@ -16,15 +16,7 @@ namespace Server.Games.Meta
             await Task.Delay(duration);
             if (Game is null || !_set.Contains(eventId)) return;
             _set.Remove(eventId);
-            await Game.semaphore.WaitAsync();
-            try
-            {
-                await Game.HandleEvent(null, command);
-            }
-            finally
-            {
-                Game.semaphore.Release();
-            }
+            await Game.HandleEvent(null, command);
         }
 
         public void CancelEvent(Guid eventId) => _set.Remove(eventId);

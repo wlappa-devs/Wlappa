@@ -3,13 +3,11 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
-    <TextView android:text="Enter server code" android:layout_height="wrap_content"
-              android:layout_width="match_parent"/>
 
     <EditText android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:id="@+id/server_code_tf"/>
-
+              android:id="@+id/server_code_tf"
+              android:hint="Enter your servercode here"/>
     <Button
             android:text="Join!"
             android:id="@+id/join_btn"

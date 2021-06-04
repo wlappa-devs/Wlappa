@@ -1,4 +1,4 @@
-namespace Server.Games.TheHat.GameCore
+namespace Server.Games.TheHat
 {
     public class Word
     {

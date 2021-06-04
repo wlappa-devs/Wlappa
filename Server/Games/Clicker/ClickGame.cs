@@ -29,7 +29,7 @@ namespace Server.Games.Clicker
             _allPlayers = new MulticastGroup(players);
         }
 
-        public override async Task HandleEvent(IInGameClient? client, InGameClientMessage e)
+        protected override async Task UnsafeHandleEvent(IInGameClient? client, InGameClientMessage e)
         {
             _logger.LogInformation("Got increment");
             switch (e)

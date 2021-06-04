@@ -1,15 +1,14 @@
-using System.Threading.Tasks;
 using Server.Routing.Helpers;
 using Shared.Protos.HatSharedClasses;
 
-namespace Server.Games.TheHat.GameCore
+namespace Server.Games.TheHat
 {
     public class HatPlayer : HatMember
     {
         public int Score { get; private set; }
         public int Id { get; }
 
-        public HatPlayer(IInGameClient client, int id, HatRole role) : base(client, role)
+        public HatPlayer(IInGameClient client, int id, IHatRole role) : base(client, role)
         {
             Id = id;
             Score = 0;

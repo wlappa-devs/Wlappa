@@ -34,15 +34,15 @@ namespace AndroidBlankApp1
                 RunOnUiThread(() => btn.Visibility = ViewStates.Gone);
                 await viewModel.GetReady(sender, args);
             };
-            viewModel.StartExplanation += () =>
+            viewModel.StartExplanation = () =>
             {
                 StartActivity(typeof(HatWordPickerPairActivity));
                 Finish();
             };
             
-            viewModel.ScoresUpdated += () => RunOnUiThread(() => scores!.Text = viewModel.LastScoresConcated);
+            viewModel.ScoresUpdated = () => RunOnUiThread(() => scores!.Text = viewModel.LastScoresConcated);
             
-            viewModel.GameOver += () =>
+            viewModel.GameOver = () =>
             {
                 StartActivity(typeof(EndHatGameActivity));
                 Finish();

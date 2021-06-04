@@ -6,8 +6,8 @@ namespace Server.Games.TheHat
 {
     public class HatMember
     {
-        public HatRole Role { get; }
-        public HatMember(IInGameClient client, HatRole role)
+        public IHatRole Role { get; }
+        public HatMember(IInGameClient client, IHatRole role)
         {
             Client = client;
             Role = role;

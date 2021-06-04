@@ -3,11 +3,22 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="wrap_content">
-    <TableLayout android:layout_height="wrap_content" android:layout_width="match_parent">
-        <TableRow>
-            <TextView android:id="@+id/player_name" android:text="name"/>
-            <Spinner android:id="@+id/role_selector" />
-        </TableRow>
-    </TableLayout>>
-            
+    <LinearLayout android:orientation="horizontal"
+                  android:layout_height="wrap_content"
+                  android:layout_width="match_parent">
+        <TextView android:id="@+id/player_name"
+                  android:text="name"
+                  android:layout_height="wrap_content"
+                  android:layout_width="match_parent"
+                  android:layout_weight="1"
+                  android:paddingLeft="10dp"/>
+        <Spinner android:id="@+id/role_selector"
+                 android:layout_height="wrap_content"
+                 android:layout_width="match_parent"
+                 android:layout_weight="1"/>
+    </LinearLayout>
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#c0c0c0"/>
 </LinearLayout>
