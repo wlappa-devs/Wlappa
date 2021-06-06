@@ -10,7 +10,7 @@ namespace Client_lib
     {
         private readonly ChannelWriter<ClientMessage> _requestWriter;
         private Action<InGameServerMessage>? _messageFromServer;
-        private ConcurrentQueue<InGameServerMessage> _messageQueue = new ConcurrentQueue<InGameServerMessage>();
+        private readonly ConcurrentQueue<InGameServerMessage> _messageQueue = new ConcurrentQueue<InGameServerMessage>();
         public Guid PlayerId { get; }
 
         public Action<InGameServerMessage>? MessageFromServer

@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Android.App;
 using Android.Runtime;
 using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using AndroidBlankApp1.ViewModels;
-using Unity;
 
-namespace AndroidBlankApp1
+namespace AndroidBlankApp1.UI.InLobbyViews
 {
     public class PlayerListViewHolder : RecyclerView.ViewHolder
     {

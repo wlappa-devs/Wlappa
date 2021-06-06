@@ -138,7 +138,8 @@ namespace Server.Games.TheHat
                     {
                         ManagerId = Manger?.Client.Id,
                         Role = member.Role.StringValue,
-                        NumberOfPlayersInGame = _players.Count
+                        NumberOfPlayersInGame = _players.Count,
+                        TimeToExplain = _timeToExplain,
                     }
                 );
         }

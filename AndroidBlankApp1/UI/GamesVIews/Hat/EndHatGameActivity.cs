@@ -5,7 +5,7 @@ using Android.Widget;
 using AndroidBlankApp1.ViewModels.GameViewModels;
 using Unity;
 
-namespace AndroidBlankApp1
+namespace AndroidBlankApp1.UI.GamesViews.Hat
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false)]
     public class EndHatGameActivity : AppCompatActivity
@@ -14,10 +14,10 @@ namespace AndroidBlankApp1
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.end_hat_game);
-            var viewModel = (Application as App).Container.Resolve<HatViewModel>();
+            // var viewModel = (Application as App).Container.Resolve<HatViewModel>();
             
             var score = FindViewById<TextView>(Resource.Id.final_scores);
-            score!.Text = viewModel.LastScoresConcated;
+            // score!.Text = viewModel.LastScoresConcated;
             FindViewById<Button>(Resource.Id.to_lobby_btn).Click += 
                 (sender, args) => Finish();
         }

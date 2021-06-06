@@ -1,7 +1,7 @@
 ﻿using Client_lib;
 using Shared.Protos;
 
-namespace AndroidBlankApp1.ViewModels
+namespace AndroidBlankApp1.ViewModels.Providers
 {
     public class LobbyProvider
     {

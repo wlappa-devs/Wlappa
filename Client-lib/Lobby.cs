@@ -102,6 +102,7 @@ namespace Client_lib
                     return;
                 case GameFinished _:
                     GameIsGoing = false;
+                    _gameInstance = null;
                     GameFinished?.Invoke();
                     return;
             }

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using AndroidBlankApp1.UI.GamesViews.Hat;
 using Shared.Protos;
 
-namespace AndroidBlankApp1
+namespace AndroidBlankApp1.UI.InLobbyViews
 {
     public static class ActivityForGameType
     {

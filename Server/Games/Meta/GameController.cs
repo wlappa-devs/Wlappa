@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,8 +14,8 @@ namespace Server.Games.Meta
     public class GameController
     {
         private readonly IGameFactory _factory;
-        private readonly Dictionary<Guid, string> _playersToRoles = new();
-        private readonly List<Client> _players = new();
+        private readonly ConcurrentDictionary<Guid, string> _playersToRoles = new();
+        private readonly List<Client> _players = new(); // TODO make concurrent
         private readonly GameConfiguration _config;
         private readonly ILogger _logger;
         private readonly Action _finished;
@@ -42,6 +44,7 @@ namespace Server.Games.Meta
             _players.Add(player);
             _playersToRoles[player.Id] = _factory.DefaultRole;
             player.LobbyEventListener = LobbyEventListener;
+            player.InGameEventListener = HandleGameEvent;
             await player.HandleLobbyMessage(new JoinedLobby()
             {
                 Type = Type,
@@ -57,17 +60,10 @@ namespace Server.Games.Meta
             var message = _factory.ValidateConfig(_config, payload);
             if (message is null)
             {
-                _game = _factory.Create(_config, payload, _players, HandleGameFinish);
+                _game = _factory.Create(_config, payload, _players.ToArray(), HandleGameFinish);
                 var notification = new GameCreated();
                 await Task.WhenAll(_players.Select(p => p.HandleLobbyMessage(notification)));
-                foreach (var player in _players)
-                {
-                    player.InGameEventListener = HandleGameEvent;
-                }
-
                 await _game.Initialize();
-
-
                 return;
             }
 
@@ -83,7 +79,6 @@ namespace Server.Games.Meta
             await _game.HandleEvent(client, message);
         }
 
-        // TODO disable players event listeners
         private async Task HandleGameFinish()
         {
             _game = null;
@@ -93,7 +88,7 @@ namespace Server.Games.Meta
 
         private async Task LobbyEventListener(Client client, LobbyClientMessage message)
         {
-            if (client.Id != Host) return; //TODO
+            if (client.Id != Host) return; //TODO not only host can disconnect
             switch (message)
             {
                 case ChangeRole m:
@@ -108,7 +103,7 @@ namespace Server.Games.Meta
                     await CreateGame(client);
                     return;
                 case Disconnect:
-                    _playersToRoles.Remove(client.Id);
+                    _playersToRoles.Remove(client.Id, out _);
                     _players.RemoveAll(c => c.Id == client.Id);
                     return;
             }

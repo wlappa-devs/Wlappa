@@ -83,6 +83,7 @@ namespace Shared.Protos.HatSharedClasses
         [ProtoMember(1)] public Guid? ManagerId { get; set; }
         [ProtoMember(2)] public string Role { get; set; }
         [ProtoMember(3)] public int NumberOfPlayersInGame { get; set; }
+        [ProtoMember(4)] public TimeSpan TimeToExplain { get; set; }
     }
 
     [DataContract]

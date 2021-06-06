@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -9,42 +7,45 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using AndroidBlankApp1.ViewModels;
-using AndroidX.RecyclerView.Widget;
-using Java.Lang;
-using Shared.Protos;
 using Unity;
 using RecyclerView = Android.Support.V7.Widget.RecyclerView;
 
-namespace AndroidBlankApp1
+namespace AndroidBlankApp1.UI.InLobbyViews
 {
+    // TODO add ready check
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false)]
     public class LobbyActivity : AppCompatActivity
     {
+        private LobbyViewModel _viewModel;
+        private PlayersListAdapter _adapter;
+
         protected override void OnCreate(Bundle? savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.lobby);
 
-            var viewModel = (Application as App)!.Container.Resolve<LobbyViewModel>();
+            _viewModel = (Application as App)!.Container.Resolve<LobbyViewModel>();
+            _adapter = new PlayersListAdapter(_viewModel.LastLobbyStatus, _viewModel.Roles, _viewModel.AmHost!.Value);
 
             var startBtn = FindViewById<Button>(Resource.Id.start_game_btn);
 
             var idView = FindViewById<EditText>(Resource.Id.lobby_game_id);
-            idView!.Text = viewModel.LobbyId.ToString();
+            _viewModel.MakeSnackBar = msg => Snackbar.Make(idView, msg, 2000).Show();
+            idView!.Text = _viewModel.LobbyId.ToString();
             idView.Click += (sender, args) =>
             {
                 Log.Info(nameof(LobbyActivity), "Copying GUID");
                 var clipboard = (ClipboardManager) GetSystemService(ClipboardService);
-                var clip = ClipData.NewPlainText(viewModel.LobbyId.ToString(), viewModel.LobbyId.ToString());
-                clipboard.PrimaryClip = clip;
+                var clip = ClipData.NewPlainText(_viewModel.LobbyId.ToString(), _viewModel.LobbyId.ToString());
+                clipboard!.PrimaryClip = clip;
                 Snackbar.Make(idView, "Copied to clipboard", 2000).Show();
             };
             Log.Info(nameof(LobbyActivity), "GUID IS " + idView!.Text);
 
-            if (viewModel.AmHost.HasValue && !viewModel.AmHost.Value)
+            if (_viewModel.AmHost.HasValue && !_viewModel.AmHost.Value)
             {
                 Log.Info(nameof(LobbyActivity), "HIDING BUTTON CUZ U R LOX XD");
-                Log.Info(nameof(LobbyActivity), viewModel.AmHost.ToString());
+                Log.Info(nameof(LobbyActivity), _viewModel.AmHost.ToString());
                 startBtn!.Visibility = ViewStates.Gone;
             }
 
@@ -52,32 +53,45 @@ namespace AndroidBlankApp1
                 async (sender, args) =>
                 {
                     Log.Info(nameof(LobbyActivity), "StartBtnPressed");
-                    await viewModel.HandleGameStartButtonPressing(sender as View);
+                    await _viewModel.HandleGameStartButtonPressing(sender as View);
                 };
 
             var recyclerView = FindViewById<RecyclerView>(Resource.Id.recycler);
 
-            var adapter = new PlayersListAdapter(viewModel.LastLobbyStatus, viewModel.Roles, viewModel.AmHost!.Value);
-            viewModel.LobbyUpdate += () =>
-            {
-                Log.Info(nameof(LobbyActivity), $"Got lobby update {viewModel.LastLobbyStatus.Count}");
-                RunOnUiThread(() => adapter.Players = viewModel.LastLobbyStatus);
-            };
-
-            viewModel.GameStarted += () =>
-            {
-                Log.Info(nameof(LobbyActivity), "Got game started");
-                StartActivity(ActivityForGameType.GameTypeToActivity[viewModel.LobbyGameType]);
-            };
-
-            adapter.PlayerRoleChanged += async (guid, s) =>
+            _adapter.PlayerRoleChanged += async (guid, s) =>
             {
                 Log.Info(nameof(LobbyActivity), "Got player role changed");
-                await viewModel.HandlePlayerRoleChange(guid, s);
+                await _viewModel.HandlePlayerRoleChange(guid, s);
             };
 
-            recyclerView!.SetAdapter(adapter);
-            viewModel.StartProcessingEvents(idView);
+            recyclerView!.SetAdapter(_adapter);
+        }
+
+        protected override void OnStart()
+        {
+            base.OnStart();
+            _viewModel.LobbyUpdate = OnViewModelLobbyUpdate;
+            _viewModel.GameStarted = OnViewModelGameStarted;
+            _viewModel.StartProcessingEvents();
+        }
+
+        protected override void OnStop()
+        {
+            base.OnStop();
+            _viewModel.LobbyUpdate = null;
+            _viewModel.GameStarted = null;
+        }
+
+        private void OnViewModelGameStarted()
+        {
+            Log.Info(nameof(LobbyActivity), "Got game started");
+            StartActivity(ActivityForGameType.GameTypeToActivity[_viewModel.LobbyGameType]);
+        }
+
+        private void OnViewModelLobbyUpdate()
+        {
+            Log.Info(nameof(LobbyActivity), $"Got lobby update {_viewModel.LastLobbyStatus.Count}");
+            RunOnUiThread(() => _adapter.Players = _viewModel.LastLobbyStatus);
         }
     }
 }

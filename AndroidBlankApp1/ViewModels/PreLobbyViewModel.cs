@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Android.Support.Design.Widget;
 using Android.Views;
+using AndroidBlankApp1.ViewModels.Providers;
 using Client_lib;
 using Shared.Protos;
 
@@ -9,20 +10,19 @@ namespace AndroidBlankApp1.ViewModels
 {
     public class PreLobbyViewModel
     {
-        public event Action LobbyCreateButtonPressed;
-        public event Action LobbyCreated;
-
-        public event Action JoinLobbyButtonPressed;
-
-        public event Action JoinedLobby;
+        public Action LobbyCreated { private get; set; }
+        public Action ShouldSelectLobby { private get; set; }
+        public Action JoinedLobby { private get; set; }
+        public Action ShouldConfigureGame { private get; set; }
 
         private bool _isConnected = false;
-        
-        
+
+
         public string? Name { get; set; }
 
-        
+
         private Guid? _guid;
+
         public string? Id
         {
             get => _guid?.ToString();
@@ -30,7 +30,7 @@ namespace AndroidBlankApp1.ViewModels
         }
 
         public GameConfiguration? Configuration { get; set; }
-        
+
         private readonly Client _client;
         private readonly LobbyProvider _provider;
 
@@ -81,7 +81,8 @@ namespace AndroidBlankApp1.ViewModels
                 Snackbar.Make(view, "Enter your name", 2000).Show();
                 return;
             }
-            LobbyCreateButtonPressed?.Invoke();
+
+            LobbyCreated?.Invoke();
         }
 
         public void HandleJoinLobbyButton(View view)
@@ -91,12 +92,13 @@ namespace AndroidBlankApp1.ViewModels
                 Snackbar.Make(view, "Enter your name", 2000).Show();
                 return;
             }
-            JoinLobbyButtonPressed?.Invoke();
+
+            ShouldSelectLobby?.Invoke();
         }
 
         public void HandleGameSelected(View view)
         {
-            JoinedLobby?.Invoke();
+            ShouldConfigureGame?.Invoke();
         }
     }
 }

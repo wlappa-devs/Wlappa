@@ -74,11 +74,12 @@
         <Compile Include="UI\PreLobbyViews\GameConfigurators\HatConfigurationActivity.cs" />
         <Compile Include="UI\PreLobbyViews\JoinServerActivity.cs" />
         <Compile Include="UI\PreLobbyViews\MainActivity.cs" />
-        <Compile Include="ViewModels\GameInstanceProvider.cs" />
         <Compile Include="ViewModels\GameViewModels\HatViewModel.cs" />
-        <Compile Include="ViewModels\LobbyProvider.cs" />
+        <Compile Include="ViewModels\GameViewModels\IGameViewModel.cs" />
         <Compile Include="ViewModels\LobbyViewModel.cs" />
         <Compile Include="ViewModels\PreLobbyViewModel.cs" />
+        <Compile Include="ViewModels\Providers\GameViewModelFactory.cs" />
+        <Compile Include="ViewModels\Providers\LobbyProvider.cs" />
     </ItemGroup>
     <ItemGroup>
         <None Include="Resources\AboutResources.txt" />

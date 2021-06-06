@@ -4,18 +4,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using Android.Util;
 using Android.Views;
+using AndroidBlankApp1.ViewModels.Providers;
 using Client_lib;
 using Shared.Protos;
 using Shared.Protos.HatSharedClasses;
 
 namespace AndroidBlankApp1.ViewModels.GameViewModels
 {
-    public class HatViewModel
+    public class HatViewModel : IGameViewModel
     {
-        private readonly Game? _gameInstance;
+        private readonly Game _gameInstance;
 
         private Dictionary<Guid, int> _lastScores = new Dictionary<Guid, int>();
-        private readonly IReadOnlyCollection<PlayerInLobby>? _players;
+        private readonly IReadOnlyCollection<PlayerInLobby> _players;
 
         public IReadOnlyDictionary<Guid, int> LastScores => _lastScores;
 
@@ -24,9 +25,9 @@ namespace AndroidBlankApp1.ViewModels.GameViewModels
 
         public Guid Explainer { get; set; }
         public Guid Understander { get; set; }
-        
+
         public Guid? Manager { get; set; }
-        
+
         public string MyRole { get; set; }
         public bool IsManaged => Manager.HasValue;
 
@@ -41,31 +42,32 @@ namespace AndroidBlankApp1.ViewModels.GameViewModels
         public bool AmControllingExplanation => IsManaged ? AmManager : AmExplainer;
 
         private DateTime _timerStartMoment = DateTime.Now;
-        public string TimerString => (DateTime.Now - _timerStartMoment).Seconds.ToString();
+        private TimeSpan _timeToExplain = TimeSpan.Zero;
+        public string TimerString => (_timeToExplain - (DateTime.Now - _timerStartMoment)).Seconds.ToString();
 
         public string CurrentWord { get; set; }
 
-        public Action WordsSuccessfullyAddedByMe { get; set; }
-        public Action WordsSuccessfullyAddedBySomeOne { get; set; }
-        public Action AnnouncedNextPair { get; set; }
-        public Action ScoresUpdated { get; set; }
-        public Action InvalidWordSet { get; set; }
-        public Action StartExplanation { get; set; }
-        public Action GetWord { get; set; }
-        public Action TimeIsUp { get; set; }
-        public Action GameOver { get; set; }
+        public event Action WordsSuccessfullyAddedByMe;
+        public event Action WordsSuccessfullyAddedBySomeOne;
+        public event Action AnnouncedNextPair;
+        public event Action ScoresUpdated;
+        public event Action InvalidWordSet;
+        public event Action StartExplanation;
+        public event Action GetWord;
+        public event Action TimeIsUp;
+        public event Action GameOver;
 
         public string WordsInput { get; set; }
         public int RemainingPlayersToWriteWords { get; private set; }
 
-        public HatViewModel(GameInstanceProvider instanceProvider)
+        public HatViewModel(Game gameInstance, IReadOnlyCollection<PlayerInLobby> players)
         {
-            _gameInstance = instanceProvider.GameInstance;
-            _players = instanceProvider.Players;
+            _gameInstance = gameInstance;
+            _players = players;
             _gameInstance!.MessageFromServer = HandleGameEvent;
         }
 
-        public void HandleGameEvent(InGameServerMessage message)
+        private void HandleGameEvent(InGameServerMessage message)
         {
             if (!(message is HatServerMessage hatServerMessage)) throw new ArgumentException();
             HandleGameEvent(hatServerMessage);
@@ -87,6 +89,7 @@ namespace AndroidBlankApp1.ViewModels.GameViewModels
                     Manager = informationMessage.ManagerId;
                     MyRole = informationMessage.Role;
                     RemainingPlayersToWriteWords = informationMessage.NumberOfPlayersInGame;
+                    _timeToExplain = informationMessage.TimeToExplain;
                     Log.Info(nameof(HatViewModel), $"My role is {MyRole}");
                     if (IsManaged)
                         // ReSharper disable once PossibleInvalidOperationException
@@ -104,9 +107,9 @@ namespace AndroidBlankApp1.ViewModels.GameViewModels
                     StartExplanation?.Invoke();
                     break;
                 // case HatNoWordsLeft hatNoWordsLeft:
-                    // break;
+                // break;
                 // case HatRotationFinished hatRotationFinished:
-                    // break;
+                // break;
                 case HatFinishMessage hatFinishMessage:
                     Log.Info(nameof(HatViewModel), "Should finish game");
                     GameOver?.Invoke();
@@ -116,6 +119,7 @@ namespace AndroidBlankApp1.ViewModels.GameViewModels
                     break;
                 case HatPointsUpdated hatPointsUpdated:
                     _lastScores = hatPointsUpdated.GuidToPoints;
+                    Log.Info(nameof(HatViewModel), "Scores update");
                     ScoresUpdated?.Invoke();
                     break;
                 case HatStartGame hatStartGame:

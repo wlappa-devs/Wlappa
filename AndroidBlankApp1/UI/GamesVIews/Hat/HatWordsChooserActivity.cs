@@ -7,60 +7,89 @@ using Android.Widget;
 using AndroidBlankApp1.ViewModels.GameViewModels;
 using Unity;
 
-namespace AndroidBlankApp1
+namespace AndroidBlankApp1.UI.GamesViews.Hat
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false)]
     public class HatWordsChooserActivity : AppCompatActivity
     {
+        private HatViewModel _viewModel;
+        private Button? _addWordsButton;
+        private EditText? _wordsTextInput;
+        private TextView? _numberOfPlayersRemaining;
+
         protected override void OnCreate(Bundle? savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.hat_words_chooser);
-            var viewModel = (Application as App)!.Container.Resolve<HatViewModel>();
+            _viewModel = (Application as App)!.Container.Resolve<HatViewModel>();
 
-            var addWordsButton = FindViewById<Button>(Resource.Id.start_choose_pairs_btn);
-            var wordsTextInput = FindViewById<EditText>(Resource.Id.words_input);
-            var numberOfPlayersRemaining = FindViewById<TextView>(Resource.Id.number_of_players_ready);
+            _addWordsButton = FindViewById<Button>(Resource.Id.start_choose_pairs_btn);
+            _wordsTextInput = FindViewById<EditText>(Resource.Id.words_input);
+            _numberOfPlayersRemaining = FindViewById<TextView>(Resource.Id.number_of_players_ready);
 
-            if (viewModel.MyRole != Shared.Protos.HatSharedClasses.HatRolePlayer.Value)
+            if (_viewModel.MyRole != Shared.Protos.HatSharedClasses.HatRolePlayer.Value)
             {
-                addWordsButton!.Visibility = ViewStates.Gone;
-                wordsTextInput!.Visibility = ViewStates.Gone;
+                _addWordsButton!.Visibility = ViewStates.Gone;
+                _wordsTextInput!.Visibility = ViewStates.Gone;
             }
-            
-            addWordsButton!.Click +=
-                async (sender, args) => await viewModel.SendWords(sender as View);
-            
 
-            viewModel.WordsSuccessfullyAddedByMe = () =>
-            {
-                RunOnUiThread(() =>
-                {
-                    addWordsButton.Visibility = ViewStates.Gone;
-                    wordsTextInput!.Enabled = false;
-                });
-            };
-            viewModel.WordsSuccessfullyAddedBySomeOne = () =>
-            {
-                RunOnUiThread(() => numberOfPlayersRemaining!.Text = viewModel.RemainingPlayersToWriteWords.ToString());
-            };
-            viewModel.AnnouncedNextPair = () =>
-            {
-                StartActivity(typeof(HatPairChoosenActivity));
-                Finish();
-            };
-            viewModel.InvalidWordSet = () =>
-            {
-                RunOnUiThread(() =>
-                {
-                    addWordsButton.Visibility = ViewStates.Visible;
-                    wordsTextInput!.Enabled = true;
-                    Snackbar.Make(addWordsButton, "Invalid word set", 2000).Show();
-                });
-            };
+            _addWordsButton!.Click +=
+                async (sender, args) => await _viewModel.SendWords(sender as View);
 
-            wordsTextInput!.TextChanged += (sender, args) =>
-                viewModel.WordsInput = string.Concat(args.Text!);
+
+            _numberOfPlayersRemaining!.Text = _viewModel.RemainingPlayersToWriteWords.ToString();
+
+            _wordsTextInput!.TextChanged += (sender, args) =>
+                _viewModel.WordsInput = string.Concat(args.Text!);
+        }
+
+        private void OnViewModelWordsSuccessfullyAddedByMe()
+        {
+            RunOnUiThread(() =>
+            {
+                _addWordsButton.Visibility = ViewStates.Gone;
+                _wordsTextInput!.Enabled = false;
+            });
+        }
+
+        private void OnViewModelWordsSuccessfullyAddedBySomeOne()
+        {
+            RunOnUiThread(() => _numberOfPlayersRemaining!.Text = _viewModel.RemainingPlayersToWriteWords.ToString());
+        }
+
+        private void OnViewModelAnnouncedNextPair()
+        {
+            StartActivity(typeof(HatPairChoosenActivity));
+            Finish();
+        }
+
+        private void OnViewModelInvalidWordSet()
+        {
+            RunOnUiThread(() =>
+            {
+                _addWordsButton!.Visibility = ViewStates.Visible;
+                _wordsTextInput!.Enabled = true;
+                Snackbar.Make(_addWordsButton, "Invalid word set", 2000).Show();
+                // Toast.MakeText(_addWordsButton.Context, "Invalid word set", ToastLength.Short)?.Show();
+            });
+        }
+
+        protected override void OnStart()
+        {
+            base.OnStart();
+            _viewModel.WordsSuccessfullyAddedBySomeOne += OnViewModelWordsSuccessfullyAddedBySomeOne;
+            _viewModel.AnnouncedNextPair += OnViewModelAnnouncedNextPair;
+            _viewModel.InvalidWordSet += OnViewModelInvalidWordSet;
+            _viewModel.WordsSuccessfullyAddedByMe += OnViewModelWordsSuccessfullyAddedByMe;
+        }
+
+        protected override void OnStop()
+        {
+            base.OnStop();
+            _viewModel.WordsSuccessfullyAddedBySomeOne -= OnViewModelWordsSuccessfullyAddedBySomeOne;
+            _viewModel.AnnouncedNextPair -= OnViewModelAnnouncedNextPair;
+            _viewModel.InvalidWordSet -= OnViewModelInvalidWordSet;
+            _viewModel.WordsSuccessfullyAddedByMe -= OnViewModelWordsSuccessfullyAddedByMe;
         }
     }
 }
