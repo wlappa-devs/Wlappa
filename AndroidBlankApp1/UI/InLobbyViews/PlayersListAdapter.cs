@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using Android.Support.V7.Widget;
 using Android.Views;
@@ -11,14 +10,13 @@ namespace AndroidBlankApp1.UI.InLobbyViews
 {
     public class PlayersListAdapter : RecyclerView.Adapter
     {
-        public event Action<Guid, string> PlayerRoleChanged;
+        public event Action<Guid, string>? PlayerRoleChanged;
         private readonly IReadOnlyList<string> _roles;
         private readonly bool _amHost;
-        private IReadOnlyCollection<PlayerInLobby> _players = Enumerable.Empty<PlayerInLobby>().ToArray();
+        private IReadOnlyCollection<PlayerInLobby>? _players;
 
-        public IReadOnlyCollection<PlayerInLobby> Players
+        public IReadOnlyCollection<PlayerInLobby>? Players
         {
-            get => _players;
             set
             {
                 _players = value;
@@ -26,7 +24,7 @@ namespace AndroidBlankApp1.UI.InLobbyViews
             }
         }
 
-        public PlayersListAdapter(IReadOnlyCollection<PlayerInLobby> players, IReadOnlyList<string> roles, bool amHost)
+        public PlayersListAdapter(IReadOnlyCollection<PlayerInLobby>? players, IReadOnlyList<string> roles, bool amHost)
         {
             _roles = roles;
             _amHost = amHost;
@@ -36,7 +34,7 @@ namespace AndroidBlankApp1.UI.InLobbyViews
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
             var viewHolder = holder as PlayerListViewHolder;
-            var player = _players.ElementAt(position);
+            var player = _players!.ElementAt(position);
             viewHolder!.PlayerName.Text = player.Name;
             viewHolder!.RoleSelector.SetSelection(_roles.IndexOf(player.Role));
             viewHolder!.PlayerId = player.Id;
@@ -48,7 +46,7 @@ namespace AndroidBlankApp1.UI.InLobbyViews
         {
             var view = LayoutInflater.From(parent.Context)
                 ?.Inflate(Resource.Layout.player_list_item, parent, false);
-            var instance = new PlayerListViewHolder(view, _roles);
+            var instance = new PlayerListViewHolder(view!, _roles);
             instance.RoleUpdated += (guid, s) => PlayerRoleChanged?.Invoke(guid, s);
             return instance;
         }

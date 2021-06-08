@@ -1,6 +1,4 @@
-﻿using Shared.Protos;
-
-namespace AndroidBlankApp1.ViewModels.GameViewModels
+﻿namespace AndroidBlankApp1.ViewModels.GameViewModels
 {
     public interface IGameViewModel
     {

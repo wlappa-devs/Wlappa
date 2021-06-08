@@ -14,7 +14,7 @@ namespace AndroidBlankApp1.UI.PreLobbyViews.GameConfigurators
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false)]
     public class HatConfigurationActivity : AppCompatActivity
     {
-        private PreLobbyViewModel _viewModel;
+        private PreLobbyViewModel _viewModel = null!;
         private const int DefaultTimeToExplain = 25;
         private const int DefaultNumberOfWordsToBeWritten = 10;
 
@@ -24,15 +24,16 @@ namespace AndroidBlankApp1.UI.PreLobbyViews.GameConfigurators
             SetContentView(Resource.Layout.hat_configuration);
             _viewModel = (Application as App)!.Container.Resolve<PreLobbyViewModel>();
             FindViewById<Button>(Resource.Id.create_server_btn)!.Click +=
-                async (sender, args) => await _viewModel.CreateLobby(sender as View);
-            var config = new HatConfiguration();
+                async (sender, args) => await _viewModel.CreateLobby();
+            var config = new HatConfiguration
+            {
+                TimeToExplain = TimeSpan.FromSeconds(DefaultTimeToExplain),
+                WordsToBeWritten = DefaultNumberOfWordsToBeWritten,
+                HatGameModeConfiguration = new HatCircleChoosingModeConfiguration()
+            };
 
             var timeInput = FindViewById<EditText>(Resource.Id.time_to_explain_field);
             var wordsInput = FindViewById<EditText>(Resource.Id.words_to_write_field);
-
-            config.TimeToExplain = TimeSpan.FromSeconds(DefaultTimeToExplain);
-            config.WordsToBeWritten = DefaultNumberOfWordsToBeWritten;
-            config.HatGameModeConfiguration = new HatCircleChoosingModeConfiguration();
 
             timeInput!.Hint = DefaultTimeToExplain.ToString();
             wordsInput!.Hint = DefaultNumberOfWordsToBeWritten.ToString();
@@ -65,12 +66,17 @@ namespace AndroidBlankApp1.UI.PreLobbyViews.GameConfigurators
         {
             base.OnStart();
             _viewModel.JoinedLobby = OnViewModelShouldConfigureGame;
+            _viewModel.ShowNotification += ShowNotification;
         }
+
+        private void ShowNotification(string text) =>
+            Toast.MakeText(ApplicationContext, text, ToastLength.Long)?.Show();
 
         protected override void OnStop()
         {
             base.OnStop();
             _viewModel.JoinedLobby = null;
+            _viewModel.ShowNotification -= ShowNotification;
         }
 
         private void OnViewModelShouldConfigureGame() => StartActivity(typeof(LobbyActivity));

@@ -7,7 +7,7 @@ namespace AndroidBlankApp1.UI.InLobbyViews
 {
     public static class ActivityForGameType
     {
-        public static IReadOnlyDictionary<GameTypes, Type> GameTypeToActivity = new Dictionary<GameTypes, Type>()
+        public static readonly IReadOnlyDictionary<GameTypes, Type> GameTypeToActivity = new Dictionary<GameTypes, Type>()
         {
             {GameTypes.TheHat, typeof(HatWordsChooserActivity)}
         };

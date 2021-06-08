@@ -17,8 +17,8 @@ namespace AndroidBlankApp1.UI.InLobbyViews
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false)]
     public class LobbyActivity : AppCompatActivity
     {
-        private LobbyViewModel _viewModel;
-        private PlayersListAdapter _adapter;
+        private LobbyViewModel _viewModel = null!;
+        private PlayersListAdapter _adapter = null!;
         private EditText? _idView;
 
         protected override void OnCreate(Bundle? savedInstanceState)
@@ -39,7 +39,7 @@ namespace AndroidBlankApp1.UI.InLobbyViews
             _idView.Click += (sender, args) =>
             {
                 Log.Info(nameof(LobbyActivity), "Copying GUID");
-                var clipboard = (ClipboardManager) GetSystemService(ClipboardService);
+                var clipboard = (ClipboardManager?) GetSystemService(ClipboardService);
                 var clip = ClipData.NewPlainText(_viewModel.LobbyId.ToString(), _viewModel.LobbyId.ToString());
                 clipboard!.PrimaryClip = clip;
                 Snackbar.Make(_idView, "Copied to clipboard", 2000).Show();
@@ -57,7 +57,7 @@ namespace AndroidBlankApp1.UI.InLobbyViews
                 async (sender, args) =>
                 {
                     Log.Info(nameof(LobbyActivity), "StartBtnPressed");
-                    await _viewModel.HandleGameStartButtonPressing(sender as View);
+                    await _viewModel.HandleGameStartButtonPressing();
                 };
 
             var recyclerView = FindViewById<RecyclerView>(Resource.Id.recycler);
@@ -83,7 +83,6 @@ namespace AndroidBlankApp1.UI.InLobbyViews
         private void OnViewModelLobbyDestroyed(string msg)
         {
             var snack = Snackbar.Make(_idView, msg, 2000);
-
             snack.Show();
             SpinWait.SpinUntil(() => !snack.IsShown);
             Finish();
@@ -110,7 +109,7 @@ namespace AndroidBlankApp1.UI.InLobbyViews
 
         private void OnViewModelLobbyUpdate()
         {
-            Log.Info(nameof(LobbyActivity), $"Got lobby update {_viewModel.LastLobbyStatus.Count}");
+            Log.Info(nameof(LobbyActivity), $"Got lobby update {_viewModel.LastLobbyStatus?.Count}");
             RunOnUiThread(() => _adapter.Players = _viewModel.LastLobbyStatus);
         }
     }

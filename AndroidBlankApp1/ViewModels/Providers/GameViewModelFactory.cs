@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using AndroidBlankApp1.ViewModels.GameViewModels;
 using Client_lib;
+using Java.Lang;
 using Shared.Protos;
 
 namespace AndroidBlankApp1.ViewModels.Providers
@@ -10,14 +10,15 @@ namespace AndroidBlankApp1.ViewModels.Providers
     public class GameViewModelMappingProvider
     {
         private static readonly Dictionary<Type, Func<Game, IReadOnlyCollection<PlayerInLobby>, IGameViewModel>>
-            _mapping =
+            Mapping =
                 new Dictionary<Type, Func<Game, IReadOnlyCollection<PlayerInLobby>, IGameViewModel>>()
                 {
                     {typeof(HatViewModel), (game, players) => new HatViewModel(game, players)}
                 };
 
+        // ReSharper disable once MemberCanBeMadeStatic.Global
         public Func<Game, IReadOnlyCollection<PlayerInLobby>, IGameViewModel> GetFactoryForType<T>() where T : IGameViewModel =>
-            _mapping[typeof(T)];
+            Mapping[typeof(T)];
     }
 
     public class GameViewModelFactory
@@ -34,6 +35,7 @@ namespace AndroidBlankApp1.ViewModels.Providers
 
         public T GetViewModel<T>() where T : IGameViewModel
         {
+            if (GameInstance is null || Players is null) throw new NullPointerException();
             _viewModelInstance ??= _mappingProvider.GetFactoryForType<T>()(GameInstance, Players);
             return (T) _viewModelInstance;
         }

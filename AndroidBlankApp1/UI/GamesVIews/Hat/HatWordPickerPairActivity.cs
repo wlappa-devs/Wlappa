@@ -15,13 +15,13 @@ namespace AndroidBlankApp1.UI.GamesViews.Hat
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false)]
     public class HatWordPickerPairActivity : AppCompatActivity
     {
-        private bool _canceledTimer = false;
-        private HatViewModel _viewModel;
-        private Button _guessedBtn;
-        private Button _cancelBtn;
-        private TextView _scores;
-        private TextView _gameTimer;
-        private TextView? _wordTextView;
+        private bool _canceledTimer;
+        private HatViewModel _viewModel = null!;
+        private Button _guessedBtn = null!;
+        private Button _cancelBtn = null!;
+        private TextView _scores = null!;
+        private TextView _gameTimer = null!;
+        private TextView _wordTextView = null!;
 
         protected override void OnCreate(Bundle? savedInstanceState)
         {
@@ -29,27 +29,27 @@ namespace AndroidBlankApp1.UI.GamesViews.Hat
             SetContentView(Resource.Layout.hat_word_picker_pair);
             _viewModel = (Application as App)!.Container.Resolve<HatViewModel>();
 
-            _wordTextView = FindViewById<TextView>(Resource.Id.word_to_guess);
-            _scores = FindViewById<TextView>(Resource.Id.in_game_scores);
-            _scores!.Text = _viewModel.LastScoresConcated;
-            _guessedBtn = FindViewById<Button>(Resource.Id.guess_btn);
-            _cancelBtn = FindViewById<Button>(Resource.Id.cancel_btn);
-            _gameTimer = FindViewById<TextView>(Resource.Id.game_timer);
+            _wordTextView = FindViewById<TextView>(Resource.Id.word_to_guess)!;
+            _scores = FindViewById<TextView>(Resource.Id.in_game_scores)!;
+            _scores!.Text = _viewModel.LastScoresConcatenated;
+            _guessedBtn = FindViewById<Button>(Resource.Id.guess_btn)!;
+            _cancelBtn = FindViewById<Button>(Resource.Id.cancel_btn)!;
+            _gameTimer = FindViewById<TextView>(Resource.Id.game_timer)!;
             _wordTextView!.Text = _viewModel.CurrentWord;
 
             if (!_viewModel.AmControllingExplanation)
             {
-                _guessedBtn!.Visibility = ViewStates.Gone;
-                _cancelBtn!.Visibility = ViewStates.Gone;
+                _guessedBtn.Visibility = ViewStates.Gone;
+                _cancelBtn.Visibility = ViewStates.Gone;
             }
 
-            _guessedBtn!.Click += async (sender, args) => await _viewModel.GuessWord();
-            _cancelBtn!.Click += async (sender, args) => await _viewModel.CancelExplanation();
+            _guessedBtn.Click += async (sender, args) => await _viewModel.GuessWord();
+            _cancelBtn.Click += async (sender, args) => await _viewModel.CancelExplanation();
         }
 
         private void OnViewModelGetWord()
         {
-            RunOnUiThread(() => _wordTextView!.Text = _viewModel.CurrentWord);
+            RunOnUiThread(() => _wordTextView.Text = _viewModel.CurrentWord);
         }
 
         private void OnViewModelTimeIsUp() =>
@@ -62,19 +62,19 @@ namespace AndroidBlankApp1.UI.GamesViews.Hat
 
         private void OnViewModelAnnouncedNextPair()
         {
-            StartActivity(typeof(HatPairChoosenActivity));
+            StartActivity(typeof(HatPairChosenActivity));
             Finish();
         }
 
         private void OnViewModelScoresUpdated()
         {
             Log.Info(nameof(HatWordPickerPairActivity), "Should update scores");
-            RunOnUiThread(() => _scores!.Text = _viewModel.LastScoresConcated);
+            RunOnUiThread(() => _scores.Text = _viewModel.LastScoresConcatenated);
         }
 
         private void OnViewModelGameOver()
         {
-            StartActivity(typeof(EndHatGameActivity));
+            EndHatGameActivity.Launch(_viewModel.LastScoresConcatenated, StartActivity, this);
             Finish();
         }
 
@@ -99,7 +99,7 @@ namespace AndroidBlankApp1.UI.GamesViews.Hat
             _viewModel.ScoresUpdated += OnViewModelScoresUpdated;
             _viewModel.GameOver += OnViewModelGameOver;
             ExecuteEvery(TimeSpan.FromMilliseconds(100),
-                () => RunOnUiThread(() => _gameTimer!.Text = _viewModel.TimerString));
+                () => RunOnUiThread(() => _gameTimer.Text = _viewModel.TimerString));
         }
 
         protected override void OnStop()

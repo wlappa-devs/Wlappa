@@ -23,6 +23,7 @@
         <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
         <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
         <LangVersion>8</LangVersion>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
         <DebugSymbols>True</DebugSymbols>
@@ -62,9 +63,8 @@
         <Compile Include="Resource.Designer.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="UI\GamesVIews\Hat\EndHatGameActivity.cs" />
-        <Compile Include="UI\GamesVIews\Hat\HatPairChoosenActivity.cs" />
+        <Compile Include="UI\GamesVIews\Hat\HatPairChosenActivity.cs" />
         <Compile Include="UI\GamesVIews\Hat\HatWordPickerPairActivity.cs" />
-        <Compile Include="UI\GamesVIews\Hat\HatWordPickerRestActivity.cs" />
         <Compile Include="UI\GamesVIews\Hat\HatWordsChooserActivity.cs" />
         <Compile Include="UI\InLobbyViews\ActivityForGameType.cs" />
         <Compile Include="UI\InLobbyViews\LobbyActivity.cs" />

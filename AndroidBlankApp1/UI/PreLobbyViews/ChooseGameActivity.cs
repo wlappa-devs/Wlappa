@@ -3,7 +3,6 @@ using Android.App;
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Util;
-using Android.Views;
 using Android.Widget;
 using AndroidBlankApp1.UI.PreLobbyViews.GameConfigurators;
 using AndroidBlankApp1.ViewModels;
@@ -14,7 +13,7 @@ namespace AndroidBlankApp1.UI.PreLobbyViews
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false)]
     public class ChooseGameActivity : AppCompatActivity
     {
-        private PreLobbyViewModel _viewModel;
+        private PreLobbyViewModel _viewModel = null!;
 
         protected override void OnCreate(Bundle? savedInstanceState)
         {
@@ -24,18 +23,21 @@ namespace AndroidBlankApp1.UI.PreLobbyViews
             _viewModel = app!.Container.Resolve<PreLobbyViewModel>();
 
             FindViewById<Button>(Resource.Id.next_to_configure_game_btn)!.Click +=
-                (sender, args) => _viewModel.HandleGameSelected(sender as View);
+                (sender, args) => _viewModel.HandleGameSelected();
         }
 
         protected override void OnStart()
         {
             base.OnStart();
             _viewModel.ShouldConfigureGame = ViewModelShouldConfigureGame;
+            _viewModel.ShowNotification += ShowNotification;
         }
+        
+        private void ShowNotification(string text) =>
+            Toast.MakeText(ApplicationContext, text, ToastLength.Long)?.Show();
 
         private void ViewModelShouldConfigureGame()
         {
-            // TODO move to event handling
             var radioGroup = FindViewById<RadioGroup>(Resource.Id.game_choosing_group);
             var selected = radioGroup?.CheckedRadioButtonId;
             Log.Info(nameof(ChooseGameActivity), selected.ToString());
@@ -45,7 +47,7 @@ namespace AndroidBlankApp1.UI.PreLobbyViews
                     StartActivity(typeof(HatConfigurationActivity));
                     break;
                 default:
-                    throw new NotImplementedException();
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -53,6 +55,7 @@ namespace AndroidBlankApp1.UI.PreLobbyViews
         {
             base.OnStop();
             _viewModel.ShouldConfigureGame = null;
+            _viewModel.ShowNotification -= ShowNotification;
         }
     }
 }

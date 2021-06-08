@@ -1,4 +1,3 @@
-using System;
 using Android.App;
 using Android.OS;
 using Android.Support.V7.App;
@@ -6,6 +5,7 @@ using Android.Views;
 using Android.Widget;
 using AndroidBlankApp1.UI.InLobbyViews;
 using AndroidBlankApp1.ViewModels;
+using Client_lib;
 using Unity;
 
 namespace AndroidBlankApp1.UI.PreLobbyViews
@@ -13,7 +13,7 @@ namespace AndroidBlankApp1.UI.PreLobbyViews
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false)]
     public class JoinServerActivity : AppCompatActivity
     {
-        private PreLobbyViewModel _viewModel;
+        private PreLobbyViewModel _viewModel = null!;
 
         protected override void OnCreate(Bundle? savedInstanceState)
         {
@@ -30,30 +30,35 @@ namespace AndroidBlankApp1.UI.PreLobbyViews
                     try
                     {
                         _viewModel.Id = idInput?.Text;
-                        await _viewModel.JoinLobby(sender as View);
+                        await _viewModel.JoinLobby();
                     }
-                    catch (Exception e)
+                    catch (LobbyNotFoundException)
                     {
-                        // TODO adequate exception handling
-                        // Snackbar.Make(sender as View, "Invalid id, dumbass", 2000).Show();
                         Toast.MakeText((sender as View)?.Context, "Invalid id, dumbass", ToastLength.Short)?.Show();
                     }
+                    catch (GameAlreadyStartedException)
+                    {
+                        Toast.MakeText((sender as View)?.Context, "Game is going without you LOX", ToastLength.Short)
+                            ?.Show();
+                    }
                 };
-
-            // FindViewById<EditText>(Resource.Id.server_code_tf)!.TextChanged +=
-            // (sender, args) => viewModel.Id = string.Concat(args.Text!);
         }
 
         protected override void OnStart()
         {
             base.OnStart();
             _viewModel.JoinedLobby = OnViewModelJoinedLobby;
+            _viewModel.ShowNotification += ShowNotification;
         }
+
+        private void ShowNotification(string text) =>
+            Toast.MakeText(ApplicationContext, text, ToastLength.Long)?.Show();
 
         protected override void OnStop()
         {
             base.OnStop();
             _viewModel.JoinedLobby = null;
+            _viewModel.ShowNotification -= ShowNotification;
         }
 
         private void OnViewModelJoinedLobby()

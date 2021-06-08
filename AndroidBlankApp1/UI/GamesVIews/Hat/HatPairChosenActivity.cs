@@ -10,9 +10,9 @@ using Unity;
 namespace AndroidBlankApp1.UI.GamesViews.Hat
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false)]
-    public class HatPairChoosenActivity : AppCompatActivity
+    public class HatPairChosenActivity : AppCompatActivity
     {
-        private HatViewModel _viewModel;
+        private HatViewModel _viewModel = null!;
         private TextView? _scores;
 
         protected override void OnCreate(Bundle? savedInstanceState)
@@ -26,7 +26,7 @@ namespace AndroidBlankApp1.UI.GamesViews.Hat
             var btn = FindViewById<Button>(Resource.Id.start_explaining_btn);
             _scores = FindViewById<TextView>(Resource.Id.scores);
 
-            _scores!.Text = _viewModel.LastScoresConcated;
+            _scores!.Text = _viewModel.LastScoresConcatenated;
 
             if (!_viewModel.AmInPair)
             {
@@ -36,7 +36,7 @@ namespace AndroidBlankApp1.UI.GamesViews.Hat
             btn!.Click += async (sender, args) =>
             {
                 RunOnUiThread(() => btn.Visibility = ViewStates.Gone);
-                await _viewModel.GetReady(sender, args);
+                await _viewModel.GetReady();
             };
         }
 
@@ -48,18 +48,18 @@ namespace AndroidBlankApp1.UI.GamesViews.Hat
 
         private void OnViewModelGameOver()
         {
-            StartActivity(typeof(EndHatGameActivity));
+            EndHatGameActivity.Launch(_viewModel.LastScoresConcatenated, StartActivity, this);
             Finish();
         }
 
         private void OnViewModelScoresUpdated()
         {
-            RunOnUiThread(() => _scores!.Text = _viewModel.LastScoresConcated);
+            RunOnUiThread(() => _scores!.Text = _viewModel.LastScoresConcatenated);
         }
 
         protected override void OnStart()
         {
-            Log.Info(nameof(HatPairChoosenActivity),"Started");
+            Log.Info(nameof(HatPairChosenActivity),"Started");
             base.OnStart();
             _viewModel.StartExplanation += OnViewModelStartExplanation;
             _viewModel.ScoresUpdated += OnViewModelScoresUpdated;
@@ -68,7 +68,7 @@ namespace AndroidBlankApp1.UI.GamesViews.Hat
 
         protected override void OnStop()
         {
-            Log.Info(nameof(HatPairChoosenActivity),"Stopped");
+            Log.Info(nameof(HatPairChosenActivity),"Stopped");
             base.OnStop();
             _viewModel.StartExplanation -= OnViewModelStartExplanation;
             _viewModel.ScoresUpdated -= OnViewModelScoresUpdated;

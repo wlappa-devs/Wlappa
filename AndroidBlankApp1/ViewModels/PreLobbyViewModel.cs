@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Android.Support.Design.Widget;
-using Android.Views;
 using AndroidBlankApp1.ViewModels.Providers;
 using Client_lib;
 using Shared.Protos;
@@ -10,26 +8,21 @@ namespace AndroidBlankApp1.ViewModels
 {
     public class PreLobbyViewModel
     {
-        public Action LobbyCreated { private get; set; }
-        public Action ShouldSelectLobby { private get; set; }
-        public Action JoinedLobby { private get; set; }
-        public Action ShouldConfigureGame { private get; set; }
-
-        private bool _isConnected = false;
-
-
+        public Action? LobbyCreated { private get; set; }
+        public Action? ShouldSelectLobby { private get; set; }
+        public Action? JoinedLobby { private get; set; }
+        public Action? ShouldConfigureGame { private get; set; }
+        private bool _isConnected;
         public string? Name { get; set; }
-
-
         private Guid? _guid;
 
         public string? Id
         {
-            get => _guid?.ToString();
             set => _guid = value is null ? (Guid?) null : Guid.Parse(value);
         }
 
         public GameConfiguration? Configuration { get; set; }
+        public event Action<string>? ShowNotification;
 
         private readonly Client _client;
         private readonly LobbyProvider _provider;
@@ -47,57 +40,57 @@ namespace AndroidBlankApp1.ViewModels
             _isConnected = true;
         }
 
-        public async Task JoinLobby(View view)
+        public async Task JoinLobby()
         {
             if (!_guid.HasValue) //Name should be validated earlier
             {
-                Snackbar.Make(view, "Invalid Id", 2000).Show();
+                ShowNotification?.Invoke("Invalid Id");
                 return;
             }
 
             await ConnectToServer();
-            await _client.ChangeName(Name);
+            await _client.ChangeName(Name!);
             _provider.Lobby = await _client.JoinGame(_guid.Value);
             _provider.Configuration = Configuration;
             JoinedLobby?.Invoke();
         }
 
-        public async Task CreateLobby(View view)
+        public async Task CreateLobby()
         {
             if (Configuration is null)
             {
-                Snackbar.Make(view, "Invalid configuration", 2000).Show();
+                ShowNotification?.Invoke("Invalid configuration");
                 return;
             }
 
             await ConnectToServer();
             _guid = await _client.CreateGame(Configuration);
-            await JoinLobby(view);
+            await JoinLobby();
         }
 
-        public void HandleCreateLobbyButton(View view)
+        public void HandleCreateLobbyButton()
         {
             if (Name is null || Name == "")
             {
-                Snackbar.Make(view, "Enter your name", 2000).Show();
+                ShowNotification?.Invoke("Enter your name");
                 return;
             }
 
             LobbyCreated?.Invoke();
         }
 
-        public void HandleJoinLobbyButton(View view)
+        public void HandleJoinLobbyButton()
         {
             if (Name is null || Name == "")
             {
-                Snackbar.Make(view, "Enter your name", 2000).Show();
+                ShowNotification?.Invoke("Enter your name");
                 return;
             }
 
             ShouldSelectLobby?.Invoke();
         }
 
-        public void HandleGameSelected(View view)
+        public void HandleGameSelected()
         {
             ShouldConfigureGame?.Invoke();
         }

@@ -1,12 +1,8 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
-using Grpc.Net.Client;
 using Microsoft.Extensions.Logging;
 using ProtoBuf.Grpc;
-using Server.Routing;
 using Server.Routing.Helpers;
 using Shared.Protos;
 
@@ -14,6 +10,7 @@ namespace Server.Services
 {
     public class MainServiceProtobufNet : IMainServiceContract
     {
+        // ReSharper disable once NotAccessedField.Local
         private readonly ILogger<MainServiceProtobufNet> _logger;
 
         private readonly ClientFactory _clientFactory;
@@ -28,7 +25,9 @@ namespace Server.Services
             IAsyncEnumerable<ClientMessage> request, CallContext context = default)
         {
             var toClientChannel = Channel.CreateUnbounded<ServerMessage>();
-            HandleClient(request, toClientChannel.Writer, context);
+#pragma warning disable 4014
+            HandleClient(request, toClientChannel.Writer, context); // TODO consult
+#pragma warning restore 4014
             return toClientChannel.Reader.ReadAllAsync();
         }
 
