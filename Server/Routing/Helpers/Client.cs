@@ -46,36 +46,28 @@ namespace Server.Routing.Helpers
 
         public async Task StartProcessing()
         {
-            try
+            await foreach (var message in _request)
             {
-                await foreach (var message in _request)
+                switch (message)
                 {
-                    switch (message)
-                    {
-                        case PreGameClientMessage e:
-                            _logger.LogInformation($"Got event pregame {e}");
-                            await HandlePregameMessage(e);
-                            break;
-                        case LobbyClientMessage e:
-                            _logger.LogInformation($"Got event lobby {e}");
-                            if (LobbyEventListener is not null)
-                                await LobbyEventListener(this, e);
-                            break;
-                        case InGameClientMessage e:
-                            _logger.LogInformation($"Got event ingame {e}");
-                            if (InGameEventListener is not null)
-                                await InGameEventListener(this, e);
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
+                    case PreGameClientMessage e:
+                        _logger.LogInformation($"Got event pregame {e}");
+                        await HandlePregameMessage(e);
+                        break;
+                    case LobbyClientMessage e:
+                        _logger.LogInformation($"Got event lobby {e}");
+                        if (LobbyEventListener is not null)
+                            await LobbyEventListener(this, e);
+                        break;
+                    case InGameClientMessage e:
+                        _logger.LogInformation($"Got event ingame {e}");
+                        if (InGameEventListener is not null)
+                            await InGameEventListener(this, e);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
-            catch (ConnectionAbortedException e)
-            {
-                // TODO Notify about disconnect
-            }
-            
         }
 
         private async Task HandlePregameMessage(PreGameClientMessage message)
@@ -100,6 +92,9 @@ namespace Server.Routing.Helpers
                 case JoinLobby m:
                     await _mainController.ConnectClientToGame(this, m.Id);
                     return;
+                case ChangeName m:
+                    Name = m.NewName;
+                    return;
             }
         }
 
@@ -111,6 +106,12 @@ namespace Server.Routing.Helpers
         public async Task HandleLobbyMessage(LobbyServerMessage message)
         {
             await _response.WriteAsync(message);
+        }
+
+        public async void HandleConnectionFailure()
+        {
+            _logger.LogInformation("Got unstable disconnect");
+            if (LobbyEventListener != null) await LobbyEventListener(this, new Disconnect());
         }
     }
 }

@@ -21,6 +21,7 @@ namespace Server.Games.Meta
         private readonly Action _finished;
         public Guid Host { get; set; }
         private Game? _game;
+        private bool _hasFinished;
         public GameTypes Type => _factory.Type;
 
         public GameController(IGameFactory factory, GameConfiguration config, Guid initialHost, ILogger logger,
@@ -88,11 +89,11 @@ namespace Server.Games.Meta
 
         private async Task LobbyEventListener(Client client, LobbyClientMessage message)
         {
-            if (client.Id != Host) return; //TODO not only host can disconnect
             switch (message)
             {
                 case ChangeRole m:
                 {
+                    if (client.Id != Host) return;
                     if (_factory.Roles.Contains(m.NewRole))
                         _playersToRoles[m.PlayerId] = m.NewRole;
 
@@ -100,13 +101,31 @@ namespace Server.Games.Meta
                     return;
                 }
                 case StartGame:
+                    if (client.Id != Host) return;
                     await CreateGame(client);
                     return;
                 case Disconnect:
                     _playersToRoles.Remove(client.Id, out _);
                     _players.RemoveAll(c => c.Id == client.Id);
+                    await NotifyLobbyUpdate();
+                    if (!_players.Any()) HandleFinishDisconnection();
+
+                    if (_players.All(x => x.Id != Host))
+                    {
+                        var msg = new LobbyDestroyed {Msg = "Host left"};
+                        await Task.WhenAll(_players.Select(player => player.HandleLobbyMessage(msg)));
+                        HandleFinishDisconnection();
+                    }
+
                     return;
             }
+        }
+
+        private void HandleFinishDisconnection()
+        {
+            if (_hasFinished) return;
+            _hasFinished = true;
+            _finished();
         }
 
         private async Task NotifyLobbyUpdate()

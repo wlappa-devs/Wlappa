@@ -21,6 +21,8 @@ namespace Client_lib
         public event Action? LobbyUpdate;
         public event Action? GameFinished;
         public event Action<Game>? HandleGameStart;
+
+        public event Action<string>? LobbyDestroyed;
         public event Action<string>? ConfigurationInvalid; 
 
         public IReadOnlyCollection<PlayerInLobby>? LastLobbyStatus { get; private set; }
@@ -69,7 +71,7 @@ namespace Client_lib
         {
             await _request.WriteAsync(new Disconnect()); // TODO check disconnect implementation
             await Task.Delay(TimeSpan.FromSeconds(1));
-            _request.Complete();
+            // _request.Complete();
             _cts.Cancel();
         }
 
@@ -93,6 +95,9 @@ namespace Client_lib
         {
             switch (message)
             {
+                case LobbyDestroyed lobbyDestroyed:
+                    LobbyDestroyed?.Invoke(lobbyDestroyed.Msg);
+                    return;
                 case LobbyUpdate update:
                     LastLobbyStatus = update.Players;
                     LobbyUpdate?.Invoke();

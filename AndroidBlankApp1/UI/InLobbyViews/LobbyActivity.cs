@@ -1,3 +1,4 @@
+using System.Threading;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -18,6 +19,7 @@ namespace AndroidBlankApp1.UI.InLobbyViews
     {
         private LobbyViewModel _viewModel;
         private PlayersListAdapter _adapter;
+        private EditText? _idView;
 
         protected override void OnCreate(Bundle? savedInstanceState)
         {
@@ -25,22 +27,24 @@ namespace AndroidBlankApp1.UI.InLobbyViews
             SetContentView(Resource.Layout.lobby);
 
             _viewModel = (Application as App)!.Container.Resolve<LobbyViewModel>();
+            _viewModel.InitializeLobby();
             _adapter = new PlayersListAdapter(_viewModel.LastLobbyStatus, _viewModel.Roles, _viewModel.AmHost!.Value);
 
             var startBtn = FindViewById<Button>(Resource.Id.start_game_btn);
 
-            var idView = FindViewById<EditText>(Resource.Id.lobby_game_id);
-            _viewModel.MakeSnackBar = msg => Snackbar.Make(idView, msg, 2000).Show();
-            idView!.Text = _viewModel.LobbyId.ToString();
-            idView.Click += (sender, args) =>
+            _idView = FindViewById<EditText>(Resource.Id.lobby_game_id);
+            _viewModel.MakeSnackBar = msg => Snackbar.Make(_idView, msg, 2000).Show();
+            _idView!.Text = _viewModel.LobbyId.ToString();
+
+            _idView.Click += (sender, args) =>
             {
                 Log.Info(nameof(LobbyActivity), "Copying GUID");
                 var clipboard = (ClipboardManager) GetSystemService(ClipboardService);
                 var clip = ClipData.NewPlainText(_viewModel.LobbyId.ToString(), _viewModel.LobbyId.ToString());
                 clipboard!.PrimaryClip = clip;
-                Snackbar.Make(idView, "Copied to clipboard", 2000).Show();
+                Snackbar.Make(_idView, "Copied to clipboard", 2000).Show();
             };
-            Log.Info(nameof(LobbyActivity), "GUID IS " + idView!.Text);
+            Log.Info(nameof(LobbyActivity), "GUID IS " + _idView!.Text);
 
             if (_viewModel.AmHost.HasValue && !_viewModel.AmHost.Value)
             {
@@ -72,7 +76,17 @@ namespace AndroidBlankApp1.UI.InLobbyViews
             base.OnStart();
             _viewModel.LobbyUpdate = OnViewModelLobbyUpdate;
             _viewModel.GameStarted = OnViewModelGameStarted;
+            _viewModel.LobbyDestroyed = OnViewModelLobbyDestroyed;
             _viewModel.StartProcessingEvents();
+        }
+
+        private void OnViewModelLobbyDestroyed(string msg)
+        {
+            var snack = Snackbar.Make(_idView, msg, 2000);
+
+            snack.Show();
+            SpinWait.SpinUntil(() => !snack.IsShown);
+            Finish();
         }
 
         protected override void OnStop()
@@ -80,6 +94,12 @@ namespace AndroidBlankApp1.UI.InLobbyViews
             base.OnStop();
             _viewModel.LobbyUpdate = null;
             _viewModel.GameStarted = null;
+        }
+
+        protected override async void OnDestroy()
+        {
+            base.OnDestroy();
+            await _viewModel.DisconnectFromLobby();
         }
 
         private void OnViewModelGameStarted()

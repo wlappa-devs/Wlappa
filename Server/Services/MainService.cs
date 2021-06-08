@@ -29,7 +29,6 @@ namespace Server.Services
         {
             var toClientChannel = Channel.CreateUnbounded<ServerMessage>();
             HandleClient(request, toClientChannel.Writer, context);
-
             return toClientChannel.Reader.ReadAllAsync();
         }
 
@@ -37,6 +36,7 @@ namespace Server.Services
             ChannelWriter<ServerMessage> response, CallContext context = default)
         {
             var client = _clientFactory.Create(request, response);
+            context.CancellationToken.Register(() => client.HandleConnectionFailure());
             await client.StartProcessing();
 
             response.TryComplete();

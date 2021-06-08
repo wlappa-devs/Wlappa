@@ -14,8 +14,8 @@ namespace Client_lib
     {
         public string? Name { get; private set; }
         public Guid Id { get; private set; }
-        
-        
+
+
         private ChannelReader<ServerMessage>? _responseReader;
         private ChannelWriter<ClientMessage>? _requestWriter;
         private Grpc.Core.Channel? _channel;
@@ -89,6 +89,15 @@ namespace Client_lib
                 default:
                     throw new InvalidOperationException();
             }
+        }
+
+        public async Task ChangeName(string newName)
+        {
+            if (_requestWriter != null)
+                await _requestWriter.WriteAsync(new ChangeName()
+                {
+                    NewName = newName,
+                });
         }
     }
 }

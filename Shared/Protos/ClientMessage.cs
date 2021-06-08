@@ -19,6 +19,7 @@ namespace Shared.Protos
     [ProtoInclude(1, typeof(Greeting))]
     [ProtoInclude(2, typeof(CreateLobby))]
     [ProtoInclude(3, typeof(JoinLobby))]
+    [ProtoInclude(4, typeof(ChangeName))]
     public abstract class PreGameClientMessage : ClientMessage
     {
     }
@@ -43,12 +44,8 @@ namespace Shared.Protos
     [ProtoContract]
     public enum GameTypes
     {
-        [EnumMember]
-        [ProtoEnum]
-        Clicker = 0,
-        [EnumMember]
-        [ProtoEnum]
-        TheHat = 1
+        [EnumMember] [ProtoEnum] Clicker = 0,
+        [EnumMember] [ProtoEnum] TheHat = 1
     }
 
     [DataContract]
@@ -93,6 +90,13 @@ namespace Shared.Protos
     [ProtoContract]
     public class Disconnect : LobbyClientMessage
     {
+    }
+
+    [DataContract]
+    [ProtoContract]
+    public class ChangeName : PreGameClientMessage
+    {
+        [ProtoMember(1)] public string NewName { get; set; }
     }
 
     [DataContract]

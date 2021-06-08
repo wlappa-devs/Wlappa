@@ -56,6 +56,7 @@ namespace AndroidBlankApp1.ViewModels
             }
 
             await ConnectToServer();
+            await _client.ChangeName(Name);
             _provider.Lobby = await _client.JoinGame(_guid.Value);
             _provider.Configuration = Configuration;
             JoinedLobby?.Invoke();

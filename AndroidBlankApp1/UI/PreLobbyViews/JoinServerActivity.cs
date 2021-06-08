@@ -1,7 +1,6 @@
 using System;
 using Android.App;
 using Android.OS;
-using Android.Support.Design.Widget;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
@@ -35,7 +34,9 @@ namespace AndroidBlankApp1.UI.PreLobbyViews
                     }
                     catch (Exception e)
                     {
-                        Snackbar.Make(sender as View, "Invalid id, dumbass", 2000).Show();
+                        // TODO adequate exception handling
+                        // Snackbar.Make(sender as View, "Invalid id, dumbass", 2000).Show();
+                        Toast.MakeText((sender as View)?.Context, "Invalid id, dumbass", ToastLength.Short)?.Show();
                     }
                 };
 
@@ -55,6 +56,10 @@ namespace AndroidBlankApp1.UI.PreLobbyViews
             _viewModel.JoinedLobby = null;
         }
 
-        private void OnViewModelJoinedLobby() => StartActivity(typeof(LobbyActivity));
+        private void OnViewModelJoinedLobby()
+        {
+            StartActivity(typeof(LobbyActivity));
+            Finish();
+        }
     }
 }
