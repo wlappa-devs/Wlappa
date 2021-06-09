@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using NUnit.Framework;
-using Server.Games.Meta;
-using Server.Games.TheHat;
+using Server.Domain.Games.Meta;
+using Server.Domain.Games.TheHat;
 using Shared.Protos;
 using Shared.Protos.HatSharedClasses;
 
@@ -14,9 +14,9 @@ namespace TestServer.GameTests
     public class HatIGameTests
     {
         private Game _gameInstance;
-        private HatIGame _hiddenHatGame;
+        private HatGame _hiddenHatGame;
         private HatConfiguration _configuration;
-        private List<MockInGameClient> _clients;
+        private List<MockInGameClientInteractor> _clients;
         private bool _hasFinished;
         private HatGameFactory _factory;
         private MockTimer _timer;
@@ -33,7 +33,7 @@ namespace TestServer.GameTests
                 HatGameModeConfiguration = new HatCircleChoosingModeConfiguration(),
                 WordsToBeWritten = 2
             };
-            _clients = new List<MockInGameClient>
+            _clients = new List<MockInGameClientInteractor>
             {
                 new("Shrek"),
                 new("Shrek2"),
@@ -41,10 +41,9 @@ namespace TestServer.GameTests
             };
             _words = new[] {"kek", "cheburek", "lol", "arbidol", "dirokol", "honker"};
             _timer = new MockTimer();
-            _hiddenHatGame = new HatIGame(
+            _hiddenHatGame = new HatGame(
                 _configuration,
-                new GameCreationPayload(_clients.ToDictionary(x => x.Id, x => _factory.DefaultRole)),
-                _clients,
+                new GameCreationPayload(_clients.ToDictionary(x => x.Id, x => _factory.DefaultRole), _clients),
                 () =>
                 {
                     _hasFinished = true;
@@ -119,7 +118,7 @@ namespace TestServer.GameTests
             Assert.IsTrue(_hasFinished);
         }
 
-        private (MockInGameClient explainer, MockInGameClient understander) GetReady()
+        private (MockInGameClientInteractor explainer, MockInGameClientInteractor understander) GetReady()
         {
             var currentPair = GetCurrentPair();
             var currentExplainer = _clients.First(client => client.Id == currentPair.Explainer);

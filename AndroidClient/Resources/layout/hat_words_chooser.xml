@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <TableLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        <TableRow>
+            <EditText android:id="@+id/words_input" 
+                      android:hint="Type your words, separated with space here"/>
+        </TableRow>
+        <TableRow>
+            <Button android:text="I've finished" android:id="@+id/start_choose_pairs_btn"/>
+        </TableRow>
+        <TableRow>
+            <TextView android:text="Players remaining: "/>
+            <TextView android:text="0" android:id="@+id/number_of_players_ready"/>
+        </TableRow>
+    </TableLayout>
+</LinearLayout>

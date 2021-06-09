@@ -1,6 +1,6 @@
 ﻿using System;
 using Google.Protobuf.WellKnownTypes;
-using Server.Games.Meta;
+using Server.Domain.Games.Meta;
 using Shared.Protos;
 
 namespace TestServer.GameTests

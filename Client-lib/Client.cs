@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Threading.Tasks;
 using ProtoBuf.Grpc.Client;
 using Shared.Protos;
@@ -12,10 +11,11 @@ namespace Client_lib
 {
     public class Client
     {
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public string? Name { get; private set; }
         public Guid Id { get; private set; }
-        
-        
+
+
         private ChannelReader<ServerMessage>? _responseReader;
         private ChannelWriter<ClientMessage>? _requestWriter;
         private Grpc.Core.Channel? _channel;
@@ -77,18 +77,23 @@ namespace Client_lib
             if (!(response is LobbyServerMessage lobbyServerMessage))
                 throw new InvalidOperationException();
 
-            switch (lobbyServerMessage)
+            return lobbyServerMessage switch
             {
-                case GameAlreadyStarted _:
-                    throw new GameAlreadyStartedException();
-                case LobbyNotFound _:
-                    throw new LobbyNotFoundException();
-                case JoinedLobby lobbyInfo:
-                    return new Lobby(lobbyInfo.Type, lobbyInfo.AvailableRoles, lobbyInfo.IsHost, _requestWriter,
-                        _responseReader, lobbyId, Id);
-                default:
-                    throw new InvalidOperationException();
-            }
+                GameAlreadyStarted _ => throw new GameAlreadyStartedException(),
+                LobbyNotFound _ => throw new LobbyNotFoundException(),
+                JoinedLobby lobbyInfo => new Lobby(lobbyInfo.Type, lobbyInfo.AvailableRoles, lobbyInfo.IsHost,
+                    _requestWriter, _responseReader, lobbyId, Id),
+                _ => throw new InvalidOperationException()
+            };
+        }
+
+        public async Task ChangeName(string newName)
+        {
+            if (_requestWriter != null)
+                await _requestWriter.WriteAsync(new ChangeName()
+                {
+                    NewName = newName,
+                });
         }
     }
 }

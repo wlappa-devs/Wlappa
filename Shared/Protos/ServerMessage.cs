@@ -33,6 +33,7 @@ namespace Shared.Protos
     [ProtoInclude(5, typeof(ConfigurationInvalid))]
     [ProtoInclude(6, typeof(GameCreated))]
     [ProtoInclude(7, typeof(GameFinished))]
+    [ProtoInclude(8, typeof(LobbyDestroyed))]
     public abstract class LobbyServerMessage : ServerMessage
     {
     }
@@ -92,7 +93,7 @@ namespace Shared.Protos
     [ProtoContract]
     public class ConfigurationInvalid : LobbyServerMessage
     {
-        public string Message { get; set; }
+        [ProtoMember(1)] public string Message { get; set; }
     }
 
     [DataContract]
@@ -113,5 +114,12 @@ namespace Shared.Protos
     [ProtoInclude(2, typeof(HatServerMessage))]
     public abstract class InGameServerMessage : ServerMessage
     {
+    }
+    
+    [DataContract]
+    [ProtoContract]
+    public class LobbyDestroyed : LobbyServerMessage
+    {
+        [ProtoMember(1)]public string Msg { get; set; }
     }
 }

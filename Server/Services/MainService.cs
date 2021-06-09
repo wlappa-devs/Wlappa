@@ -1,42 +1,41 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
-using Grpc.Net.Client;
 using Microsoft.Extensions.Logging;
 using ProtoBuf.Grpc;
-using Server.Routing;
-using Server.Routing.Helpers;
+using Server.Application;
 using Shared.Protos;
 
 namespace Server.Services
 {
     public class MainServiceProtobufNet : IMainServiceContract
     {
+        // ReSharper disable once NotAccessedField.Local
         private readonly ILogger<MainServiceProtobufNet> _logger;
 
-        private readonly ClientFactory _clientFactory;
+        private readonly ClientInteractorFactory _clientInteractorFactory;
 
-        public MainServiceProtobufNet(ILogger<MainServiceProtobufNet> logger, ClientFactory clientFactory)
+        public MainServiceProtobufNet(ILogger<MainServiceProtobufNet> logger, ClientInteractorFactory clientInteractorFactory)
         {
             _logger = logger;
-            _clientFactory = clientFactory;
+            _clientInteractorFactory = clientInteractorFactory;
         }
 
         public IAsyncEnumerable<ServerMessage> Connect(
             IAsyncEnumerable<ClientMessage> request, CallContext context = default)
         {
             var toClientChannel = Channel.CreateUnbounded<ServerMessage>();
-            HandleClient(request, toClientChannel.Writer, context);
-
+#pragma warning disable 4014
+            HandleClient(request, toClientChannel.Writer, context); // TODO consult
+#pragma warning restore 4014
             return toClientChannel.Reader.ReadAllAsync();
         }
 
         private async Task HandleClient(IAsyncEnumerable<ClientMessage> request,
             ChannelWriter<ServerMessage> response, CallContext context = default)
         {
-            var client = _clientFactory.Create(request, response);
+            var client = _clientInteractorFactory.Create(request, response);
+            context.CancellationToken.Register(() => client.HandleConnectionFailure());
             await client.StartProcessing();
 
             response.TryComplete();

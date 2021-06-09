@@ -10,6 +10,7 @@ namespace Shared.Protos.HatSharedClasses
     [ProtoInclude(2, typeof(HatClientIsReady))]
     [ProtoInclude(3, typeof(HatGuessRight))]
     [ProtoInclude(4, typeof(HatTimerFinish))]
+    [ProtoInclude(5, typeof(HatCancelExplanation))]
     public class HatClientMessage : InGameClientMessage
     {
     }
@@ -32,4 +33,8 @@ namespace Shared.Protos.HatSharedClasses
     [DataContract]
     [ProtoContract]
     public class HatTimerFinish : HatClientMessage { }
+
+    [DataContract]
+    [ProtoContract]
+    public class HatCancelExplanation : HatClientMessage { }
 }

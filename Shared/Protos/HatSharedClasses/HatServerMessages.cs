@@ -16,6 +16,7 @@ namespace Shared.Protos.HatSharedClasses
     [ProtoInclude(7, typeof(HatFinishMessage))]
     [ProtoInclude(8, typeof(HatPointsUpdated))]
     [ProtoInclude(9, typeof(HatPlayerSuccessfullyAddedWords))]
+    [ProtoInclude(10, typeof(HatGameInitialInformationMessage))]
     public abstract class HatServerMessage : InGameServerMessage
     {
     }
@@ -64,16 +65,25 @@ namespace Shared.Protos.HatSharedClasses
     public class HatPointsUpdated : HatServerMessage
     {
         [ProtoMember(1)] public Dictionary<Guid, int> GuidToPoints { get; set; }
-
     }
-    
+
     [DataContract]
     [ProtoContract]
     public class HatPlayerSuccessfullyAddedWords : HatServerMessage
     {
         [ProtoMember(1)] public Guid AuthorId { get; set; }
-        
-        [ProtoMember(2)] public int TotalReady { get; set; }
+
+        [ProtoMember(2)] public int TotalNotReady { get; set; }
+    }
+
+    [DataContract]
+    [ProtoContract]
+    public class HatGameInitialInformationMessage : HatServerMessage
+    {
+        [ProtoMember(1)] public Guid? ManagerId { get; set; }
+        [ProtoMember(2)] public string Role { get; set; }
+        [ProtoMember(3)] public int NumberOfPlayersInGame { get; set; }
+        [ProtoMember(4)] public TimeSpan TimeToExplain { get; set; }
     }
 
     [DataContract]
