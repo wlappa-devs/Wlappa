@@ -46,8 +46,7 @@ namespace Server.Domain.Games.TheHat
 
         private Guid? _currentExplanationId;
 
-        public HatGame(HatConfiguration configuration, GameCreationPayload payload,
-            IReadOnlyCollection<IInGameClientInteractor> players, Func<Task> finished, ITimer timer, Random random,
+        public HatGame(HatConfiguration configuration, GameCreationPayload payload, Func<Task> finished, ITimer timer, Random random,
             ILogger<HatGame> logger)
         {
             _finished = finished;
@@ -60,6 +59,7 @@ namespace Server.Domain.Games.TheHat
 
             #region PayLoad Deconstruction
 
+            var players = payload.Clients;
             var index = 0;
             var listOfPlayersWhoNeedToKnowTheWordExceptExplainer = new List<HatMember>();
             foreach (var player in players)

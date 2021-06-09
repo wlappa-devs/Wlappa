@@ -26,9 +26,7 @@ namespace Server.Domain.Games.TheHat
             {
                 case HatConfiguration hatConfiguration:
                     var timer = new Timer();
-                    var instance = new HatGame(hatConfiguration, payload, payload.Clients, finished, timer,
-                        new Random(),
-                        _logger);
+                    var instance = new HatGame(hatConfiguration, payload, finished, timer, new Random(), _logger);
                     timer.Game = instance;
                     return instance;
                 default:

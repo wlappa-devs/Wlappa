@@ -43,8 +43,7 @@ namespace TestServer.GameTests
             _timer = new MockTimer();
             _hiddenHatGame = new HatGame(
                 _configuration,
-                new GameCreationPayload(_clients.ToDictionary(x => x.Id, x => _factory.DefaultRole)),
-                _clients,
+                new GameCreationPayload(_clients.ToDictionary(x => x.Id, x => _factory.DefaultRole), _clients),
                 () =>
                 {
                     _hasFinished = true;
