@@ -69,9 +69,8 @@ namespace Client_lib
 
         public async Task Disconnect()
         {
-            await _request.WriteAsync(new Disconnect()); // TODO check disconnect implementation
+            await _request.WriteAsync(new Disconnect());
             await Task.Delay(TimeSpan.FromSeconds(1));
-            // _request.Complete();
             _cts.Cancel();
         }
 

@@ -1,7 +1,7 @@
 using System;
 using Shared.Protos;
 
-namespace Server.Games.Meta
+namespace Server.Domain.Games.Meta
 {
     public interface ITimer
     {

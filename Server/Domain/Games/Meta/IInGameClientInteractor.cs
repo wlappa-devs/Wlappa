@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Shared.Protos;
 
-namespace Server.Routing.Helpers
+namespace Server.Domain.Games.Meta
 {
-    public interface IInGameClient
+    public interface IInGameClientInteractor
     {
         public Guid Id { get; }
         public string? Name { get; }

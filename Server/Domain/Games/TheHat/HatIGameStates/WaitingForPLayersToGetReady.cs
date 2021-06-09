@@ -1,18 +1,17 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Server.Games.TheHat.GameCore;
 using Shared.Protos.HatSharedClasses;
 
-namespace Server.Games.TheHat.HatIGameStates
+namespace Server.Domain.Games.TheHat.HatIGameStates
 {
     public class WaitingForPLayersToGetReady : IHatGameState
     {
         private readonly bool _explainerIsReady;
         private readonly bool _understanderIsReady;
-        private readonly HatIGame _game;
+        private readonly HatGame _game;
 
-        public WaitingForPLayersToGetReady(bool explainerIsReady, bool understanderIsReady, HatIGame game)
+        public WaitingForPLayersToGetReady(bool explainerIsReady, bool understanderIsReady, HatGame game)
         {
             _explainerIsReady = explainerIsReady;
             _understanderIsReady = understanderIsReady;

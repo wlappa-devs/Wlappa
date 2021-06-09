@@ -1,28 +1,27 @@
 using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Server.Routing;
-using Server.Routing.Helpers;
+using Server.Domain.Games.Meta;
 using Shared.Protos;
 
-namespace Server.Games.Meta
+namespace Server.Domain.Lobby
 {
     public class GameController
     {
         private readonly IGameFactory _factory;
         private readonly ConcurrentDictionary<Guid, string> _playersToRoles = new();
-        private readonly List<Client> _players = new(); // TODO make concurrent
+        private readonly List<ILobbyClientInteractor> _players = new(); // TODO make concurrent
         private readonly GameConfiguration _config;
+        // ReSharper disable once NotAccessedField.Local
         private readonly ILogger _logger;
         private readonly Action _finished;
-        public Guid Host { get; set; }
+        private Guid Host { get; set; }
         private Game? _game;
         private bool _hasFinished;
-        public GameTypes Type => _factory.Type;
+        private GameTypes Type => _factory.Type;
 
         public GameController(IGameFactory factory, GameConfiguration config, Guid initialHost, ILogger logger,
             Action finished)
@@ -34,7 +33,7 @@ namespace Server.Games.Meta
             Host = initialHost;
         }
 
-        public async Task ConnectPlayer(Client player)
+        public async Task ConnectPlayer(ILobbyClientInteractor player)
         {
             if (_game is not null)
             {
@@ -55,13 +54,13 @@ namespace Server.Games.Meta
             await NotifyLobbyUpdate();
         }
 
-        private async Task CreateGame(Client initiator)
+        private async Task CreateGame(ILobbyClientInteractor initiator)
         {
-            var payload = new GameCreationPayload(_playersToRoles);
+            var payload = new GameCreationPayload(_playersToRoles, _players.ToArray());
             var message = _factory.ValidateConfig(_config, payload);
             if (message is null)
             {
-                _game = _factory.Create(_config, payload, _players.ToArray(), HandleGameFinish);
+                _game = _factory.Create(_config, payload, HandleGameFinish);
                 var notification = new GameCreated();
                 await Task.WhenAll(_players.Select(p => p.HandleLobbyMessage(notification)));
                 await _game.Initialize();
@@ -74,10 +73,10 @@ namespace Server.Games.Meta
             });
         }
 
-        private async Task HandleGameEvent(IInGameClient client, InGameClientMessage message)
+        private async Task HandleGameEvent(IInGameClientInteractor clientInteractor, InGameClientMessage message)
         {
             if (_game is null) return;
-            await _game.HandleEvent(client, message);
+            await _game.HandleEvent(clientInteractor, message);
         }
 
         private async Task HandleGameFinish()
@@ -87,13 +86,13 @@ namespace Server.Games.Meta
             await Task.WhenAll(_players.Select(p => p.HandleLobbyMessage(notification)));
         }
 
-        private async Task LobbyEventListener(Client client, LobbyClientMessage message)
+        private async Task LobbyEventListener(ILobbyClientInteractor clientInteractor, LobbyClientMessage message)
         {
             switch (message)
             {
                 case ChangeRole m:
                 {
-                    if (client.Id != Host) return;
+                    if (clientInteractor.Id != Host) return;
                     if (_factory.Roles.Contains(m.NewRole))
                         _playersToRoles[m.PlayerId] = m.NewRole;
 
@@ -101,12 +100,12 @@ namespace Server.Games.Meta
                     return;
                 }
                 case StartGame:
-                    if (client.Id != Host) return;
-                    await CreateGame(client);
+                    if (clientInteractor.Id != Host) return;
+                    await CreateGame(clientInteractor);
                     return;
                 case Disconnect:
-                    _playersToRoles.Remove(client.Id, out _);
-                    _players.RemoveAll(c => c.Id == client.Id);
+                    _playersToRoles.Remove(clientInteractor.Id, out _);
+                    _players.RemoveAll(c => c.Id == clientInteractor.Id);
                     await NotifyLobbyUpdate();
                     if (!_players.Any()) HandleFinishDisconnection();
 

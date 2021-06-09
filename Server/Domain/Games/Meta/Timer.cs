@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Shared.Protos;
 
-namespace Server.Games.Meta
+namespace Server.Domain.Games.Meta
 {
     public class Timer : ITimer
     {

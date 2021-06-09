@@ -1,9 +1,9 @@
 using System;
 using Microsoft.Extensions.Logging;
-using Server.Routing;
+using Server.Domain.Games.Meta;
 using Shared.Protos;
 
-namespace Server.Games.Meta
+namespace Server.Domain.Lobby
 {
     public class GameControllerFactory
     {

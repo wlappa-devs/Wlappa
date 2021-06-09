@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Server.Routing.Helpers;
+using Server.Domain.Games.Meta;
 using Shared.Protos;
 
 namespace TestServer.GameTests
 {
-    public class MockInGameClient: IInGameClient
+    public class MockInGameClientInteractor: IInGameClientInteractor
     {
         public IReadOnlyList<InGameServerMessage> Messages => _messages;
 
@@ -14,7 +14,7 @@ namespace TestServer.GameTests
         public Guid Id { get; }
         public string? Name { get; }
 
-        public MockInGameClient(string name)
+        public MockInGameClientInteractor(string name)
         {
             Id = Guid.NewGuid();
             Name = name;

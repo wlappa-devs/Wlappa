@@ -1,14 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Server.Games.Meta;
-using Server.Routing;
-using Server.Routing.Helpers;
+using Server.Domain.Games.Meta;
 using Shared.Protos;
 
-namespace Server.Games.Clicker
+namespace Server.Domain.Games.Clicker
 {
     public class ClickGame : Game
     {
@@ -19,8 +16,8 @@ namespace Server.Games.Clicker
         private long _currentValue;
         private readonly MulticastGroup _allPlayers;
 
-        public ClickGame(ClickGameConfiguration config, GameCreationPayload payload, ITimer timer,
-            IReadOnlyCollection<IInGameClient> players, Func<Task> finished, ILogger<ClickGame> logger)
+        public ClickGame(ClickGameConfiguration config, ITimer timer,
+            IReadOnlyCollection<IInGameClientInteractor> players, Func<Task> finished, ILogger<ClickGame> logger)
         {
             _config = config;
             _timer = timer;
@@ -29,7 +26,7 @@ namespace Server.Games.Clicker
             _allPlayers = new MulticastGroup(players);
         }
 
-        protected override async Task UnsafeHandleEvent(IInGameClient? client, InGameClientMessage e)
+        protected override async Task UnsafeHandleEvent(IInGameClientInteractor? client, InGameClientMessage e)
         {
             _logger.LogInformation("Got increment");
             switch (e)
@@ -61,24 +58,22 @@ namespace Server.Games.Clicker
         }
 
 
-        public Game Create(GameConfiguration config, GameCreationPayload payload,
-            IReadOnlyCollection<IInGameClient> clients,
-            Func<Task> finished)
+        public Game Create(GameConfiguration config, GameCreationPayload payload, Func<Task> finished)
         {
             if (config is not ClickGameConfiguration correctConfig)
                 throw new ArgumentException("Provided invalid configuration");
             var timer = new Timer();
-            var instance = new ClickGame(correctConfig, payload, timer, clients, finished, _logger);
+            var instance = new ClickGame(correctConfig, timer, payload.Clients, finished, _logger);
             timer.Game = instance;
             return instance;
         }
 
         public IReadOnlyList<string> Roles { get; } = new[] {"Clicker"};
-        public string DefaultRole => Roles.First();
+        public string DefaultRole => Roles[0];
 
         public GameTypes Type => GameTypes.Clicker;
 
-        public string? ValidateConfig(GameConfiguration config, GameCreationPayload payload)
+        public string? ValidateConfig(GameConfiguration config, IValidationPayload payload)
         {
             return null;
         }

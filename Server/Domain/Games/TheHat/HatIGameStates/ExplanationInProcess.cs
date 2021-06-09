@@ -1,17 +1,15 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Server.Games.TheHat.GameCore;
 using Shared.Protos.HatSharedClasses;
 
-namespace Server.Games.TheHat.HatIGameStates
+namespace Server.Domain.Games.TheHat.HatIGameStates
 {
     public class ExplanationInProcess : IHatGameState
     {
-        private readonly HatIGame _game;
-        private int _alreadyGuessed = 0;
+        private readonly HatGame _game;
 
-        public ExplanationInProcess(HatIGame game)
+        public ExplanationInProcess(HatGame game)
         {
             _game = game;
         }
@@ -26,27 +24,15 @@ namespace Server.Games.TheHat.HatIGameStates
                     await MoveNextAndAnnounce();
                     return new WaitingForPLayersToGetReady(false, false, _game);
                 case HatGuessRight:
-                    if (_game.IsManged)
+                    if (client.ClientInteractor.Id != _game.ExplanationControllingMember.ClientInteractor.Id)
                     {
-                        if (client != _game.Manger)
-                        {
-                            _game.Logger.Log(LogLevel.Information, "Not manager sent GuessRight");
-                            return this;
-                        }
-
-                        _game.Logger.Log(LogLevel.Information, "Manager sent GuessRight");
-                    }
-                    else if (client is HatPlayer player)
-                    {
-                        _game.Logger.Log(LogLevel.Information, "Unmanaged GuessRight");
-                        if (player != _game.Explainer)
-                            return this;
+                        _game.Logger.LogError("Unauthorized GuessRight");
+                        return this;
                     }
 
                     _game.GuessCurrentWord();
                     await _game.AnnounceScores();
                     await _game.TellTheWord(new HatWordToGuess {Value = (await _game.TakeWord())?.Value});
-                    _alreadyGuessed++;
                     return this;
                 case HatTimerFinish:
                     // ReSharper disable once ConditionIsAlwaysTrueOrFalse

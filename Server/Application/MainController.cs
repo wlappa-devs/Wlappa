@@ -3,11 +3,10 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Server.Games.Meta;
-using Server.Routing.Helpers;
+using Server.Domain.Lobby;
 using Shared.Protos;
 
-namespace Server.Routing
+namespace Server.Application
 {
     public class MainController
     {
@@ -24,7 +23,7 @@ namespace Server.Routing
             _gameControllerFactory = gameControllerFactory;
         }
 
-        public async Task ConnectClientToGame(Client player, Guid gameId)
+        public async Task ConnectClientToGame(ClientInteractor player, Guid gameId)
         {
             if (!_games.ContainsKey(gameId))
             {

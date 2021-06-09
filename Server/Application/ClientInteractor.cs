@@ -2,41 +2,26 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Channels;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Connections;
 using Microsoft.Extensions.Logging;
+using Server.Domain.Lobby;
 using Shared.Protos;
 
-namespace Server.Routing.Helpers
+namespace Server.Application
 {
-    public class ClientFactory
-    {
-        private readonly ILogger<Client> _logger;
-        private readonly MainController _mainController;
-
-        public ClientFactory(ILogger<Client> logger, MainController mainController)
-        {
-            _logger = logger;
-            _mainController = mainController;
-        }
-
-        public Client Create(IAsyncEnumerable<ClientMessage> request,
-            ChannelWriter<ServerMessage> response) => new(request, response, _logger, _mainController);
-    }
-
-    public class Client : ILobbyClient
+    public class ClientInteractor : ILobbyClientInteractor
     {
         private readonly IAsyncEnumerable<ClientMessage> _request;
         private readonly ChannelWriter<ServerMessage> _response;
-        private readonly ILogger<Client> _logger;
+        private readonly ILogger<ClientInteractor> _logger;
         private readonly MainController _mainController;
         public Guid Id { get; } = Guid.NewGuid();
         public string? Name { get; private set; }
 
-        public Func<Client, LobbyClientMessage, Task>? LobbyEventListener { private get; set; }
-        public Func<Client, InGameClientMessage, Task>? InGameEventListener { private get; set; }
+        public Func<ClientInteractor, LobbyClientMessage, Task>? LobbyEventListener { private get; set; }
+        public Func<ClientInteractor, InGameClientMessage, Task>? InGameEventListener { private get; set; }
 
-        public Client(IAsyncEnumerable<ClientMessage> request,
-            ChannelWriter<ServerMessage> response, ILogger<Client> logger, MainController mainController)
+        public ClientInteractor(IAsyncEnumerable<ClientMessage> request,
+            ChannelWriter<ServerMessage> response, ILogger<ClientInteractor> logger, MainController mainController)
         {
             _request = request;
             _response = response;
@@ -98,15 +83,9 @@ namespace Server.Routing.Helpers
             }
         }
 
-        public async Task HandleInGameMessage(InGameServerMessage message)
-        {
-            await _response.WriteAsync(message);
-        }
+        public async Task HandleInGameMessage(InGameServerMessage message) => await _response.WriteAsync(message);
 
-        public async Task HandleLobbyMessage(LobbyServerMessage message)
-        {
-            await _response.WriteAsync(message);
-        }
+        public async Task HandleLobbyMessage(LobbyServerMessage message) => await _response.WriteAsync(message);
 
         public async void HandleConnectionFailure()
         {

@@ -6,13 +6,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ProtoBuf.Grpc.Reflection;
-using Server.Games.Clicker;
-using Server.Games.Meta;
 using Server.Services;
 using ProtoBuf.Grpc.Server;
-using Server.Games.TheHat;
-using Server.Routing;
-using Server.Routing.Helpers;
+using Server.Application;
+using Server.Domain.Games.Clicker;
+using Server.Domain.Games.Meta;
+using Server.Domain.Games.TheHat;
+using Server.Domain.Lobby;
 using Shared.Protos;
 
 namespace Server
@@ -30,7 +30,7 @@ namespace Server
             services.AddSingleton<IGameFactory, HatGameFactory>();
             services.AddSingleton<GameControllerFactory>();
             services.AddSingleton<GameResolver>();
-            services.AddSingleton<ClientFactory>();
+            services.AddSingleton<ClientInteractorFactory>();
             services.AddSingleton<MainController>();
         }
 

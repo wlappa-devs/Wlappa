@@ -3,33 +3,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Server.Games.Meta;
-using Server.Routing.Helpers;
+using Server.Domain.Games.Meta;
 using Shared.Protos;
 using Shared.Protos.HatSharedClasses;
 
-namespace Server.Games.TheHat
+namespace Server.Domain.Games.TheHat
 {
     public class HatGameFactory : IGameFactory
     {
-        private readonly ILogger<HatIGame> _logger;
+        private readonly ILogger<HatGame> _logger;
 
-        public HatGameFactory(ILogger<HatIGame> logger)
+        public HatGameFactory(ILogger<HatGame> logger)
         {
             _logger = logger;
         }
 
         public string DefaultRole => HatRolePlayer.Value;
 
-        public Game Create(GameConfiguration config, GameCreationPayload payload,
-            IReadOnlyCollection<IInGameClient> clients,
-            Func<Task> finished)
+        public Game Create(GameConfiguration config, GameCreationPayload payload, Func<Task> finished)
         {
             switch (config)
             {
                 case HatConfiguration hatConfiguration:
                     var timer = new Timer();
-                    var instance = new HatIGame(hatConfiguration, payload, clients, finished, timer, new Random(),
+                    var instance = new HatGame(hatConfiguration, payload, payload.Clients, finished, timer,
+                        new Random(),
                         _logger);
                     timer.Game = instance;
                     return instance;
@@ -43,21 +41,21 @@ namespace Server.Games.TheHat
 
         public GameTypes Type => GameTypes.TheHat;
 
-        public string? ValidateConfig(GameConfiguration config, GameCreationPayload payload) =>
+        public string? ValidateConfig(GameConfiguration config, IValidationPayload payload) =>
             config switch
             {
                 HatConfiguration hatConfiguration => ValidateConfig(hatConfiguration, payload),
                 _ => "Game configuration from another game"
             };
 
-        private static string? ValidateConfig(HatConfiguration config, GameCreationPayload payload)
+        private static string? ValidateConfig(HatConfiguration config, IValidationPayload payload)
         {
             if (config.TimeToExplain.Seconds < 1)
                 return "Time to explain should be at least 1 second. U r not FLASH";
             if (config.WordsToBeWritten < 1)
                 return "Words to be written should be at least 1. U r not dumb, I hope";
             if (config.HatGameModeConfiguration is HatPairChoosingModeConfiguration
-                && payload.PlayerToRole.Values.Count(x => x == "player") % 2 == 0)
+                && payload.PlayerToRole.Values.Count(x => x == HatRolePlayer.Value) % 2 == 0)
                 return "Not even number of players";
             if (payload.PlayerToRole.Values.Count(x => x == HatRoleManager.Value) > 1)
                 return "Too many managers in the game";

@@ -1,11 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using Server.Games.Meta;
+using Server.Domain.Games.Meta;
 using Shared.Protos;
 
-namespace Server.Routing
+namespace Server.Application
 {
     public class GameResolver
     {

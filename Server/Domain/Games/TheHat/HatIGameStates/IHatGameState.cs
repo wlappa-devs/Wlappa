@@ -1,8 +1,7 @@
 using System.Threading.Tasks;
-using Server.Games.TheHat.GameCore;
 using Shared.Protos.HatSharedClasses;
 
-namespace Server.Games.TheHat.HatIGameStates
+namespace Server.Domain.Games.TheHat.HatIGameStates
 {
     public interface IHatGameState
     {

@@ -1,16 +1,15 @@
 using System;
 using System.Threading.Tasks;
-using Server.Games.TheHat.GameCore;
 using Shared.Protos.HatSharedClasses;
 
-namespace Server.Games.TheHat.HatIGameStates
+namespace Server.Domain.Games.TheHat.HatIGameStates
 {
     public class AddingWordsState : IHatGameState
     {
         private readonly int _authorsReady;
-        private readonly HatIGame _game;
+        private readonly HatGame _game;
 
-        public AddingWordsState(int authorsReady, HatIGame game)
+        public AddingWordsState(int authorsReady, HatGame game)
         {
             _authorsReady = authorsReady;
             _game = game;
@@ -26,7 +25,7 @@ namespace Server.Games.TheHat.HatIGameStates
                     if (addingResult != 1) return this;
                     await _game.SendMulticastMessage(new HatPlayerSuccessfullyAddedWords
                     {
-                        AuthorId = client.Client.Id,
+                        AuthorId = client.ClientInteractor.Id,
                         TotalNotReady = _game.PlayersCount - _authorsReady - 1
                     });
                     if (_authorsReady + 1 == _game.PlayersCount)

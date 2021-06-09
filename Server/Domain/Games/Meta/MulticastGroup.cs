@@ -1,17 +1,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Server.Routing;
-using Server.Routing.Helpers;
 using Shared.Protos;
 
-namespace Server.Games.Meta
+namespace Server.Domain.Games.Meta
 {
     public class MulticastGroup
     {
-        private readonly IReadOnlyCollection<IInGameClient> _players;
+        private readonly IReadOnlyCollection<IInGameClientInteractor> _players;
 
-        public MulticastGroup(IReadOnlyCollection<IInGameClient> players)
+        public MulticastGroup(IReadOnlyCollection<IInGameClientInteractor> players)
         {
             _players = players;
         }

@@ -3,7 +3,7 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using ProtoBuf.Grpc;
-using Server.Routing.Helpers;
+using Server.Application;
 using Shared.Protos;
 
 namespace Server.Services
@@ -13,12 +13,12 @@ namespace Server.Services
         // ReSharper disable once NotAccessedField.Local
         private readonly ILogger<MainServiceProtobufNet> _logger;
 
-        private readonly ClientFactory _clientFactory;
+        private readonly ClientInteractorFactory _clientInteractorFactory;
 
-        public MainServiceProtobufNet(ILogger<MainServiceProtobufNet> logger, ClientFactory clientFactory)
+        public MainServiceProtobufNet(ILogger<MainServiceProtobufNet> logger, ClientInteractorFactory clientInteractorFactory)
         {
             _logger = logger;
-            _clientFactory = clientFactory;
+            _clientInteractorFactory = clientInteractorFactory;
         }
 
         public IAsyncEnumerable<ServerMessage> Connect(
@@ -34,7 +34,7 @@ namespace Server.Services
         private async Task HandleClient(IAsyncEnumerable<ClientMessage> request,
             ChannelWriter<ServerMessage> response, CallContext context = default)
         {
-            var client = _clientFactory.Create(request, response);
+            var client = _clientInteractorFactory.Create(request, response);
             context.CancellationToken.Register(() => client.HandleConnectionFailure());
             await client.StartProcessing();
 

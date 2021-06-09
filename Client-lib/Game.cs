@@ -34,10 +34,7 @@ namespace Client_lib
 
         public void HandleGameEvent(InGameServerMessage evt) //TODO Something wrong with naming
         {
-            if (MessageFromServer is null)
-            {
-                _messageQueue.Enqueue(evt);
-            }
+            if (MessageFromServer is null) _messageQueue.Enqueue(evt);
 
             MessageFromServer?.Invoke(evt);
         }
