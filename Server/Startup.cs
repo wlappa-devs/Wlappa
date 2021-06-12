@@ -9,6 +9,7 @@ using ProtoBuf.Grpc.Reflection;
 using Server.Services;
 using ProtoBuf.Grpc.Server;
 using Server.Application;
+using Server.Application.ChainOfResponsibilityUtils;
 using Server.Domain.Games.Clicker;
 using Server.Domain.Games.Meta;
 using Server.Domain.Games.TheHat;
@@ -17,6 +18,18 @@ using Shared.Protos;
 
 namespace Server
 {
+    public static class ServiceCollectionExtension
+    {
+        public static void AddMessageType<T>(this IServiceCollection services) where T : ClientMessage
+        {
+            services.AddSingleton<ChainHandlerManager<T>>();
+            services.AddSingleton<IChainHandlerFactory>(p => p.GetService<ChainHandlerManager<T>>()!);
+            services.AddSingleton<IClientEventEmitterResolver<T>>(p =>
+                p.GetService<ChainHandlerManager<T>>()!);
+            services.AddSingleton<SubscriptionManager<T>>();
+        }
+    }
+
     public class Startup
     {
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -28,10 +41,17 @@ namespace Server
             services.AddSingleton<Random>();
             services.AddSingleton<IGameFactory, ClickGameFactory>();
             services.AddSingleton<IGameFactory, HatGameFactory>();
-            services.AddSingleton<GameControllerFactory>();
-            services.AddSingleton<GameResolver>();
+
+            services.AddMessageType<PreGameClientMessage>();
+            services.AddMessageType<LobbyClientMessage>();
+            services.AddMessageType<InGameClientMessage>();
+            services.AddSingleton<ChainResolver>();
+
+            services.AddSingleton<LobbyFactory>();
+            services.AddSingleton<GameFactoryResolver>();
+            services.AddSingleton<ClientRouter>();
             services.AddSingleton<ClientInteractorFactory>();
-            services.AddSingleton<MainController>();
+            services.AddSingleton<PreGameClientFactory>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,12 +61,14 @@ namespace Server
             {
                 app.UseDeveloperExceptionPage();
             }
-            System.IO.File.WriteAllText("protocol.proto.ignore", new SchemaGenerator().GetSchema(typeof(IMainServiceContract)));
+
+            System.IO.File.WriteAllText("protocol.proto.ignore",
+                new SchemaGenerator().GetSchema(typeof(IMainServiceContract)));
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<MainServiceProtobufNet>();
+                endpoints.MapGrpcService<ClientService>();
 
                 endpoints.MapGet("/",
                     async context =>

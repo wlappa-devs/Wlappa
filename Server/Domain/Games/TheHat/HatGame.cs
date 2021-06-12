@@ -24,7 +24,7 @@ namespace Server.Domain.Games.TheHat
         private readonly TimeSpan _timeToExplain;
 
         private IHatGameState _currentState;
-        private readonly Dictionary<IInGameClientInteractor, HatMember> _clientToMemberMapping;
+        private readonly Dictionary<Guid, HatMember> _clientToMemberMapping;
         private readonly List<Word> _words;
 
         private readonly HatMember? _manger;
@@ -46,7 +46,8 @@ namespace Server.Domain.Games.TheHat
 
         private Guid? _currentExplanationId;
 
-        public HatGame(HatConfiguration configuration, GameCreationPayload payload, Func<Task> finished, ITimer timer, Random random,
+        public HatGame(HatConfiguration configuration, GameCreationPayload payload, Func<Task> finished, ITimer timer,
+            Random random,
             ILogger<HatGame> logger)
         {
             _finished = finished;
@@ -102,7 +103,7 @@ namespace Server.Domain.Games.TheHat
 
             _words = new List<Word>();
             _clientToMemberMapping = _allMembers
-                .ToDictionary(player => player.ClientInteractor, player => player);
+                .ToDictionary(player => player.ClientInteractor.Id, player => player);
             _currentState = new AddingWordsState(0, this);
         }
 
@@ -113,18 +114,19 @@ namespace Server.Domain.Games.TheHat
             _currentExplanationId = null;
         }
 
-        protected override async Task UnsafeHandleEvent(IInGameClientInteractor? client, InGameClientMessage e)
+        protected override async Task UnsafeHandleEvent(Guid? clientId, InGameClientMessage e)
         {
             if (e is HatClientMessage hatClientMessage)
-                if (client is null)
+                if (clientId is null)
 #pragma warning disable 8625
                     _currentState = await _currentState.HandleEvent(null, hatClientMessage);
 #pragma warning restore 8625
 
                 else
-                    _currentState = await _currentState.HandleEvent(_clientToMemberMapping[client], hatClientMessage);
+                    _currentState =
+                        await _currentState.HandleEvent(_clientToMemberMapping[clientId.Value], hatClientMessage);
             else
-                throw new Exception("Wrong game, dude");
+                throw new ArgumentException("Wrong game, dude");
         }
 
         protected override async Task UnsafeInitialize()

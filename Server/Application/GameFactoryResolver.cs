@@ -6,11 +6,11 @@ using Shared.Protos;
 
 namespace Server.Application
 {
-    public class GameResolver
+    public class GameFactoryResolver
     {
         private readonly ImmutableArray<IGameFactory> _games;
 
-        public GameResolver(IEnumerable<IGameFactory> games)
+        public GameFactoryResolver(IEnumerable<IGameFactory> games)
         {
             _games = games.ToImmutableArray();
         }

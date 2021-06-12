@@ -1,4 +1,5 @@
-using System.Threading;
+using System;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -17,6 +18,7 @@ namespace AndroidClient.UI.InLobbyViews
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false)]
     public class LobbyActivity : AppCompatActivity
     {
+        private static readonly TimeSpan HostLeftSnackBarLength = TimeSpan.FromSeconds(2);
         private LobbyViewModel _viewModel = null!;
         private PlayersListAdapter _adapter = null!;
         private EditText? _idView;
@@ -80,11 +82,10 @@ namespace AndroidClient.UI.InLobbyViews
             _viewModel.StartProcessingEvents();
         }
 
-        private void OnViewModelLobbyDestroyed(string msg)
+        private async void OnViewModelLobbyDestroyed(string msg)
         {
-            var snack = Snackbar.Make(_idView, msg, 2000);
-            snack.Show();
-            SpinWait.SpinUntil(() => !snack.IsShown);
+            Snackbar.Make(_idView, msg, HostLeftSnackBarLength.Milliseconds).Show();
+            await Task.Delay(HostLeftSnackBarLength).ConfigureAwait(true);
             Finish();
         }
 

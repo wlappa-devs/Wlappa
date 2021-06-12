@@ -66,9 +66,9 @@ namespace TestServer.GameTests
         public void TestIncorrectCommandFails()
         {
             Assert.ThrowsAsync<Exception>(async () =>
-                await _gameInstance.HandleEvent(_clients[0], new InGameClientMessage()));
+                await _gameInstance.EventHandle(_clients[0].Id, new InGameClientMessage()));
             Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () =>
-                await _gameInstance.HandleEvent(_clients[0], new HatClientMessage()));
+                await _gameInstance.EventHandle(_clients[0].Id, new HatClientMessage()));
         }
 
         [Test]
@@ -123,8 +123,8 @@ namespace TestServer.GameTests
             var currentPair = GetCurrentPair();
             var currentExplainer = _clients.First(client => client.Id == currentPair.Explainer);
             var currentUnderstander = _clients.First(client => client.Id == currentPair.Understander);
-            _gameInstance.HandleEvent(currentExplainer, new HatClientIsReady()).Wait();
-            _gameInstance.HandleEvent(currentUnderstander, new HatClientIsReady()).Wait();
+            _gameInstance.EventHandle(currentExplainer.Id, new HatClientIsReady()).Wait();
+            _gameInstance.EventHandle(currentUnderstander.Id, new HatClientIsReady()).Wait();
             return (currentExplainer, currentUnderstander);
         }
 
@@ -136,10 +136,10 @@ namespace TestServer.GameTests
             var (explainer, understander) = GetReady();
             for (var _ = 0; _ < correctlyGuessed; _++)
             {
-                _gameInstance.HandleEvent(explainer, new HatGuessRight()).Wait();
+                _gameInstance.EventHandle(explainer.Id, new HatGuessRight()).Wait();
             }
 
-            _gameInstance.HandleEvent(null, new HatTimerFinish())
+            _gameInstance.EventHandle(null, new HatTimerFinish())
                 .Wait();
         }
 
@@ -148,7 +148,7 @@ namespace TestServer.GameTests
             var wordsPool = new Queue<string>(_words);
             foreach (var client in _clients)
             {
-                _gameInstance.HandleEvent(client,
+                _gameInstance.EventHandle(client.Id,
                     new HatAddWords {Value = new[] {wordsPool.Dequeue(), wordsPool.Dequeue()}}).Wait();
             }
         }
