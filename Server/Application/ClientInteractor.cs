@@ -8,12 +8,22 @@ using Shared.Protos;
 
 namespace Server.Application
 {
+    interface IDialog<out TClient, in TServer> where TClient : ClientMessage where TServer : ServerMessage
+    {
+        public Guid Id { get; }
+        public string Name { get; }
+
+        public void SendToClient(TServer message);
+
+        public Func<IDialog<TClient, TServer>, TClient, Task> EventListener { set; }
+    }
+
     public class ClientInteractor : ILobbyClientInteractor
     {
         private readonly IAsyncEnumerable<ClientMessage> _request;
         private readonly ChannelWriter<ServerMessage> _response;
         private readonly ILogger<ClientInteractor> _logger;
-        private readonly MainController _mainController;
+        private readonly ClientRouter _clientRouter;
         public Guid Id { get; } = Guid.NewGuid();
         public string? Name { get; private set; }
 
@@ -21,12 +31,12 @@ namespace Server.Application
         public Func<ClientInteractor, InGameClientMessage, Task>? InGameEventListener { private get; set; }
 
         public ClientInteractor(IAsyncEnumerable<ClientMessage> request,
-            ChannelWriter<ServerMessage> response, ILogger<ClientInteractor> logger, MainController mainController)
+            ChannelWriter<ServerMessage> response, ILogger<ClientInteractor> logger, ClientRouter clientRouter)
         {
             _request = request;
             _response = response;
             _logger = logger;
-            _mainController = mainController;
+            _clientRouter = clientRouter;
         }
 
         public async Task StartProcessing()
@@ -68,14 +78,14 @@ namespace Server.Application
                     });
                     return;
                 case CreateLobby m:
-                    var gameId = _mainController.CreateGame(Id, m.Configuration);
+                    var gameId = _clientRouter.CreateGame(Id, m.Configuration);
                     await _response.WriteAsync(new LobbyCreated()
                     {
                         Guid = gameId
                     });
                     return;
                 case JoinLobby m:
-                    await _mainController.ConnectClientToGame(this, m.Id);
+                    await _clientRouter.ConnectClientToGame(this, m.Id);
                     return;
                 case ChangeName m:
                     Name = m.NewName;

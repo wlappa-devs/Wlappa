@@ -28,10 +28,10 @@ namespace Server
             services.AddSingleton<Random>();
             services.AddSingleton<IGameFactory, ClickGameFactory>();
             services.AddSingleton<IGameFactory, HatGameFactory>();
-            services.AddSingleton<GameControllerFactory>();
+            services.AddSingleton<LobbyFactory>();
             services.AddSingleton<GameResolver>();
             services.AddSingleton<ClientInteractorFactory>();
-            services.AddSingleton<MainController>();
+            services.AddSingleton<ClientRouter>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,7 +46,7 @@ namespace Server
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<MainServiceProtobufNet>();
+                endpoints.MapGrpcService<ClientService>();
 
                 endpoints.MapGet("/",
                     async context =>

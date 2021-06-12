@@ -8,19 +8,19 @@ using Shared.Protos;
 
 namespace Server.Application
 {
-    public class MainController
+    public class ClientRouter
     {
-        private readonly ILogger<MainController> _logger;
+        private readonly ILogger<ClientRouter> _logger;
         private readonly GameResolver _gameResolver;
-        private readonly GameControllerFactory _gameControllerFactory;
-        private readonly ConcurrentDictionary<Guid, GameController> _games = new();
+        private readonly LobbyFactory _lobbyFactory;
+        private readonly ConcurrentDictionary<Guid, Lobby> _games = new();
 
-        public MainController(ILogger<MainController> logger, GameResolver gameResolver,
-            GameControllerFactory gameControllerFactory)
+        public ClientRouter(ILogger<ClientRouter> logger, GameResolver gameResolver,
+            LobbyFactory lobbyFactory)
         {
             _logger = logger;
             _gameResolver = gameResolver;
-            _gameControllerFactory = gameControllerFactory;
+            _lobbyFactory = lobbyFactory;
         }
 
         public async Task ConnectClientToGame(ClientInteractor player, Guid gameId)
@@ -38,7 +38,7 @@ namespace Server.Application
             var gameFactory = _gameResolver.FindGameFactory(config.Type);
             var newId = Guid.NewGuid();
             var gameController =
-                _gameControllerFactory.Create(gameFactory, config, hostId, () => _games.Remove(newId, out _));
+                _lobbyFactory.Create(gameFactory, config, hostId, () => _games.Remove(newId, out _));
             _games[newId] = gameController;
             return newId;
         }

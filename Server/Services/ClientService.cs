@@ -8,14 +8,14 @@ using Shared.Protos;
 
 namespace Server.Services
 {
-    public class MainServiceProtobufNet : IMainServiceContract
+    public class ClientService : IMainServiceContract
     {
         // ReSharper disable once NotAccessedField.Local
-        private readonly ILogger<MainServiceProtobufNet> _logger;
+        private readonly ILogger<ClientService> _logger;
 
         private readonly ClientInteractorFactory _clientInteractorFactory;
 
-        public MainServiceProtobufNet(ILogger<MainServiceProtobufNet> logger, ClientInteractorFactory clientInteractorFactory)
+        public ClientService(ILogger<ClientService> logger, ClientInteractorFactory clientInteractorFactory)
         {
             _logger = logger;
             _clientInteractorFactory = clientInteractorFactory;

@@ -8,15 +8,15 @@ namespace Server.Application
     public class ClientInteractorFactory
     {
         private readonly ILogger<ClientInteractor> _logger;
-        private readonly MainController _mainController;
+        private readonly ClientRouter _clientRouter;
 
-        public ClientInteractorFactory(ILogger<ClientInteractor> logger, MainController mainController)
+        public ClientInteractorFactory(ILogger<ClientInteractor> logger, ClientRouter clientRouter)
         {
             _logger = logger;
-            _mainController = mainController;
+            _clientRouter = clientRouter;
         }
 
         public ClientInteractor Create(IAsyncEnumerable<ClientMessage> request,
-            ChannelWriter<ServerMessage> response) => new(request, response, _logger, _mainController);
+            ChannelWriter<ServerMessage> response) => new(request, response, _logger, _clientRouter);
     }
 }
