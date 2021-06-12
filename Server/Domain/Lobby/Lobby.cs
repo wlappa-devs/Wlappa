@@ -2,97 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Server.Application.ChainOfResponsibilityUtils;
 using Server.Domain.Games.Meta;
 using Shared.Protos;
 
 namespace Server.Domain.Lobby
 {
-    internal class SynchronisedPlayersState
-    {
-        private readonly Dictionary<Guid, string> _playersToRoles = new();
-        private readonly List<ILobbyClientInteractor> _players = new();
-        private readonly ReaderWriterLockSlim _lock = new();
-
-        public void AddPlayerWithRole(ILobbyClientInteractor player, string role)
-        {
-            _lock.EnterWriteLock();
-            try
-            {
-                _players.Add(player);
-                _playersToRoles[player.Id] = role;
-            }
-            finally
-            {
-                _lock.ExitWriteLock();
-            }
-        }
-
-        public void ChangePlayerRole(Guid id, string newRole)
-        {
-            _lock.EnterWriteLock();
-            try
-            {
-                _playersToRoles[id] = newRole;
-            }
-            finally
-            {
-                _lock.ExitWriteLock();
-            }
-        }
-
-        public IReadOnlyList<ILobbyClientInteractor> RemovePlayer(Guid id)
-        {
-            _lock.EnterWriteLock();
-            try
-            {
-                _players.RemoveAll(p => p.Id == id);
-                _playersToRoles.Remove(id);
-                return _players.ToImmutableArray();
-            }
-            finally
-            {
-                _lock.ExitWriteLock();
-            }
-        }
-
-        public T ReadWithLock<T>(
-            Func<IReadOnlyList<ILobbyClientInteractor>, IReadOnlyDictionary<Guid, string>, T> action)
-        {
-            _lock.EnterReadLock();
-            try
-            {
-                return action(_players.ToImmutableArray(), _playersToRoles.ToImmutableDictionary());
-            }
-            finally
-            {
-                _lock.ExitReadLock();
-            }
-        }
-
-        public void ReadWithLock(
-            Action<IReadOnlyList<ILobbyClientInteractor>, IReadOnlyDictionary<Guid, string>> action)
-        {
-            _lock.EnterReadLock();
-            try
-            {
-                action(_players, _playersToRoles);
-            }
-            finally
-            {
-                _lock.ExitReadLock();
-            }
-        }
-
-        ~SynchronisedPlayersState()
-        {
-            _lock.Dispose();
-        }
-    }
-
-    public class Lobby
+    public class Lobby : IClientEventSubscriber<LobbyClientMessage>
     {
         private readonly IGameFactory _factory;
         private readonly SynchronisedPlayersState _playersState = new();
@@ -100,70 +18,68 @@ namespace Server.Domain.Lobby
 
         // ReSharper disable once NotAccessedField.Local
         private readonly ILogger _logger;
-        private readonly Action _finished;
-        private readonly Guid _host;
+        private readonly Action<IReadOnlyCollection<Guid>>? _finished;
+        private readonly SubscriptionManager<InGameClientMessage> _subscriptionManager;
+        private readonly Guid _hostId;
         private Game? _game;
         private bool _hasFinished;
         private GameTypes Type => _factory.Type;
+        private IChannelToClient<LobbyServerMessage>? _host;
 
-        public Lobby(IGameFactory factory, GameConfiguration config, Guid initialHost, ILogger logger,
-            Action finished)
+        public Lobby(IGameFactory factory, GameConfiguration config, Guid initialHostId, ILogger logger,
+            Action<IReadOnlyCollection<Guid>>? finished, SubscriptionManager<InGameClientMessage> subscriptionManager)
         {
             _factory = factory;
             _config = config;
             _logger = logger;
             _finished = finished;
-            _host = initialHost;
+            _subscriptionManager = subscriptionManager;
+            _hostId = initialHostId;
         }
 
-        public async Task ConnectPlayer(ILobbyClientInteractor player)
+        public async Task ConnectPlayer(IChannelToClient<LobbyServerMessage> player)
         {
             if (_game is not null)
             {
-                await player.HandleLobbyMessage(new GameAlreadyStarted());
+                await player.SendMessage(new GameAlreadyStarted());
                 return;
             }
 
+            if (player.Id == _hostId) _host = player;
             _playersState.AddPlayerWithRole(player, _factory.DefaultRole);
-            player.LobbyEventListener = LobbyEventListener;
-            player.InGameEventListener = HandleGameEvent;
-            await player.HandleLobbyMessage(new JoinedLobby()
+
+            await player.SendMessage(new JoinedLobby()
             {
                 Type = Type,
-                IsHost = player.Id == _host,
+                IsHost = player.Id == _hostId,
                 AvailableRoles = _factory.Roles
             });
             await NotifyLobbyUpdate();
         }
 
-        private async Task CreateGame(ILobbyClientInteractor initiator)
+        private async Task CreateGame()
         {
-            var (payload, message, players) = _playersState.ReadWithLock((playersInState, playersToRoles) =>
-            {
-                var payloadInState = new GameCreationPayload(playersToRoles, playersInState.ToArray());
-                var messageInState = _factory.ValidateConfig(_config, payloadInState);
-                return (payloadInState, messageInState, playersInState);
-            });
-
+            var (players, playersToRoles) =
+                _playersState.ReadWithLock((p, p2R) => (p, p2R));
+            var payload = new GameCreationPayload(playersToRoles,
+                players.Select(e => e.AsNewHandler<InGameServerMessage>()).ToArray());
+            var message = _factory.ValidateConfig(_config, payload);
             if (message is null)
             {
                 _game = _factory.Create(_config, payload, HandleGameFinish);
                 var notification = new GameCreated();
-                await Task.WhenAll(players.Select(p => p.HandleLobbyMessage(notification)));
+                foreach (var player in players) _subscriptionManager.SubscribeForClient(player.Id, _game);
+
+                await Task.WhenAll(players.Select(p => p.SendMessage(notification)));
                 await _game.Initialize();
                 return;
             }
 
-            await initiator.HandleLobbyMessage(new ConfigurationInvalid()
-            {
-                Message = message
-            });
-        }
-
-        private async Task HandleGameEvent(IInGameClientInteractor clientInteractor, InGameClientMessage message)
-        {
-            if (_game is null) return;
-            await _game.HandleEvent(clientInteractor, message);
+            if (_host is not null)
+                await _host.SendMessage(new ConfigurationInvalid()
+                {
+                    Message = message
+                });
         }
 
         private async Task HandleGameFinish()
@@ -173,18 +89,21 @@ namespace Server.Domain.Lobby
                 _game = null;
                 return playersInState;
             });
+            foreach (var player in players) _subscriptionManager.UnsubscribeFromClient(player.Id);
 
             var notification = new GameFinished();
-            await Task.WhenAll(players.Select(p => p.HandleLobbyMessage(notification)));
+            await Task.WhenAll(players.Select(p => p.SendMessage(notification)));
         }
 
-        private async Task LobbyEventListener(ILobbyClientInteractor clientInteractor, LobbyClientMessage message)
+        public async Task EventHandle(Guid? cId, LobbyClientMessage message)
         {
+            if (cId is null) return;
+            var clientId = cId.Value;
             switch (message)
             {
                 case ChangeRole m:
                 {
-                    if (clientInteractor.Id != _host) return;
+                    if (cId != _hostId) return;
                     if (_factory.Roles.Contains(m.NewRole))
                         _playersState.ChangePlayerRole(m.PlayerId, m.NewRole);
 
@@ -192,30 +111,31 @@ namespace Server.Domain.Lobby
                     return;
                 }
                 case StartGame:
-                    if (clientInteractor.Id != _host) return;
-                    await CreateGame(clientInteractor);
+                    if (clientId != _hostId) return;
+                    await CreateGame();
                     return;
                 case Disconnect:
-                    var players = _playersState.RemovePlayer(clientInteractor.Id);
+                    var players = _playersState.RemovePlayer(clientId);
+                    var playerIds = players.Select(p => p.Id).ToImmutableArray();
                     await NotifyLobbyUpdate();
-                    if (!players.Any()) HandleFinishDisconnection();
+                    if (!players.Any()) HandleFinishDisconnection(playerIds);
 
-                    if (players.All(x => x.Id != _host))
+                    if (players.All(x => x.Id != _hostId))
                     {
                         var msg = new LobbyDestroyed {Msg = "Host left"};
-                        await Task.WhenAll(players.Select(player => player.HandleLobbyMessage(msg)));
-                        HandleFinishDisconnection();
+                        await Task.WhenAll(players.Select(player => player.SendMessage(msg)));
+                        HandleFinishDisconnection(playerIds);
                     }
 
                     return;
             }
         }
 
-        private void HandleFinishDisconnection()
+        private void HandleFinishDisconnection(IReadOnlyCollection<Guid> playerIds)
         {
             if (_hasFinished) return;
             _hasFinished = true;
-            _finished();
+            _finished?.Invoke(playerIds);
         }
 
         private async Task NotifyLobbyUpdate()
@@ -233,7 +153,7 @@ namespace Server.Domain.Lobby
                     };
                 }).ToArray()
             }, playersInState));
-            await Task.WhenAll(players.Select(p => p.HandleLobbyMessage(message)));
+            await Task.WhenAll(players.Select(p => p.SendMessage(message)));
         }
     }
 }

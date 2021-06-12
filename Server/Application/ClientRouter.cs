@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Server.Application.ChainOfResponsibilityUtils;
 using Server.Domain.Lobby;
 using Shared.Protos;
 
@@ -10,36 +11,45 @@ namespace Server.Application
 {
     public class ClientRouter
     {
+        // ReSharper disable once NotAccessedField.Local
         private readonly ILogger<ClientRouter> _logger;
-        private readonly GameResolver _gameResolver;
+        private readonly GameFactoryResolver _gameFactoryResolver;
         private readonly LobbyFactory _lobbyFactory;
-        private readonly ConcurrentDictionary<Guid, Lobby> _games = new();
+        private readonly SubscriptionManager<LobbyClientMessage> _subscriptionManager;
+        private readonly ConcurrentDictionary<Guid, Lobby> _lobbies = new();
 
-        public ClientRouter(ILogger<ClientRouter> logger, GameResolver gameResolver,
-            LobbyFactory lobbyFactory)
+        public ClientRouter(ILogger<ClientRouter> logger, GameFactoryResolver gameFactoryResolver,
+            LobbyFactory lobbyFactory, SubscriptionManager<LobbyClientMessage> subscriptionManager)
         {
             _logger = logger;
-            _gameResolver = gameResolver;
+            _gameFactoryResolver = gameFactoryResolver;
             _lobbyFactory = lobbyFactory;
+            _subscriptionManager = subscriptionManager;
         }
 
-        public async Task ConnectClientToGame(ClientInteractor player, Guid gameId)
+        public async Task ConnectClientToLobby(IChannelToClient<LobbyServerMessage> player, Guid lobbyId)
         {
-            if (!_games.ContainsKey(gameId))
+            if (!_lobbies.TryGetValue(lobbyId, out var lobby))
             {
-                await player.HandleLobbyMessage(new LobbyNotFound());
+                await player.SendMessage(new LobbyNotFound());
+                return;
             }
 
-            await _games[gameId].ConnectPlayer(player);
+            await lobby.ConnectPlayer(player);
+            _subscriptionManager.SubscribeForClient(player.Id, lobby);
         }
 
         public Guid CreateGame(Guid hostId, GameConfiguration config)
         {
-            var gameFactory = _gameResolver.FindGameFactory(config.Type);
+            var gameFactory = _gameFactoryResolver.FindGameFactory(config.Type);
             var newId = Guid.NewGuid();
-            var gameController =
-                _lobbyFactory.Create(gameFactory, config, hostId, () => _games.Remove(newId, out _));
-            _games[newId] = gameController;
+            var lobby =
+                _lobbyFactory.Create(gameFactory, config, hostId, playerIds =>
+                {
+                    _lobbies.Remove(newId, out _);
+                    foreach (var playerId in playerIds) _subscriptionManager.UnsubscribeFromClient(playerId);
+                });
+            _lobbies[newId] = lobby;
             return newId;
         }
     }

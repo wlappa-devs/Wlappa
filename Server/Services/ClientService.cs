@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using ProtoBuf.Grpc;
 using Server.Application;
+using Server.Application.ChainOfResponsibilityUtils;
 using Shared.Protos;
 
 namespace Server.Services
@@ -14,11 +15,16 @@ namespace Server.Services
         private readonly ILogger<ClientService> _logger;
 
         private readonly ClientInteractorFactory _clientInteractorFactory;
+        private readonly PreGameClientFactory _preGameClientFactory;
+        private readonly SubscriptionManager<PreGameClientMessage> _subscriptionManager;
 
-        public ClientService(ILogger<ClientService> logger, ClientInteractorFactory clientInteractorFactory)
+        public ClientService(ILogger<ClientService> logger, ClientInteractorFactory clientInteractorFactory,
+            PreGameClientFactory preGameClientFactory, SubscriptionManager<PreGameClientMessage> subscriptionManager)
         {
             _logger = logger;
             _clientInteractorFactory = clientInteractorFactory;
+            _preGameClientFactory = preGameClientFactory;
+            _subscriptionManager = subscriptionManager;
         }
 
         public IAsyncEnumerable<ServerMessage> Connect(
@@ -26,7 +32,7 @@ namespace Server.Services
         {
             var toClientChannel = Channel.CreateUnbounded<ServerMessage>();
 #pragma warning disable 4014
-            HandleClient(request, toClientChannel.Writer, context); // TODO consult
+            HandleClient(request, toClientChannel.Writer, context);
 #pragma warning restore 4014
             return toClientChannel.Reader.ReadAllAsync();
         }
@@ -34,10 +40,12 @@ namespace Server.Services
         private async Task HandleClient(IAsyncEnumerable<ClientMessage> request,
             ChannelWriter<ServerMessage> response, CallContext context = default)
         {
-            var client = _clientInteractorFactory.Create(request, response);
-            context.CancellationToken.Register(() => client.HandleConnectionFailure());
-            await client.StartProcessing();
-
+            var clientInteractor = _clientInteractorFactory.Create(request, response);
+            var preGameClient = _preGameClientFactory.Create(clientInteractor);
+            _subscriptionManager.SubscribeForClient(clientInteractor.Id, preGameClient);
+            context.CancellationToken.Register(() => clientInteractor.HandleConnectionFailure());
+            await clientInteractor.StartProcessing();
+            _subscriptionManager.UnsubscribeFromClient(clientInteractor.Id);
             response.TryComplete();
         }
     }

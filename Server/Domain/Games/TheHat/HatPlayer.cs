@@ -1,4 +1,7 @@
+using Server.Application;
+using Server.Application.ChainOfResponsibilityUtils;
 using Server.Domain.Games.Meta;
+using Shared.Protos;
 using Shared.Protos.HatSharedClasses;
 
 namespace Server.Domain.Games.TheHat
@@ -8,7 +11,8 @@ namespace Server.Domain.Games.TheHat
         public int Score { get; private set; }
         public int Id { get; }
 
-        public HatPlayer(IInGameClientInteractor clientInteractor, int id, IHatRole role) : base(clientInteractor, role)
+        public HatPlayer(IChannelToClient<InGameServerMessage> clientInteractor, int id, IHatRole role) : base(
+            clientInteractor, role)
         {
             Id = id;
             Score = 0;

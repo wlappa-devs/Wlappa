@@ -16,7 +16,7 @@ namespace Server.Domain.Games.Meta
             await Task.Delay(duration);
             if (Game is null || !_set.Contains(eventId)) return;
             _set.Remove(eventId);
-            await Game.HandleEvent(null, command);
+            await Game.EventHandle(null, command);
         }
 
         public void CancelEvent(Guid eventId) => _set.Remove(eventId);

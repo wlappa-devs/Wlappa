@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Server.Application.ChainOfResponsibilityUtils;
 using Shared.Protos;
 
 namespace Server.Domain.Games.Meta
 {
-    public abstract class Game
+    public abstract class Game : IClientEventSubscriber<InGameClientMessage>
     {
-        protected abstract Task UnsafeHandleEvent(IInGameClientInteractor? client, InGameClientMessage e);
+        protected abstract Task UnsafeHandleEvent(Guid? clientId, InGameClientMessage e);
 
         private readonly SemaphoreSlim _semaphore = new(1, 1);
 
@@ -29,7 +30,7 @@ namespace Server.Domain.Games.Meta
 
         public Task Initialize() => PerformLockOperation(UnsafeInitialize);
 
-        public Task HandleEvent(IInGameClientInteractor? client, InGameClientMessage e) =>
+        public Task EventHandle(Guid? client, InGameClientMessage e) =>
             PerformLockOperation(() => UnsafeHandleEvent(client, e));
     }
 
@@ -41,14 +42,14 @@ namespace Server.Domain.Games.Meta
     public class GameCreationPayload : IValidationPayload
     {
         public GameCreationPayload(IReadOnlyDictionary<Guid, string> playerToRole,
-            IReadOnlyCollection<IInGameClientInteractor> clients)
+            IReadOnlyCollection<IChannelToClient<InGameServerMessage>> clients)
         {
             PlayerToRole = playerToRole;
             Clients = clients;
         }
 
         public IReadOnlyDictionary<Guid, string> PlayerToRole { get; }
-        public IReadOnlyCollection<IInGameClientInteractor> Clients { get; }
+        public IReadOnlyCollection<IChannelToClient<InGameServerMessage>> Clients { get; }
     }
 
     public interface IGameFactory

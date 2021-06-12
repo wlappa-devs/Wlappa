@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Server.Application;
+using Server.Application.ChainOfResponsibilityUtils;
 using Server.Domain.Games.Meta;
 using Shared.Protos;
 
@@ -17,7 +19,7 @@ namespace Server.Domain.Games.Clicker
         private readonly MulticastGroup _allPlayers;
 
         public ClickGame(ClickGameConfiguration config, ITimer timer,
-            IReadOnlyCollection<IInGameClientInteractor> players, Func<Task> finished, ILogger<ClickGame> logger)
+            IReadOnlyCollection<IChannelToClient<InGameServerMessage>> players, Func<Task> finished, ILogger<ClickGame> logger)
         {
             _config = config;
             _timer = timer;
@@ -26,7 +28,7 @@ namespace Server.Domain.Games.Clicker
             _allPlayers = new MulticastGroup(players);
         }
 
-        protected override async Task UnsafeHandleEvent(IInGameClientInteractor? client, InGameClientMessage e)
+        protected override async Task UnsafeHandleEvent(Guid? _, InGameClientMessage e)
         {
             _logger.LogInformation("Got increment");
             switch (e)
