@@ -70,7 +70,7 @@ namespace AndroidClient.ViewModels
 
         public void HandleCreateLobbyButton()
         {
-            if (Name is null || Name == "")
+            if (Name is null || Name == "" || Name.Trim() == "")
             {
                 ShowNotification?.Invoke("Enter your name");
                 return;
@@ -81,7 +81,7 @@ namespace AndroidClient.ViewModels
 
         public void HandleJoinLobbyButton()
         {
-            if (Name is null || Name == "")
+            if (Name is null || Name == "" || Name.Trim() == "")
             {
                 ShowNotification?.Invoke("Enter your name");
                 return;
