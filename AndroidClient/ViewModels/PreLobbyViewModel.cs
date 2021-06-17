@@ -18,7 +18,8 @@ namespace AndroidClient.ViewModels
 
         public string? Id
         {
-            set => _guid = value is null ? (Guid?) null : Guid.Parse(value);
+            get => _guid is null ? "" : _guid.ToString();
+            set => _guid = value is null || value.Trim() == "" ? (Guid?) null : Guid.Parse(value);
         }
 
         public GameConfiguration? Configuration { get; set; }

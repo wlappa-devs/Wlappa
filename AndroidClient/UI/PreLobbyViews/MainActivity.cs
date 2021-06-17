@@ -34,7 +34,7 @@ namespace AndroidClient.UI.PreLobbyViews
                 (sender, args) =>
                 {
                     _nicknameLayout.Error = null;
-                    _viewModel.Name = string.Concat(args.Text!);
+                    _viewModel.Name = string.Concat(args.Text!).Trim();
                 };
             
             SupportActionBar.Hide();

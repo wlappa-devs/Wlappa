@@ -1,5 +1,7 @@
+using System;
 using Android.App;
 using Android.OS;
+using Android.Support.Design.Widget;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
@@ -10,10 +12,11 @@ using Unity;
 
 namespace AndroidClient.UI.PreLobbyViews
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false)]
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false, WindowSoftInputMode = SoftInput.AdjustResize)]
     public class JoinServerActivity : AppCompatActivity
     {
         private PreLobbyViewModel _viewModel = null!;
+        private TextInputLayout _servercodeLayout = null!;
 
         protected override void OnCreate(Bundle? savedInstanceState)
         {
@@ -23,23 +26,37 @@ namespace AndroidClient.UI.PreLobbyViews
             SetContentView(Resource.Layout.join_server);
 
             var idInput = FindViewById<EditText>(Resource.Id.server_code_tf);
+            
+            _servercodeLayout = FindViewById<TextInputLayout>(Resource.Id.server_code_lt)!;
 
+            FindViewById<EditText>(Resource.Id.server_code_tf)!.TextChanged +=
+                (sender, args) => _servercodeLayout.Error = null;
+            
             FindViewById<Button>(Resource.Id.join_btn)!.Click +=
                 async (sender, args) =>
                 {
                     try
                     {
                         _viewModel.Id = idInput?.Text;
+                        if (_viewModel.Id == "")
+                        {
+                            _servercodeLayout.Error = "Enter server code";
+                            return;
+                        }
+
                         await _viewModel.JoinLobby();
+                    }
+                    catch (FormatException)
+                    {
+                        _servercodeLayout.Error = "Invalid server code";
                     }
                     catch (LobbyNotFoundException)
                     {
-                        Toast.MakeText((sender as View)?.Context, "Invalid id, dumbass", ToastLength.Short)?.Show();
+                        _servercodeLayout.Error = "Lobby not found";
                     }
                     catch (GameAlreadyStartedException)
                     {
-                        Toast.MakeText((sender as View)?.Context, "Game is going without you LOX", ToastLength.Short)
-                            ?.Show();
+                        _servercodeLayout.Error = "Game is already in process";
                     }
                 };
         }
@@ -52,7 +69,7 @@ namespace AndroidClient.UI.PreLobbyViews
         }
 
         private void ShowNotification(string text) =>
-            Toast.MakeText(ApplicationContext, text, ToastLength.Long)?.Show();
+            _servercodeLayout.Error = text;
 
         protected override void OnStop()
         {

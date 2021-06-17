@@ -15,7 +15,7 @@ using RecyclerView = Android.Support.V7.Widget.RecyclerView;
 namespace AndroidClient.UI.InLobbyViews
 {
     // TODO add ready check
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false)]
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false, WindowSoftInputMode = SoftInput.AdjustResize)]
     public class LobbyActivity : AppCompatActivity
     {
         private static readonly TimeSpan HostLeftSnackBarLength = TimeSpan.FromSeconds(2);
@@ -37,6 +37,8 @@ namespace AndroidClient.UI.InLobbyViews
             _idView = FindViewById<EditText>(Resource.Id.lobby_game_id);
             _viewModel.MakeSnackBar = msg => Snackbar.Make(_idView, msg, 2000).Show();
             _idView!.Text = _viewModel.LobbyId.ToString();
+            _idView!.Focusable = false;
+            _idView!.Clickable = true;
 
             _idView.Click += (sender, args) =>
             {
@@ -79,6 +81,7 @@ namespace AndroidClient.UI.InLobbyViews
             _viewModel.LobbyUpdate = OnViewModelLobbyUpdate;
             _viewModel.GameStarted = OnViewModelGameStarted;
             _viewModel.LobbyDestroyed = OnViewModelLobbyDestroyed;
+            SupportActionBar.Title = "Lobby";
             _viewModel.StartProcessingEvents();
         }
 

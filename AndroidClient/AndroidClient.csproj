@@ -87,6 +87,7 @@
         <None Include="Assets\AboutAssets.txt" />
     </ItemGroup>
     <ItemGroup>
+        <AndroidResource Include="Resources\drawable\empty_tall_divider.xml" />
         <AndroidResource Include="Resources\drawable\wlapa.png" />
         <AndroidResource Include="Resources\layout\activity_main.axml">
             <SubType>Designer</SubType>
