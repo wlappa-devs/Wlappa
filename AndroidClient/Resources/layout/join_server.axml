@@ -23,6 +23,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/server_code_tf"
+                android:textSize="16dp"
                 style="@style/TextInputTheme"/>
     </android.support.design.widget.TextInputLayout>
     

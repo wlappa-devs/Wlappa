@@ -3,7 +3,6 @@ using Android.Support.Design.Widget;
 using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
-using AndroidClient.UI.InLobbyViews;
 
 namespace AndroidClient.UI.GamesVIews.Hat.WordsChooser
 {
@@ -26,5 +25,8 @@ namespace AndroidClient.UI.GamesVIews.Hat.WordsChooser
                 WordUpdated?.Invoke(Index, textResult);
             };
         }
+
+        public void ChangeInputState(bool isEnabled) => WordInputField.Enabled = isEnabled;
+        
     }
 }

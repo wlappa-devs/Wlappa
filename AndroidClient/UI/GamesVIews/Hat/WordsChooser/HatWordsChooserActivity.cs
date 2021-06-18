@@ -48,8 +48,8 @@ namespace AndroidClient.UI.GamesVIews.Hat.WordsChooser
         {
             RunOnUiThread(() =>
             {
-                _addWordsButton.Visibility = ViewStates.Gone;
-                _wordsRecyclerView.Enabled = false;
+                ChangeButtonState(false);
+                _wordsAdapter.LockInput();
             });
         }
 
@@ -71,8 +71,8 @@ namespace AndroidClient.UI.GamesVIews.Hat.WordsChooser
         {
             RunOnUiThread(() =>
             {
-                _addWordsButton.Visibility = ViewStates.Visible;
-                _wordsRecyclerView.Enabled = true;
+                ChangeButtonState(true);
+                _wordsAdapter.UnlockInput();
                 _wordsAdapter.SendErroredWords(invalidWords);
             });
         }
@@ -93,6 +93,12 @@ namespace AndroidClient.UI.GamesVIews.Hat.WordsChooser
             _viewModel.AnnouncedNextPair -= OnViewModelAnnouncedNextPair;
             _viewModel.InvalidWordSet -= OnViewModelInvalidWordSet;
             _viewModel.WordsSuccessfullyAddedByMe -= OnViewModelWordsSuccessfullyAddedByMe;
+        }
+
+        private void ChangeButtonState(bool isEnabled)
+        {
+            _addWordsButton.Enabled = isEnabled;
+            _addWordsButton.Visibility = isEnabled ? ViewStates.Visible : ViewStates.Invisible;
         }
     }
 }

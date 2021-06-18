@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using Android.Support.V7.Widget;
 using Android.Util;
@@ -9,7 +8,9 @@ namespace AndroidClient.UI.GamesVIews.Hat.WordsChooser
 {
     public class HatWordsChooserAdapter : RecyclerView.Adapter
     {
-        public event Action<int, string>? WordErrored;
+        private event Action<int, string>? WordErrored;
+        private event Action? InputLocked;
+        private event Action? InputUnlocked;
         private string[] _words;
 
         public string[] Words
@@ -36,6 +37,8 @@ namespace AndroidClient.UI.GamesVIews.Hat.WordsChooser
                 if (index == position)
                     viewHolder.WordInputLayout.Error = errorText;
             };
+            InputLocked += () => viewHolder.ChangeInputState(false);
+            InputUnlocked += () => viewHolder.ChangeInputState(true);
         }
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
@@ -55,6 +58,8 @@ namespace AndroidClient.UI.GamesVIews.Hat.WordsChooser
                 WordErrored!.Invoke(index, "Incorrect word");
         }
 
+        public void LockInput() => InputLocked?.Invoke();
+        public void UnlockInput() => InputUnlocked?.Invoke();
         public override int ItemCount => _words.Length;
     }
 }
