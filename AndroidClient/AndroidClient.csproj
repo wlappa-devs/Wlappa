@@ -65,7 +65,9 @@
         <Compile Include="UI\GamesVIews\Hat\EndHatGameActivity.cs" />
         <Compile Include="UI\GamesVIews\Hat\HatPairChosenActivity.cs" />
         <Compile Include="UI\GamesVIews\Hat\HatWordPickerPairActivity.cs" />
-        <Compile Include="UI\GamesVIews\Hat\HatWordsChooserActivity.cs" />
+        <Compile Include="UI\GamesVIews\Hat\WordsChooser\HatWordsChooserActivity.cs" />
+        <Compile Include="UI\GamesVIews\Hat\WordsChooser\HatWordsChooserAdapter.cs" />
+        <Compile Include="UI\GamesVIews\Hat\WordsChooser\HatWordsChooserViewHolder.cs" />
         <Compile Include="UI\InLobbyViews\ActivityForGameType.cs" />
         <Compile Include="UI\InLobbyViews\LobbyActivity.cs" />
         <Compile Include="UI\InLobbyViews\PlayerListViewHolder.cs" />
@@ -102,6 +104,7 @@
         <AndroidResource Include="Resources\layout\join_server.axml" />
         <AndroidResource Include="Resources\layout\lobby.xml" />
         <AndroidResource Include="Resources\layout\player_list_item.xml" />
+        <AndroidResource Include="Resources\layout\words_list_item.xml" />
         <AndroidResource Include="Resources\values\colors.xml" />
         <AndroidResource Include="Resources\values\ic_launcher_background.xml" />
         <AndroidResource Include="Resources\values\strings.xml" />

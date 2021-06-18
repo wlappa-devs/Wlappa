@@ -26,6 +26,7 @@ namespace AndroidClient.ViewModels.GameViewModels
         public Guid Understander { get; private set; }
 
         private Guid? _manager;
+        private int _wordsToWrite;
 
         public string? MyRole { get; private set; }
         private bool IsManaged => _manager.HasValue;
@@ -44,14 +45,14 @@ namespace AndroidClient.ViewModels.GameViewModels
         private TimeSpan _timeToExplain = TimeSpan.Zero;
         public string TimerString => (_timeToExplain - (DateTime.Now - _timerStartMoment)).Seconds.ToString();
 
-        public string? WordsInput { get; set; }
+        public string[]? WordsInput { get; private set; }
         public string? CurrentWord { get; private set; }
-
+        
         public event Action? WordsSuccessfullyAddedByMe;
         public event Action? WordsSuccessfullyAddedBySomeOne;
         public event Action? AnnouncedNextPair;
         public event Action? ScoresUpdated;
-        public event Action? InvalidWordSet;
+        public event Action<ICollection<int>>? InvalidWordSet;
         public event Action? StartExplanation;
         public event Action? GetWord;
         public event Action? TimeIsUp;
@@ -89,7 +90,10 @@ namespace AndroidClient.ViewModels.GameViewModels
                     MyRole = informationMessage.Role;
                     RemainingPlayersToWriteWords = informationMessage.NumberOfPlayersInGame;
                     _timeToExplain = informationMessage.TimeToExplain;
+                    _wordsToWrite = informationMessage.WordsToWrite;
+                    WordsInput = Enumerable.Repeat(string.Empty, _wordsToWrite).ToArray();
                     Log.Info(nameof(HatViewModel), $"My role is {MyRole}");
+                    Log.Info(nameof(HatViewModel), $"I need to write {_wordsToWrite} words");
                     if (IsManaged)
                         Log.Info(nameof(HatViewModel), $"Manager exists, and his GUID is {_manager!.Value}");
                     WordsSuccessfullyAddedBySomeOne?.Invoke();
@@ -108,8 +112,8 @@ namespace AndroidClient.ViewModels.GameViewModels
                     Log.Info(nameof(HatViewModel), "Should finish game");
                     GameOver?.Invoke();
                     break;
-                case HatInvalidWordsSet _:
-                    InvalidWordSet?.Invoke();
+                case HatInvalidWordsSet hatInvalidWordsSet:
+                    InvalidWordSet?.Invoke(hatInvalidWordsSet.WrongWordIds);
                     break;
                 case HatPointsUpdated hatPointsUpdated:
                     _lastScores = hatPointsUpdated.GuidToPoints;
@@ -141,7 +145,7 @@ namespace AndroidClient.ViewModels.GameViewModels
         {
             await _gameInstance!.SendGameEvent(new HatAddWords()
             {
-                Value = WordsInput!.Split(" ")
+                Value = WordsInput!.ToList()
             });
         }
 

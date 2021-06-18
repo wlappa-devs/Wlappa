@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using AndroidClient.UI.GamesVIews.Hat;
+using AndroidClient.UI.GamesVIews.Hat.WordsChooser;
 using Shared.Protos;
 
 namespace AndroidClient.UI.InLobbyViews
