@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Android.Graphics;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Shared.Protos;
@@ -38,8 +39,12 @@ namespace AndroidClient.UI.InLobbyViews
             viewHolder!.PlayerName.Text = player.Name;
             viewHolder!.RoleSelector.SetSelection(_roles.IndexOf(player.Role));
             viewHolder!.PlayerId = player.Id;
+            viewHolder!.ReadyCheck.Checked = player.IsReady;
             if (!_amHost)
+            {
                 viewHolder!.RoleSelector.Enabled = false;
+                viewHolder!.RoleSelector.Background!.SetColorFilter(new PorterDuffColorFilter(Color.Transparent, PorterDuff.Mode.Clear!));
+            }
         }
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)

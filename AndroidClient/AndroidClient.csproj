@@ -52,74 +52,83 @@
         <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
     </PropertyGroup>
     <ItemGroup>
-        <Reference Include="System"/>
-        <Reference Include="System.Xml"/>
-        <Reference Include="System.Core"/>
-        <Reference Include="Mono.Android"/>
+        <Reference Include="System" />
+        <Reference Include="System.Xml" />
+        <Reference Include="System.Core" />
+        <Reference Include="Mono.Android" />
     </ItemGroup>
     <ItemGroup>
         <!--        <Compile Include="obj\Debug\110\designtime\Resource.designer.cs" />-->
-        <Compile Include="Application.cs"/>
-        <Compile Include="Resource.Designer.cs"/>
-        <Compile Include="Properties\AssemblyInfo.cs"/>
-        <Compile Include="UI\GamesVIews\Hat\EndHatGameActivity.cs"/>
-        <Compile Include="UI\GamesVIews\Hat\HatPairChosenActivity.cs"/>
-        <Compile Include="UI\GamesVIews\Hat\HatWordPickerPairActivity.cs"/>
-        <Compile Include="UI\GamesVIews\Hat\HatWordsChooserActivity.cs"/>
-        <Compile Include="UI\InLobbyViews\ActivityForGameType.cs"/>
-        <Compile Include="UI\InLobbyViews\LobbyActivity.cs"/>
-        <Compile Include="UI\InLobbyViews\PlayerListViewHolder.cs"/>
-        <Compile Include="UI\InLobbyViews\PlayersListAdapter.cs"/>
-        <Compile Include="UI\PreLobbyViews\ChooseGameActivity.cs"/>
-        <Compile Include="UI\PreLobbyViews\GameConfigurators\HatConfigurationActivity.cs"/>
-        <Compile Include="UI\PreLobbyViews\JoinServerActivity.cs"/>
-        <Compile Include="UI\PreLobbyViews\MainActivity.cs"/>
-        <Compile Include="ViewModels\GameViewModels\HatViewModel.cs"/>
-        <Compile Include="ViewModels\GameViewModels\IGameViewModel.cs"/>
-        <Compile Include="ViewModels\LobbyViewModel.cs"/>
-        <Compile Include="ViewModels\PreLobbyViewModel.cs"/>
-        <Compile Include="ViewModels\Providers\GameViewModelFactory.cs"/>
-        <Compile Include="ViewModels\Providers\LobbyProvider.cs"/>
+        <Compile Include="Application.cs" />
+        <Compile Include="Resource.Designer.cs" />
+        <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="UI\GamesViews\Hat\EndHatGameActivity.cs" />
+        <Compile Include="UI\GamesViews\Hat\GameScore\HatGameScoreAdapter.cs" />
+        <Compile Include="UI\GamesViews\Hat\GameScore\HatGameScoreViewHolder.cs" />
+        <Compile Include="UI\GamesViews\Hat\HatPairChosenActivity.cs" />
+        <Compile Include="UI\GamesViews\Hat\HatWordPickerPairActivity.cs" />
+        <Compile Include="UI\GamesViews\Hat\WordsChooser\HatWordsChooserActivity.cs" />
+        <Compile Include="UI\GamesViews\Hat\WordsChooser\HatWordsChooserAdapter.cs" />
+        <Compile Include="UI\GamesViews\Hat\WordsChooser\HatWordsChooserViewHolder.cs" />
+        <Compile Include="UI\InLobbyViews\ActivityForGameType.cs" />
+        <Compile Include="UI\InLobbyViews\LobbyActivity.cs" />
+        <Compile Include="UI\InLobbyViews\PlayerListViewHolder.cs" />
+        <Compile Include="UI\InLobbyViews\PlayersListAdapter.cs" />
+        <Compile Include="UI\PreLobbyViews\ChooseGameActivity.cs" />
+        <Compile Include="UI\PreLobbyViews\GameConfigurators\HatConfigurationActivity.cs" />
+        <Compile Include="UI\PreLobbyViews\JoinServerActivity.cs" />
+        <Compile Include="UI\PreLobbyViews\MainActivity.cs" />
+        <Compile Include="ViewModels\GameViewModels\HatViewModel.cs" />
+        <Compile Include="ViewModels\GameViewModels\IGameViewModel.cs" />
+        <Compile Include="ViewModels\LobbyViewModel.cs" />
+        <Compile Include="ViewModels\PreLobbyViewModel.cs" />
+        <Compile Include="ViewModels\Providers\GameViewModelFactory.cs" />
+        <Compile Include="ViewModels\Providers\LobbyProvider.cs" />
     </ItemGroup>
     <ItemGroup>
-        <None Include="Resources\AboutResources.txt"/>
-        <None Include="Properties\AndroidManifest.xml"/>
-        <None Include="Assets\AboutAssets.txt"/>
+        <None Include="Resources\AboutResources.txt" />
+        <None Include="Properties\AndroidManifest.xml" />
+        <None Include="Assets\AboutAssets.txt" />
     </ItemGroup>
     <ItemGroup>
+        <AndroidResource Include="Resources\drawable\empty_tall_divider.xml" />
+        <AndroidResource Include="Resources\drawable\wlapa.png" />
         <AndroidResource Include="Resources\layout\activity_main.axml">
             <SubType>Designer</SubType>
         </AndroidResource>
-        <AndroidResource Include="Resources\layout\choose_game.xml"/>
-        <AndroidResource Include="Resources\layout\hat_configuration.xml"/>
-        <AndroidResource Include="Resources\layout\end_hat_game.xml"/>
-        <AndroidResource Include="Resources\layout\hat_pair_choosen.xml"/>
-        <AndroidResource Include="Resources\layout\hat_words_chooser.xml"/>
-        <AndroidResource Include="Resources\layout\hat_word_picker_pair.xml"/>
-        <AndroidResource Include="Resources\layout\hat_word_picker_rest.xml"/>
-        <AndroidResource Include="Resources\layout\join_server.axml"/>
-        <AndroidResource Include="Resources\layout\lobby.xml"/>
-        <AndroidResource Include="Resources\layout\player_list_item.xml"/>
-        <AndroidResource Include="Resources\values\colors.xml"/>
-        <AndroidResource Include="Resources\values\ic_launcher_background.xml"/>
-        <AndroidResource Include="Resources\values\strings.xml"/>
-        <AndroidResource Include="Resources\values\styles.xml"/>
+        <AndroidResource Include="Resources\layout\choose_game.xml" />
+        <AndroidResource Include="Resources\layout\hat_configuration.xml" />
+        <AndroidResource Include="Resources\layout\end_hat_game.xml" />
+        <AndroidResource Include="Resources\layout\hat_pair_choosen.xml" />
+        <AndroidResource Include="Resources\layout\hat_words_chooser.xml" />
+        <AndroidResource Include="Resources\layout\hat_word_picker_pair.xml" />
+        <AndroidResource Include="Resources\layout\hat_word_picker_rest.xml" />
+        <AndroidResource Include="Resources\layout\join_server.axml" />
+        <AndroidResource Include="Resources\layout\lobby.xml" />
+        <AndroidResource Include="Resources\layout\player_list_item.xml" />
+        <AndroidResource Include="Resources\layout\score_list_item.xml" />
+        <AndroidResource Include="Resources\layout\words_list_item.xml" />
+        <AndroidResource Include="Resources\values\colors.xml" />
+        <AndroidResource Include="Resources\values\ic_launcher_background.xml" />
+        <AndroidResource Include="Resources\values\strings.xml" />
+        <AndroidResource Include="Resources\values\styles.xml" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Grpc.Core.Xamarin" Version="2.38.0-pre1"/>
-        <PackageReference Include="protobuf-net.Core" Version="3.0.101"/>
-        <PackageReference Include="protobuf-net.Grpc" Version="1.0.152"/>
-        <PackageReference Include="protobuf-net.Grpc.Native" Version="1.0.152"/>
-        <PackageReference Include="Unity" Version="5.11.10"/>
-        <PackageReference Include="Xamarin.Android.Support.Design" Version="28.0.0.3"/>
-        <PackageReference Include="Xamarin.AndroidX.RecyclerView" Version="1.2.0"/>
+        <PackageReference Include="Grpc.Core.Xamarin" Version="2.38.0-pre1" />
+        <PackageReference Include="protobuf-net.Core" Version="3.0.101" />
+        <PackageReference Include="protobuf-net.Grpc" Version="1.0.152" />
+        <PackageReference Include="protobuf-net.Grpc.Native" Version="1.0.152" />
+        <PackageReference Include="Unity" Version="5.11.10" />
+        <PackageReference Include="Xamarin.Android.Support.Design" Version="28.0.0.3" />
+        <PackageReference Include="Xamarin.AndroidX.ConstraintLayout" Version="2.0.4.2" />
+        <PackageReference Include="Xamarin.AndroidX.RecyclerView" Version="1.2.0" />
         <!--hand-Made-->
-        <PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData" Version="2.3.1"/>
-        <PackageReference Include="Xamarin.AndroidX.Legacy.Support.Core.UI" Version="1.0.0.8"/>
-        <PackageReference Include="Xamarin.Google.Android.Material" Version="1.3.0.1"/>
+        <PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData" Version="2.3.1" />
+        <PackageReference Include="Xamarin.AndroidX.Legacy.Support.Core.UI" Version="1.0.0.8" />
+        <PackageReference Include="Xamarin.Google.Android.Material" Version="1.3.0.1" />
     </ItemGroup>
     <ItemGroup>
-        <Folder Include="obj\Debug\110\designtime"/>
+        <Folder Include="obj\Debug\110\designtime" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Client-lib\Client-lib.csproj">
@@ -131,7 +140,7 @@
             <Name>Shared</Name>
         </ProjectReference>
     </ItemGroup>
-    <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets"/>
+    <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
       Other similar extension points exist, see Microsoft.Common.targets.
       <Target Name="BeforeBuild">

@@ -11,7 +11,7 @@ using Unity;
 
 namespace AndroidClient.UI.PreLobbyViews.GameConfigurators
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false)]
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false, WindowSoftInputMode = SoftInput.AdjustResize)]
     public class HatConfigurationActivity : AppCompatActivity
     {
         private PreLobbyViewModel _viewModel = null!;
@@ -23,8 +23,13 @@ namespace AndroidClient.UI.PreLobbyViews.GameConfigurators
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.hat_configuration);
             _viewModel = (Application as App)!.Container.Resolve<PreLobbyViewModel>();
-            FindViewById<Button>(Resource.Id.create_server_btn)!.Click +=
-                async (sender, args) => await _viewModel.CreateLobby();
+            var createServerButton = FindViewById<Button>(Resource.Id.create_server_btn)!;
+            createServerButton.Click +=
+                async (sender, args) =>
+                {
+                    createServerButton.Enabled = false;
+                    await _viewModel.CreateLobby();
+                };
             var config = new HatConfiguration
             {
                 TimeToExplain = TimeSpan.FromSeconds(DefaultTimeToExplain),
@@ -34,9 +39,7 @@ namespace AndroidClient.UI.PreLobbyViews.GameConfigurators
 
             var timeInput = FindViewById<EditText>(Resource.Id.time_to_explain_field);
             var wordsInput = FindViewById<EditText>(Resource.Id.words_to_write_field);
-
-            timeInput!.Hint = DefaultTimeToExplain.ToString();
-            wordsInput!.Hint = DefaultNumberOfWordsToBeWritten.ToString();
+            
 
             _viewModel.Configuration = config;
             FindViewById<RadioGroup>(Resource.Id.hat_game_mode_choice)!.CheckedChange += (sender, args) =>
@@ -48,6 +51,10 @@ namespace AndroidClient.UI.PreLobbyViews.GameConfigurators
                     _ => throw new ArgumentException()
                 };
             };
+
+            timeInput!.FocusChange += (sender, args) => timeInput.Hint = args.HasFocus ? DefaultTimeToExplain.ToString() : "";
+            wordsInput!.FocusChange += (sender, args) => wordsInput.Hint = args.HasFocus ? DefaultNumberOfWordsToBeWritten.ToString() : "";
+            
             timeInput!.TextChanged += (sender, args) =>
             {
                 var str = string.Concat(args.Text!);
@@ -67,6 +74,7 @@ namespace AndroidClient.UI.PreLobbyViews.GameConfigurators
             base.OnStart();
             _viewModel.JoinedLobby = OnViewModelShouldConfigureGame;
             _viewModel.ShowNotification += ShowNotification;
+            SupportActionBar.Title = "The Hat Game";
         }
 
         private void ShowNotification(string text) =>
@@ -79,6 +87,10 @@ namespace AndroidClient.UI.PreLobbyViews.GameConfigurators
             _viewModel.ShowNotification -= ShowNotification;
         }
 
-        private void OnViewModelShouldConfigureGame() => StartActivity(typeof(LobbyActivity));
+        private void OnViewModelShouldConfigureGame()
+        {
+            StartActivity(typeof(LobbyActivity));
+            Finish();
+        }
     }
 }

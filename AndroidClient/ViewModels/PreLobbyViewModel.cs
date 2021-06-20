@@ -18,7 +18,8 @@ namespace AndroidClient.ViewModels
 
         public string? Id
         {
-            set => _guid = value is null ? (Guid?) null : Guid.Parse(value);
+            get => _guid is null ? "" : _guid.ToString();
+            set => _guid = value is null || value.Trim() == "" ? (Guid?) null : Guid.Parse(value);
         }
 
         public GameConfiguration? Configuration { get; set; }
@@ -70,7 +71,7 @@ namespace AndroidClient.ViewModels
 
         public void HandleCreateLobbyButton()
         {
-            if (Name is null || Name == "")
+            if (Name is null || Name == "" || Name.Trim() == "")
             {
                 ShowNotification?.Invoke("Enter your name");
                 return;
@@ -81,7 +82,7 @@ namespace AndroidClient.ViewModels
 
         public void HandleJoinLobbyButton()
         {
-            if (Name is null || Name == "")
+            if (Name is null || Name == "" || Name.Trim() == "")
             {
                 ShowNotification?.Invoke("Enter your name");
                 return;

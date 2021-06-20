@@ -9,13 +9,20 @@
         <TextView android:id="@+id/player_name"
                   android:text="name"
                   android:layout_height="wrap_content"
-                  android:layout_width="match_parent"
-                  android:layout_weight="1"
+                  android:layout_width="0dp"
+                  android:layout_weight="0.50"
                   android:paddingLeft="10dp"/>
         <Spinner android:id="@+id/role_selector"
                  android:layout_height="wrap_content"
-                 android:layout_width="match_parent"
-                 android:layout_weight="1"/>
+                 android:layout_width="0dp"
+                 android:layout_weight="0.40"/>
+        <CheckBox
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/readycheck"
+            android:layout_weight="0.10"
+            android:enabled="false"
+            />
     </LinearLayout>
     <View
             android:layout_width="match_parent"

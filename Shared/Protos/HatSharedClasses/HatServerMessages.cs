@@ -58,6 +58,7 @@ namespace Shared.Protos.HatSharedClasses
     [ProtoContract]
     public class HatInvalidWordsSet : HatServerMessage
     {
+        [ProtoMember(1)] public List<int> WrongWordIds { get; set; }
     }
 
     [DataContract]
@@ -84,6 +85,7 @@ namespace Shared.Protos.HatSharedClasses
         [ProtoMember(2)] public string Role { get; set; }
         [ProtoMember(3)] public int NumberOfPlayersInGame { get; set; }
         [ProtoMember(4)] public TimeSpan TimeToExplain { get; set; }
+        [ProtoMember(5)] public int WordsToWrite { get; set; }
     }
 
     [DataContract]

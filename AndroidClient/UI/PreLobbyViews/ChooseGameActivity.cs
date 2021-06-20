@@ -3,6 +3,7 @@ using Android.App;
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Util;
+using Android.Views;
 using Android.Widget;
 using AndroidClient.UI.PreLobbyViews.GameConfigurators;
 using AndroidClient.ViewModels;
@@ -10,7 +11,7 @@ using Unity;
 
 namespace AndroidClient.UI.PreLobbyViews
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false)]
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false, WindowSoftInputMode = SoftInput.AdjustResize)]
     public class ChooseGameActivity : AppCompatActivity
     {
         private PreLobbyViewModel _viewModel = null!;
@@ -49,6 +50,7 @@ namespace AndroidClient.UI.PreLobbyViews
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+            Finish();
         }
 
         protected override void OnStop()

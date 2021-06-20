@@ -139,21 +139,29 @@ namespace Server.Domain.Games.TheHat
                         Role = member.Role.StringValue,
                         NumberOfPlayersInGame = _players.Count,
                         TimeToExplain = _timeToExplain,
+                        WordsToWrite = _wordsToBeWritten
                     }
                 );
         }
 
-        private bool ValidateWords(IReadOnlyList<string> words) => words.Count == _wordsToBeWritten;
+        private List<int> ValidateWords(IReadOnlyList<string> words)
+        {
+            var filteredWords = words
+                .Select((word, index) => (word,index))
+                .Where(pair => pair.word == "")
+                .Select(pair => pair.index).ToList();
+            return filteredWords;
+        }
 
         public async Task<int> AddWords(IReadOnlyList<string> words, HatPlayer author)
         {
-            if (ValidateWords(words))
+            var validationResult = ValidateWords(words);
+            if (validationResult.Count == 0)
             {
                 _words.AddRange(words.Select(x => new Word(x, author)));
                 return 1;
             }
-
-            await author.HandleServerMessage(new HatInvalidWordsSet());
+            await author.HandleServerMessage(new HatInvalidWordsSet{WrongWordIds = validationResult});
             return 0;
         }
 

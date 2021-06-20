@@ -53,7 +53,7 @@ namespace AndroidClient.ViewModels
                 GameStarted?.Invoke();
             };
             _lobby.LobbyUpdate += () => { LobbyUpdate?.Invoke(); };
-            _lobby.ConfigurationInvalid += msg => { MakeSnackBar?.Invoke("Configuration invalid: " + msg); };
+            _lobby.GameStartingProblems += msg => { MakeSnackBar?.Invoke("Game Starting problems: " + msg); };
             _lobby.GameFinished += () => _gameProvider.InvalidateGameInstance();
             _lobby.LobbyDestroyed += async msg =>
             {
@@ -79,6 +79,11 @@ namespace AndroidClient.ViewModels
         public async Task HandleGameStartButtonPressing()
         {
             await _lobby!.StartGame();
+        }
+
+        public async Task HandlePlayerReadinessChange(bool oneWayReady)
+        {
+            await _lobby!.ReadyChecked(oneWayReady);
         }
 
         public async Task DisconnectFromLobby()

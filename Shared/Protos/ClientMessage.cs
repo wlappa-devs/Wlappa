@@ -29,6 +29,7 @@ namespace Shared.Protos
     [ProtoInclude(1, typeof(ChangeRole))]
     [ProtoInclude(2, typeof(StartGame))]
     [ProtoInclude(3, typeof(Disconnect))]
+    [ProtoInclude(4, typeof(ReadyChecked))]
     public abstract class LobbyClientMessage : ClientMessage
     {
     }
@@ -105,5 +106,12 @@ namespace Shared.Protos
     [ProtoInclude(2, typeof(HatClientMessage))]
     public class InGameClientMessage : ClientMessage
     {
+    }
+
+    [DataContract]
+    [ProtoContract]
+    public class ReadyChecked : LobbyClientMessage
+    {
+        [ProtoMember(1)] public bool OneWayReady { get; set; }
     }
 }
