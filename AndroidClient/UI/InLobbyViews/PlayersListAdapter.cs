@@ -43,7 +43,7 @@ namespace AndroidClient.UI.InLobbyViews
             if (!_amHost)
             {
                 viewHolder!.RoleSelector.Enabled = false;
-                viewHolder!.RoleSelector.Background!.SetColorFilter(Color.Transparent, PorterDuff.Mode.Clear!);
+                viewHolder!.RoleSelector.Background!.SetColorFilter(new PorterDuffColorFilter(Color.Transparent, PorterDuff.Mode.Clear!));
             }
         }
 

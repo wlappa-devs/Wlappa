@@ -31,9 +31,8 @@ namespace AndroidClient.UI.GamesViews.Hat
         public static void Launch(ICollection<(string Name, int Value)> lastScores, Action<Intent> start, Context context)
         {
             var intent = new Intent(context, typeof(EndHatGameActivity));
-            var sortedScores = lastScores.OrderByDescending(kv => kv.Value).ToList();
-            intent.PutExtra("score_name", sortedScores.Select(kv=> kv.Name).ToArray());
-            intent.PutExtra("score_value", sortedScores.Select(kv=> kv.Value).ToArray());
+            intent.PutExtra("score_name", lastScores.Select(kv=> kv.Name).ToArray());
+            intent.PutExtra("score_value", lastScores.Select(kv=> kv.Value).ToArray());
             start(intent);
         }
     }

@@ -40,7 +40,7 @@ namespace AndroidClient.UI.PreLobbyViews
                         _viewModel.Id = idInput?.Text;
                         if (_viewModel.Id == "")
                         {
-                            _servercodeLayout.Error = "Enter server code";
+                            _servercodeLayout.Error = "Enter Game ID";
                             return;
                         }
 
@@ -48,7 +48,7 @@ namespace AndroidClient.UI.PreLobbyViews
                     }
                     catch (FormatException)
                     {
-                        _servercodeLayout.Error = "Invalid server code";
+                        _servercodeLayout.Error = "Invalid Game ID";
                     }
                     catch (LobbyNotFoundException)
                     {
