@@ -1,0 +1,36 @@
+name: .NET
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: Unload
+      run: dotnet sln remove AndroidClient
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Publish
+      run: |
+        mkdir ./Server_published_release
+        dotnet publish Server -r linux-arm64 --configuration Release -o ./Server_published_release
+    - name: Install SSH key
+      uses: shimataro/ssh-key-action@v2.0.2
+      with:
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        known_hosts: ${{ secrets.KNOWN_HOSTS }}
+    - name: Rsync Release to server
+      run: |
+        ssh ${{ secrets.SSH_HOST }} -l ${{ secrets.SSH_USER }} mkdir -p /home/${{ secrets.SSH_USER }}/Wlappa/Published_release
+        rsync -r ./Server_published_release ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USER }}/Wlappa/Published_release
