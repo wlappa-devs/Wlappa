@@ -19,8 +19,8 @@ namespace AndroidClient.ViewModels.GameViewModels
         // ReSharper disable once MemberCanBePrivate.Global
         public IReadOnlyDictionary<Guid, int> LastScores => _lastScores;
 
-        public string LastScoresConcatenated =>
-            string.Join("\n", LastScores.Select(x => $"{GetName(x.Key)} -- {x.Value}"));
+        public List<(string Name, int Value)> LastScoresValues =>
+            LastScores.Select(pair => (GetName(pair.Key), pair.Value)).ToList();
 
         public Guid Explainer { get; private set; }
         public Guid Understander { get; private set; }
@@ -43,7 +43,14 @@ namespace AndroidClient.ViewModels.GameViewModels
 
         private DateTime _timerStartMoment = DateTime.Now;
         private TimeSpan _timeToExplain = TimeSpan.Zero;
-        public string TimerString => (_timeToExplain - (DateTime.Now - _timerStartMoment)).Seconds.ToString();
+        public string TimerString
+        {
+            get
+            {
+                var output = (_timeToExplain - (DateTime.Now - _timerStartMoment)).TotalSeconds;
+                return output > 0 ? $"{output:00.00}": "00.00";
+            }
+        }
 
         public string[]? WordsInput { get; private set; }
         public string? CurrentWord { get; private set; }
@@ -52,7 +59,7 @@ namespace AndroidClient.ViewModels.GameViewModels
         public event Action? WordsSuccessfullyAddedBySomeOne;
         public event Action? AnnouncedNextPair;
         public event Action? ScoresUpdated;
-        public event Action<ICollection<int>>? InvalidWordSet;
+        public event Action<IReadOnlyCollection<int>>? InvalidWordSet;
         public event Action? StartExplanation;
         public event Action? GetWord;
         public event Action? TimeIsUp;

@@ -1,34 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
-
-    <LinearLayout android:orientation="horizontal"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content">
-
-        <TextView android:text="expl" android:id="@+id/explainer_name"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:layout_weight="1"
-                  android:textAlignment="center"/>
-        <TextView android:text=" EXPLAINS TO "
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:layout_weight="1"
-                  android:textAlignment="center"/>
-        <TextView android:text="undr" android:id="@+id/understander_name"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:layout_weight="1"
-                  android:textAlignment="center"/>
-    </LinearLayout>
-    <TextView android:text="scores" android:id="@+id/scores"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"/>
-    <Button android:text="Start explanation"
-            android:id="@+id/start_explaining_btn"
+<android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="24dp">
+    <LinearLayout 
+            android:id="@+id/info_lt"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-</LinearLayout>
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+        <TextView 
+                android:text="expl" 
+                android:id="@+id/explainer_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="center"/>
+        <TextView 
+                android:text=" EXPLAINS TO "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="center"/>
+        <TextView 
+                android:text="undr" android:id="@+id/understander_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="center"/>
+    </LinearLayout>
+    <android.support.v7.widget.RecyclerView
+            android:id="@+id/score"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintHeight_max="500dp"
+            app:layoutManager="LinearLayoutManager"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/info_lt"
+            app:layout_constraintVertical_bias="0.5"
+    />
+    <Button 
+            android:text="Ready"
+            android:id="@+id/start_explaining_btn"
+            android:layout_width="200dp"
+            android:layout_height="75dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/score"
+    />
+</android.support.constraint.ConstraintLayout>

@@ -9,6 +9,7 @@ using Unity;
 
 namespace AndroidClient.UI.PreLobbyViews
 {
+    //Todo name representation shortification
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = true, WindowSoftInputMode = SoftInput.AdjustResize)]
     public class MainActivity : AppCompatActivity
     {

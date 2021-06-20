@@ -30,7 +30,7 @@ namespace Shared.Protos
     [ProtoInclude(2, typeof(JoinedLobby))]
     [ProtoInclude(3, typeof(LobbyNotFound))]
     [ProtoInclude(4, typeof(LobbyUpdate))]
-    [ProtoInclude(5, typeof(ConfigurationInvalid))]
+    [ProtoInclude(5, typeof(GameStartingProblems))]
     [ProtoInclude(6, typeof(GameCreated))]
     [ProtoInclude(7, typeof(GameFinished))]
     [ProtoInclude(8, typeof(LobbyDestroyed))]
@@ -80,6 +80,7 @@ namespace Shared.Protos
         [ProtoMember(1)] public Guid Id { get; set; }
         [ProtoMember(2)] public string Name { get; set; }
         [ProtoMember(3)] public string Role { get; set; }
+        [ProtoMember(4)] public bool IsReady { get; set; }
     }
 
     [DataContract]
@@ -91,7 +92,7 @@ namespace Shared.Protos
 
     [DataContract]
     [ProtoContract]
-    public class ConfigurationInvalid : LobbyServerMessage
+    public class GameStartingProblems : LobbyServerMessage
     {
         [ProtoMember(1)] public string Message { get; set; }
     }

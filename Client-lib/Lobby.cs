@@ -23,7 +23,7 @@ namespace Client_lib
         public event Action<Game>? HandleGameStart;
 
         public event Action<string>? LobbyDestroyed;
-        public event Action<string>? ConfigurationInvalid; 
+        public event Action<string>? GameStartingProblems;
 
         public IReadOnlyCollection<PlayerInLobby>? LastLobbyStatus { get; private set; }
         public bool GameIsGoing { get; private set; }
@@ -90,6 +90,11 @@ namespace Client_lib
             await _request.WriteAsync(new StartGame());
         }
 
+        public async Task ReadyChecked(bool oneWayReady)
+        {
+            await _request.WriteAsync(new ReadyChecked{OneWayReady = oneWayReady});
+        }
+
         private void HandleLobbyEvent(LobbyServerMessage message)
         {
             switch (message)
@@ -101,8 +106,8 @@ namespace Client_lib
                     LastLobbyStatus = update.Players;
                     LobbyUpdate?.Invoke();
                     return;
-                case ConfigurationInvalid msg :
-                    ConfigurationInvalid?.Invoke(msg.Message);
+                case GameStartingProblems msg :
+                    GameStartingProblems?.Invoke(msg.Message);
                     return;
                 case GameFinished _:
                     GameIsGoing = false;

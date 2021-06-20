@@ -3,7 +3,6 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/choose_game_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="24dp">
@@ -20,14 +19,25 @@
             app:layout_constraintBottom_toTopOf="@+id/start_choose_pairs_btn"
             app:layout_constraintVertical_bias="0.2"
     />
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/words_error_msg"
+            android:text="Incorrect words provided"
+            android:textSize="14dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/words_input_recycler"
+            app:layout_constraintBottom_toTopOf="@+id/start_choose_pairs_btn"
+    />
     <Button
             android:layout_width="200dp"
             android:layout_height="75dp"
-            android:text="I've finished" 
+            android:text="Finish" 
             android:id="@+id/start_choose_pairs_btn"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/words_input_recycler"
+            app:layout_constraintTop_toBottomOf="@+id/words_error_msg"
             app:layout_constraintBottom_toTopOf="@+id/players_remaining_text"
     />
     <TextView

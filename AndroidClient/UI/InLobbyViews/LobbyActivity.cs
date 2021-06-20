@@ -14,7 +14,6 @@ using RecyclerView = Android.Support.V7.Widget.RecyclerView;
 
 namespace AndroidClient.UI.InLobbyViews
 {
-    // TODO add ready check
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false, WindowSoftInputMode = SoftInput.AdjustResize)]
     public class LobbyActivity : AppCompatActivity
     {
@@ -50,19 +49,30 @@ namespace AndroidClient.UI.InLobbyViews
             };
             Log.Info(nameof(LobbyActivity), "GUID IS " + _idView!.Text);
 
-            if (_viewModel.AmHost.HasValue && !_viewModel.AmHost.Value)
-            {
-                Log.Info(nameof(LobbyActivity), "HIDING BUTTON CUZ U R LOX XD");
-                Log.Info(nameof(LobbyActivity), _viewModel.AmHost.ToString());
-                startBtn!.Visibility = ViewStates.Gone;
-            }
-
-            startBtn!.Click +=
-                async (sender, args) =>
+            if (_viewModel.AmHost.HasValue)
+                if (!_viewModel.AmHost.Value)
                 {
-                    Log.Info(nameof(LobbyActivity), "StartBtnPressed");
-                    await _viewModel.HandleGameStartButtonPressing();
-                };
+                    Log.Info(nameof(LobbyActivity), "BUTTON START IZ NAU JOIN CUZ U R LOX XD");
+                    Log.Info(nameof(LobbyActivity), _viewModel.AmHost.ToString());
+                    startBtn!.Text = "Ready";
+                    startBtn!.Click +=
+                        async (sender, args) =>
+                        {
+                            Log.Info(nameof(LobbyActivity), "ReadyBtnPressed");
+                            await _viewModel.HandlePlayerReadinessChange(false);
+                        };
+                }
+                else
+                {
+                    startBtn!.Click +=
+                        async (sender, args) =>
+                        {
+                            Log.Info(nameof(LobbyActivity), "StartBtnPressed");
+                            await _viewModel.HandlePlayerReadinessChange(true);
+                            await _viewModel.HandleGameStartButtonPressing();
+                        };
+                }
+            
 
             var recyclerView = FindViewById<RecyclerView>(Resource.Id.recycler);
 
@@ -82,6 +92,8 @@ namespace AndroidClient.UI.InLobbyViews
             _viewModel.GameStarted = OnViewModelGameStarted;
             _viewModel.LobbyDestroyed = OnViewModelLobbyDestroyed;
             SupportActionBar.Title = "Lobby";
+            if (!(_viewModel.LastLobbyStatus is null))
+                OnViewModelLobbyUpdate();
             _viewModel.StartProcessingEvents();
         }
 

@@ -8,7 +8,7 @@ using Android.Widget;
 using AndroidClient.ViewModels.GameViewModels;
 using Unity;
 
-namespace AndroidClient.UI.GamesVIews.Hat.WordsChooser
+namespace AndroidClient.UI.GamesViews.Hat.WordsChooser
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false, WindowSoftInputMode = SoftInput.AdjustResize)]
     public class HatWordsChooserActivity : AppCompatActivity
@@ -18,6 +18,7 @@ namespace AndroidClient.UI.GamesVIews.Hat.WordsChooser
         private HatWordsChooserAdapter _wordsAdapter = null! ;
         private TextView _numberOfPlayersRemaining = null!;
         private RecyclerView _wordsRecyclerView = null!;
+        private TextView? _wordsErroredMsg;
 
         protected override void OnCreate(Bundle? savedInstanceState)
         {
@@ -26,9 +27,10 @@ namespace AndroidClient.UI.GamesVIews.Hat.WordsChooser
             _viewModel = (Application as App)!.Container.Resolve<HatViewModel>();
 
             _addWordsButton = FindViewById<Button>(Resource.Id.start_choose_pairs_btn)!;
+            _wordsErroredMsg = FindViewById<TextView>(Resource.Id.words_error_msg)!;
             _wordsAdapter = new HatWordsChooserAdapter(_viewModel.WordsInput!);
             _numberOfPlayersRemaining = FindViewById<TextView>(Resource.Id.number_of_players_ready)!;
-            _wordsRecyclerView = FindViewById<RecyclerView>(Resource.Id.words_input_recycler);
+            _wordsRecyclerView = FindViewById<RecyclerView>(Resource.Id.words_input_recycler)!;
             
             if (_viewModel.MyRole != Shared.Protos.HatSharedClasses.HatRolePlayer.Value)
             {
@@ -49,6 +51,7 @@ namespace AndroidClient.UI.GamesVIews.Hat.WordsChooser
             RunOnUiThread(() =>
             {
                 ChangeButtonState(false);
+                _wordsErroredMsg!.Visibility = ViewStates.Gone;
                 _wordsAdapter.LockInput();
             });
         }
@@ -67,13 +70,15 @@ namespace AndroidClient.UI.GamesVIews.Hat.WordsChooser
             Finish();
         }
 
-        private void OnViewModelInvalidWordSet(ICollection<int> invalidWords)
+        private void OnViewModelInvalidWordSet(IReadOnlyCollection<int> invalidWords)
         {
             RunOnUiThread(() =>
             {
                 ChangeButtonState(true);
                 _wordsAdapter.UnlockInput();
+                _wordsErroredMsg!.Visibility = ViewStates.Visible;
                 _wordsAdapter.SendErroredWords(invalidWords);
+                
             });
         }
 

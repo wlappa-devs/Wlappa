@@ -1,28 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
-
+<android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    
     <TableLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center">
+            android:gravity="center"
+            android:id="@+id/game_over_lt"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.2"
+    >
         <TableRow>
-            <TextView android:text="Игра закончилась, потому что гладиолус"/>
+            <TextView 
+                    android:text="GAME OVER"
+                    android:textAlignment="center"
+                    android:textSize="24dp"
+            />
         </TableRow>
         <TableRow>
-
-        </TableRow>
-        <TableRow>
-            <Button android:text="To lobby" android:id="@+id/to_lobby_btn"/>
+            <Button 
+                    android:text="To lobby" 
+                    android:id="@+id/to_lobby_btn"
+                    android:layout_width="200dp"
+                    android:layout_height="75dp"
+            />
         </TableRow>
     </TableLayout>
     <TextView android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:text="Final scores:"/>
-    <TextView android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:text="\nСемён: 10"
-              android:id="@+id/final_scores"/>
-</LinearLayout>
+              android:text="Final score: "
+              android:id="@+id/final_score_tx"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintTop_toBottomOf="@+id/game_over_lt"
+              app:layout_constraintVertical_bias="0.5"
+    />
+    <android.support.v7.widget.RecyclerView
+            android:id="@+id/final_score"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintHeight_max="500dp"
+            app:layoutManager="LinearLayoutManager"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/final_score_tx"
+    />
+</android.support.constraint.ConstraintLayout>

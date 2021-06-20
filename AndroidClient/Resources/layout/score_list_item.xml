@@ -6,16 +6,18 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content">
     <android.support.design.widget.TextInputLayout
-            android:id="@+id/word_input_lt"
+            android:id="@+id/score_lt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Word #NUMBER"
+            android:hint="PLAYERNAME"
             app:errorEnabled="true"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense">
         <android.support.design.widget.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/word_input_tf"
+                android:id="@+id/score_tf"
+                android:enabled="false"
+                android:text="SCORE"
                 style="@style/TextInputTheme"/>
     </android.support.design.widget.TextInputLayout>
     <View

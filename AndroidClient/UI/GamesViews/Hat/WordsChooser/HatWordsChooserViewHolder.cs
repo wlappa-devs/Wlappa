@@ -4,7 +4,7 @@ using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 
-namespace AndroidClient.UI.GamesVIews.Hat.WordsChooser
+namespace AndroidClient.UI.GamesViews.Hat.WordsChooser
 {
     public class HatWordsChooserViewHolder : RecyclerView.ViewHolder
     {
@@ -21,12 +21,10 @@ namespace AndroidClient.UI.GamesVIews.Hat.WordsChooser
             WordInputField.TextChanged += (sender, args) =>
             {
                 var textResult = string.Concat(args.Text!).Trim();
-                WordInputLayout.Error = null;
                 WordUpdated?.Invoke(Index, textResult);
             };
         }
 
         public void ChangeInputState(bool isEnabled) => WordInputField.Enabled = isEnabled;
-        
     }
 }

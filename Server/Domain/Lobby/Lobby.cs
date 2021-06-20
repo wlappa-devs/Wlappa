@@ -59,8 +59,14 @@ namespace Server.Domain.Lobby
 
         private async Task CreateGame()
         {
-            var (players, playersToRoles) =
-                _playersState.ReadWithLock((p, p2R) => (p, p2R));
+            var (players, playersToRoles, playersToReadyState) =
+                _playersState.ReadWithLock((p, p2R, p2Rd) => (p, p2R, p2Rd));
+            if (playersToReadyState.Any(kw => kw.Value == false))
+            {
+                if (_host is not null)
+                    await _host.SendMessage(new GameStartingProblems{Message = "Players are not ready"});
+                return;
+            }
             var payload = new GameCreationPayload(playersToRoles,
                 players.Select(e => e.AsNewHandler<InGameServerMessage>()).ToArray());
             var message = _factory.ValidateConfig(_config, payload);
@@ -72,11 +78,12 @@ namespace Server.Domain.Lobby
 
                 await Task.WhenAll(players.Select(p => p.SendMessage(notification)));
                 await _game.Initialize();
+                _playersState.UnreadyEveryone();
                 return;
             }
 
             if (_host is not null)
-                await _host.SendMessage(new ConfigurationInvalid()
+                await _host.SendMessage(new GameStartingProblems()
                 {
                     Message = message
                 });
@@ -84,7 +91,7 @@ namespace Server.Domain.Lobby
 
         private async Task HandleGameFinish()
         {
-            var players = _playersState.ReadWithLock((playersInState, _) =>
+            var players = _playersState.ReadWithLock((playersInState, _, _) =>
             {
                 _game = null;
                 return playersInState;
@@ -103,7 +110,7 @@ namespace Server.Domain.Lobby
             {
                 case ChangeRole m:
                 {
-                    if (cId != _hostId) return;
+                    if (clientId != _hostId) return;
                     if (_factory.Roles.Contains(m.NewRole))
                         _playersState.ChangePlayerRole(m.PlayerId, m.NewRole);
 
@@ -113,6 +120,7 @@ namespace Server.Domain.Lobby
                 case StartGame:
                     if (clientId != _hostId) return;
                     await CreateGame();
+                    await NotifyLobbyUpdate();
                     return;
                 case Disconnect:
                     var players = _playersState.RemovePlayer(clientId);
@@ -128,6 +136,10 @@ namespace Server.Domain.Lobby
                     }
 
                     return;
+                case ReadyChecked readyChecked:
+                    _playersState.ChangePlayerReadyStatus(clientId, readyChecked.OneWayReady);
+                    await NotifyLobbyUpdate();
+                    return;
             }
         }
 
@@ -140,16 +152,19 @@ namespace Server.Domain.Lobby
 
         private async Task NotifyLobbyUpdate()
         {
-            var (message, players) = _playersState.ReadWithLock((playersInState, playersToRoles) => (new LobbyUpdate()
+            var (message, players) = 
+                _playersState.ReadWithLock((playersInState, playersToRoles, playersToReadyStatus) => (new LobbyUpdate()
             {
                 Players = playersInState.Select(p =>
                 {
                     var role = playersToRoles.ContainsKey(p.Id) ? playersToRoles[p.Id] : "";
+                    var readiness = playersToReadyStatus.GetValueOrDefault(p.Id);
                     return new PlayerInLobby()
                     {
                         Id = p.Id,
                         Name = p.Name,
                         Role = role,
+                        IsReady = readiness
                     };
                 }).ToArray()
             }, playersInState));
