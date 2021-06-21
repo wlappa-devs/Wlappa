@@ -4,7 +4,7 @@ using ProtoBuf.Grpc;
 
 namespace Shared.Protos
 {
-    [ServiceContract(Name = "MainServiceProtobufNet")]
+    [ServiceContract(Name = "ClientService", Namespace = "Wlappa")]
     public interface IMainServiceContract
     {
         IAsyncEnumerable<ServerMessage> Connect(IAsyncEnumerable<ClientMessage> request,

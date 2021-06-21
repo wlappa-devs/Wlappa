@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
+using Android.Graphics;
 using Android.OS;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
@@ -10,11 +11,14 @@ using Android.Views;
 using Android.Widget;
 using AndroidClient.ViewModels;
 using Unity;
+using ZXing;
+using ZXing.Common;
 using RecyclerView = Android.Support.V7.Widget.RecyclerView;
 
 namespace AndroidClient.UI.InLobbyViews
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false, WindowSoftInputMode = SoftInput.AdjustResize)]
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false,
+        WindowSoftInputMode = SoftInput.AdjustResize)]
     public class LobbyActivity : AppCompatActivity
     {
         private static readonly TimeSpan HostLeftSnackBarLength = TimeSpan.FromSeconds(2);
@@ -32,6 +36,9 @@ namespace AndroidClient.UI.InLobbyViews
             _adapter = new PlayersListAdapter(_viewModel.LastLobbyStatus, _viewModel.Roles, _viewModel.AmHost!.Value);
 
             var startBtn = FindViewById<Button>(Resource.Id.start_game_btn);
+            var qrCodeView = FindViewById<ImageView>(Resource.Id.qr_code);
+
+            qrCodeView!.SetImageBitmap(GenerateQrCodeForGuid(_viewModel.LobbyId));
 
             _idView = FindViewById<EditText>(Resource.Id.lobby_game_id);
             _viewModel.MakeSnackBar = msg => Snackbar.Make(_idView, msg, 2000).Show();
@@ -72,7 +79,7 @@ namespace AndroidClient.UI.InLobbyViews
                             await _viewModel.HandleGameStartButtonPressing();
                         };
                 }
-            
+
 
             var recyclerView = FindViewById<RecyclerView>(Resource.Id.recycler);
 
@@ -127,6 +134,28 @@ namespace AndroidClient.UI.InLobbyViews
         {
             Log.Info(nameof(LobbyActivity), $"Got lobby update {_viewModel.LastLobbyStatus?.Count}");
             RunOnUiThread(() => _adapter.Players = _viewModel.LastLobbyStatus);
+        }
+
+        private Bitmap GenerateQrCodeForGuid(Guid guid)
+        {
+            var text = Convert.ToBase64String(guid.ToByteArray());
+            var options = new EncodingOptions()
+            {
+                Width = 512,
+                Height = 512,
+                Margin = 0,
+            };
+            var writer = new BarcodeWriterGeneric
+            {
+                Format = BarcodeFormat.QR_CODE,
+                Options = options,
+            };
+            var bitMatrix = writer.Encode(text);
+            var bitmap = Bitmap.CreateBitmap(512, 512, Bitmap.Config.Argb8888!);
+            for (var x = 0; x < 512; x++)
+            for (var y = 0; y < 512; y++)
+                bitmap!.SetPixel(x, y, bitMatrix[x, y] ? Color.Black : Color.White);
+            return bitmap!;
         }
     }
 }

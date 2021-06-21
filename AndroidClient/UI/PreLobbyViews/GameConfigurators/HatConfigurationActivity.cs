@@ -29,6 +29,7 @@ namespace AndroidClient.UI.PreLobbyViews.GameConfigurators
                 {
                     createServerButton.Enabled = false;
                     await _viewModel.CreateLobby();
+                    createServerButton.Enabled = true;
                 };
             var config = new HatConfiguration
             {

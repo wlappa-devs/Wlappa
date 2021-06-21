@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using AndroidClient.ViewModels.Providers;
 using Client_lib;
@@ -37,7 +38,7 @@ namespace AndroidClient.ViewModels
         private async Task ConnectToServer()
         {
             if (_isConnected) return;
-            await _client.ConnectToServer("10.0.2.2:5000", Name!);
+            await _client.ConnectToServer(Constants.ServerIp, Constants.Port, Name!);
             _isConnected = true;
         }
 
@@ -49,7 +50,16 @@ namespace AndroidClient.ViewModels
                 return;
             }
 
-            await ConnectToServer();
+            try
+            {
+                await ConnectToServer();
+            }
+            catch (TaskCanceledException)
+            {
+                _isConnected = false;
+                ShowNotification?.Invoke("Failed to connect to server");
+                return;
+            }
             await _client.ChangeName(Name!);
             _provider.Lobby = await _client.JoinGame(_guid.Value);
             _provider.Configuration = Configuration;
@@ -64,7 +74,17 @@ namespace AndroidClient.ViewModels
                 return;
             }
 
-            await ConnectToServer();
+            try
+            {
+                await ConnectToServer();
+            }
+            catch (TaskCanceledException)
+            {
+                _isConnected = false;
+                ShowNotification?.Invoke("Failed to connect to server");
+                return;
+            }
+            
             _guid = await _client.CreateGame(Configuration);
             await JoinLobby();
         }
