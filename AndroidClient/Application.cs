@@ -1,6 +1,7 @@
 ﻿using System;
 using Android.App;
 using Android.Runtime;
+using Android.Support.V7.App;
 using AndroidClient.ViewModels;
 using AndroidClient.ViewModels.GameViewModels;
 using AndroidClient.ViewModels.Providers;
@@ -29,6 +30,12 @@ namespace AndroidClient
             Container.RegisterFactory<HatViewModel>(container =>
                 container.Resolve<GameViewModelFactory>().GetViewModel<HatViewModel>());
             Container.RegisterSingleton<LobbyViewModel>();
+        }
+
+        public override void OnCreate()
+        {
+            base.OnCreate();
+            AppCompatDelegate.DefaultNightMode = AppCompatDelegate.ModeNightNo;
         }
     }
 }
