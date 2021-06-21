@@ -64,6 +64,7 @@ namespace AndroidClient.ViewModels.GameViewModels
         public event Action? GetWord;
         public event Action? TimeIsUp;
         public event Action? GameOver;
+        public event Action? GotGameInitialMessage;
 
         public int RemainingPlayersToWriteWords { get; private set; }
 
@@ -104,6 +105,7 @@ namespace AndroidClient.ViewModels.GameViewModels
                     if (IsManaged)
                         Log.Info(nameof(HatViewModel), $"Manager exists, and his GUID is {_manager!.Value}");
                     WordsSuccessfullyAddedBySomeOne?.Invoke();
+                    GotGameInitialMessage?.Invoke();
                     break;
                 case HatAnnounceNextPair hatAnnounceNextPair:
                     Explainer = hatAnnounceNextPair.Explainer;

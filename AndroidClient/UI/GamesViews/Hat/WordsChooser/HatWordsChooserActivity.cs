@@ -3,6 +3,7 @@ using Android.App;
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using AndroidClient.ViewModels.GameViewModels;
@@ -10,12 +11,13 @@ using Unity;
 
 namespace AndroidClient.UI.GamesViews.Hat.WordsChooser
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false, WindowSoftInputMode = SoftInput.AdjustResize)]
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false,
+        WindowSoftInputMode = SoftInput.AdjustResize)]
     public class HatWordsChooserActivity : AppCompatActivity
     {
         private HatViewModel _viewModel = null!;
         private Button _addWordsButton = null!;
-        private HatWordsChooserAdapter _wordsAdapter = null! ;
+        private HatWordsChooserAdapter _wordsAdapter = null!;
         private TextView _numberOfPlayersRemaining = null!;
         private RecyclerView _wordsRecyclerView = null!;
         private TextView? _wordsErroredMsg;
@@ -28,20 +30,21 @@ namespace AndroidClient.UI.GamesViews.Hat.WordsChooser
 
             _addWordsButton = FindViewById<Button>(Resource.Id.start_choose_pairs_btn)!;
             _wordsErroredMsg = FindViewById<TextView>(Resource.Id.words_error_msg)!;
-            _wordsAdapter = new HatWordsChooserAdapter(_viewModel.WordsInput!);
             _numberOfPlayersRemaining = FindViewById<TextView>(Resource.Id.number_of_players_ready)!;
             _wordsRecyclerView = FindViewById<RecyclerView>(Resource.Id.words_input_recycler)!;
-            
-            if (_viewModel.MyRole != Shared.Protos.HatSharedClasses.HatRolePlayer.Value)
-            {
-                _addWordsButton.Visibility = ViewStates.Gone;
-                _wordsRecyclerView!.Visibility = ViewStates.Gone;
-            }
-
+            _addWordsButton.Visibility = ViewStates.Gone;
+            _wordsRecyclerView!.Visibility = ViewStates.Gone;
             _addWordsButton.Click +=
                 async (sender, args) => await _viewModel.SendWords();
+            DoNetworkRelatedInitialisation();
+        }
 
-
+        public void DoNetworkRelatedInitialisation()
+        {
+            if (_viewModel.MyRole != Shared.Protos.HatSharedClasses.HatRolePlayer.Value) return;
+            _addWordsButton.Visibility = ViewStates.Visible;
+            _wordsRecyclerView!.Visibility = ViewStates.Visible;
+            _wordsAdapter = new HatWordsChooserAdapter(_viewModel.WordsInput!);
             _numberOfPlayersRemaining.Text = _viewModel.RemainingPlayersToWriteWords.ToString();
             _wordsRecyclerView!.SetAdapter(_wordsAdapter);
         }
@@ -78,7 +81,6 @@ namespace AndroidClient.UI.GamesViews.Hat.WordsChooser
                 _wordsAdapter.UnlockInput();
                 _wordsErroredMsg!.Visibility = ViewStates.Visible;
                 _wordsAdapter.SendErroredWords(invalidWords);
-                
             });
         }
 
@@ -89,6 +91,12 @@ namespace AndroidClient.UI.GamesViews.Hat.WordsChooser
             _viewModel.AnnouncedNextPair += OnViewModelAnnouncedNextPair;
             _viewModel.InvalidWordSet += OnViewModelInvalidWordSet;
             _viewModel.WordsSuccessfullyAddedByMe += OnViewModelWordsSuccessfullyAddedByMe;
+            _viewModel.GotGameInitialMessage += OnViewModelOnGotGameInitialMessage;
+        }
+
+        private void OnViewModelOnGotGameInitialMessage()
+        {
+            RunOnUiThread(DoNetworkRelatedInitialisation);
         }
 
         protected override void OnStop()
@@ -98,6 +106,7 @@ namespace AndroidClient.UI.GamesViews.Hat.WordsChooser
             _viewModel.AnnouncedNextPair -= OnViewModelAnnouncedNextPair;
             _viewModel.InvalidWordSet -= OnViewModelInvalidWordSet;
             _viewModel.WordsSuccessfullyAddedByMe -= OnViewModelWordsSuccessfullyAddedByMe;
+            _viewModel.GotGameInitialMessage -= OnViewModelOnGotGameInitialMessage;
         }
 
         private void ChangeButtonState(bool isEnabled)
