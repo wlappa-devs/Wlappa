@@ -20,10 +20,11 @@ namespace Client_lib
         private ChannelWriter<ClientMessage>? _requestWriter;
         private Grpc.Core.Channel? _channel;
 
-        public async Task ConnectToServer(string address, string name)
+        public async Task ConnectToServer(string address, int port, string name)
         {
             GrpcClientFactory.AllowUnencryptedHttp2 = true;
-            _channel = new Grpc.Core.Channel(address, ChannelCredentials.Insecure);
+            _channel = new Grpc.Core.Channel(address, port, ChannelCredentials.Insecure);
+            await _channel.ConnectAsync(DateTime.Now.ToUniversalTime() + TimeSpan.FromSeconds(1));
             var grpcClient = _channel.CreateGrpcService<IMainServiceContract>();
             var request = Channel.CreateUnbounded<ClientMessage>();
             var responseStream = grpcClient.Connect(request.AsAsyncEnumerable());

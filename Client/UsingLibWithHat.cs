@@ -20,7 +20,7 @@ namespace Client
         {
             var name = Console.ReadLine()!;
             _client = new Client_lib.Client();
-            await _client.ConnectToServer("127.0.0.1:5000", name);
+            await _client.ConnectToServer("127.0.0.1", 5000, name);
 
             var command = Console.ReadLine()!;
             Guid id;

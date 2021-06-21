@@ -9,6 +9,7 @@ using AndroidClient.UI.InLobbyViews;
 using AndroidClient.ViewModels;
 using Client_lib;
 using Unity;
+using ZXing.Mobile;
 
 namespace AndroidClient.UI.PreLobbyViews
 {
@@ -22,10 +23,19 @@ namespace AndroidClient.UI.PreLobbyViews
         {
             base.OnCreate(savedInstanceState);
             _viewModel = (Application as App)!.Container.Resolve<PreLobbyViewModel>();
+            Xamarin.Essentials.Platform.Init(Application);
 
             SetContentView(Resource.Layout.join_server);
 
             var idInput = FindViewById<EditText>(Resource.Id.server_code_tf);
+            var scanQrButton = FindViewById<Button>(Resource.Id.scan_qr_code_btn);
+            var scanner = new MobileBarcodeScanner();
+
+            scanQrButton!.Click += async (_, __) =>
+            {
+                var result = await scanner!.Scan();
+                idInput!.Text = new Guid(Convert.FromBase64String(result.Text)).ToString();
+            };
             
             _servercodeLayout = FindViewById<TextInputLayout>(Resource.Id.server_code_lt)!;
 

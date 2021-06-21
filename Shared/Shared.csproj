@@ -4,6 +4,10 @@
         <TargetFrameworks>net5.0;netstandard2.1</TargetFrameworks>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <Optimize>true</Optimize>
+    </PropertyGroup>
+
     <ItemGroup>
       <PackageReference Include="Google.Protobuf" Version="3.17.1" />
       <PackageReference Include="protobuf-net.BuildTools" Version="3.0.101">
