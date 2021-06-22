@@ -13,7 +13,6 @@ namespace AndroidClient
     [Application]
     public class App : Application
     {
-        // TODO Deactivate buttons when waiting for responses 
         // TODO Store all state in viewmodels to be able to handle configurationChange
         public UnityContainer Container { get; } = new UnityContainer();
 

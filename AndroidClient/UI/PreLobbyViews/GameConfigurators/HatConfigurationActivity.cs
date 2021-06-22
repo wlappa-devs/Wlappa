@@ -1,6 +1,7 @@
 using System;
 using Android.App;
 using Android.OS;
+using Android.Support.Design.Widget;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
@@ -11,7 +12,8 @@ using Unity;
 
 namespace AndroidClient.UI.PreLobbyViews.GameConfigurators
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false, WindowSoftInputMode = SoftInput.AdjustResize)]
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false,
+        WindowSoftInputMode = SoftInput.AdjustResize)]
     public class HatConfigurationActivity : AppCompatActivity
     {
         private PreLobbyViewModel _viewModel = null!;
@@ -40,7 +42,11 @@ namespace AndroidClient.UI.PreLobbyViews.GameConfigurators
 
             var timeInput = FindViewById<EditText>(Resource.Id.time_to_explain_field);
             var wordsInput = FindViewById<EditText>(Resource.Id.words_to_write_field);
-            
+            var timeInputLayout = FindViewById<TextInputLayout>(Resource.Id.hat_config_time_to_explain_lt);
+            timeInputLayout!.Hint += $" (default: {DefaultTimeToExplain})";
+            var wordsInputLayout = FindViewById<TextInputLayout>(Resource.Id.hat_config_words_to_write_lt);
+            wordsInputLayout!.Hint += $" (default: {DefaultNumberOfWordsToBeWritten})";
+
 
             _viewModel.Configuration = config;
             FindViewById<RadioGroup>(Resource.Id.hat_game_mode_choice)!.CheckedChange += (sender, args) =>
@@ -53,9 +59,11 @@ namespace AndroidClient.UI.PreLobbyViews.GameConfigurators
                 };
             };
 
-            timeInput!.FocusChange += (sender, args) => timeInput.Hint = args.HasFocus ? DefaultTimeToExplain.ToString() : "";
-            wordsInput!.FocusChange += (sender, args) => wordsInput.Hint = args.HasFocus ? DefaultNumberOfWordsToBeWritten.ToString() : "";
-            
+            timeInput!.FocusChange += (sender, args) =>
+                timeInput.Hint = args.HasFocus ? DefaultTimeToExplain.ToString() : "";
+            wordsInput!.FocusChange += (sender, args) =>
+                wordsInput.Hint = args.HasFocus ? DefaultNumberOfWordsToBeWritten.ToString() : "";
+
             timeInput!.TextChanged += (sender, args) =>
             {
                 var str = string.Concat(args.Text!);

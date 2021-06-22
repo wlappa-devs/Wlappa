@@ -13,7 +13,8 @@ using ZXing.Mobile;
 
 namespace AndroidClient.UI.PreLobbyViews
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false, WindowSoftInputMode = SoftInput.AdjustResize)]
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false,
+        WindowSoftInputMode = SoftInput.AdjustResize)]
     public class JoinServerActivity : AppCompatActivity
     {
         private PreLobbyViewModel _viewModel = null!;
@@ -36,15 +37,18 @@ namespace AndroidClient.UI.PreLobbyViews
                 var result = await scanner!.Scan();
                 idInput!.Text = new Guid(Convert.FromBase64String(result.Text)).ToString();
             };
-            
+
             _servercodeLayout = FindViewById<TextInputLayout>(Resource.Id.server_code_lt)!;
 
             FindViewById<EditText>(Resource.Id.server_code_tf)!.TextChanged +=
                 (sender, args) => _servercodeLayout.Error = null;
-            
+
+            var startedJoining = false;
             FindViewById<Button>(Resource.Id.join_btn)!.Click +=
                 async (sender, args) =>
                 {
+                    if (startedJoining) return;
+                    startedJoining = true;
                     try
                     {
                         _viewModel.Id = idInput?.Text;
@@ -67,6 +71,10 @@ namespace AndroidClient.UI.PreLobbyViews
                     catch (GameAlreadyStartedException)
                     {
                         _servercodeLayout.Error = "Game is already in process";
+                    }
+                    finally
+                    {
+                        startedJoining = false;
                     }
                 };
         }

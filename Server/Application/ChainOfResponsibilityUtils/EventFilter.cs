@@ -9,9 +9,9 @@ namespace Server.Application.ChainOfResponsibilityUtils
     {
         public Func<Guid?, T, Task>? EventListener { private get; set; }
 
-        public async Task EventHandle(Guid? clientId, ClientMessage e)
+        public async Task EventHandle(Guid? clientId, ClientMessage clientMessage)
         {
-            if (e is T correctEvent && EventListener is not null)
+            if (clientMessage is T correctEvent && EventListener is not null)
                 await EventListener(clientId, correctEvent);
         }
     }

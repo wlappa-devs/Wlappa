@@ -102,11 +102,11 @@ namespace Server.Domain.Lobby
             await Task.WhenAll(players.Select(p => p.SendMessage(notification)));
         }
 
-        public async Task EventHandle(Guid? cId, LobbyClientMessage message)
+        public async Task EventHandle(Guid? cId, LobbyClientMessage clientMessage)
         {
             if (cId is null) return;
             var clientId = cId.Value;
-            switch (message)
+            switch (clientMessage)
             {
                 case ChangeRole m:
                 {

@@ -39,7 +39,7 @@ namespace Server.Application
             _subscriptionManager.SubscribeForClient(player.Id, lobby);
         }
 
-        public Guid CreateGame(Guid hostId, GameConfiguration config)
+        public Guid CreateLobby(Guid hostId, GameConfiguration config)
         {
             var gameFactory = _gameFactoryResolver.FindGameFactory(config.Type);
             var newId = Guid.NewGuid();

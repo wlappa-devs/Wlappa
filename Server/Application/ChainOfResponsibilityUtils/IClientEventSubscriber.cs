@@ -6,6 +6,6 @@ namespace Server.Application.ChainOfResponsibilityUtils
 {
     public interface IClientEventSubscriber<in T> where T : ClientMessage
     {
-        Task EventHandle(Guid? clientId, T e);
+        Task EventHandle(Guid? clientId, T clientMessage);
     }
 }

@@ -35,7 +35,7 @@ namespace AndroidClient.UI.GamesViews.Hat
             _wordTextView = FindViewById<TextView>(Resource.Id.word_to_guess)!;
             _scoreAdapter = new HatGameScoreAdapter(_viewModel.LastScoresValues);
             _scoreRecyclerView = FindViewById<RecyclerView>(Resource.Id.score)!;
-            var currentWordLauout = FindViewById<LinearLayout>(Resource.Id.current_word_lt)!;
+            var currentWordLayout = FindViewById<LinearLayout>(Resource.Id.current_word_lt)!;
             _guessedBtn = FindViewById<Button>(Resource.Id.guess_btn)!;
             _cancelBtn = FindViewById<Button>(Resource.Id.cancel_btn)!;
             _gameTimer = FindViewById<TextView>(Resource.Id.game_timer)!;
@@ -45,9 +45,11 @@ namespace AndroidClient.UI.GamesViews.Hat
             {
                 _guessedBtn.Visibility = ViewStates.Gone;
                 _cancelBtn.Visibility = ViewStates.Gone;
-                currentWordLauout.Visibility = ViewStates.Gone;
             }
 
+            if (!_viewModel.AmSeeingWord)
+                currentWordLayout.Visibility = ViewStates.Gone;
+            
             _guessedBtn.Click += async (sender, args) => await _viewModel.GuessWord();
             _cancelBtn.Click += async (sender, args) => await _viewModel.CancelExplanation();
             _scoreRecyclerView.SetAdapter(_scoreAdapter);

@@ -78,7 +78,7 @@ namespace Server.Domain.Games.TheHat
                     var member = new HatMember(player, hatRoleObserver);
                     _allMembers.Add(member);
                 }
-                else if (playerRole is HatRoleKukold hatRoleKukold)
+                else if (playerRole is HatRoleSpectator hatRoleKukold)
                 {
                     var member = new HatMember(player, hatRoleKukold);
                     _allMembers.Add(member);
@@ -131,23 +131,22 @@ namespace Server.Domain.Games.TheHat
 
         protected override async Task UnsafeInitialize()
         {
-            foreach (var member in _allMembers)
-                await member.HandleServerMessage(
-                    new HatGameInitialInformationMessage
-                    {
-                        ManagerId = _manger?.ClientInteractor.Id,
-                        Role = member.Role.StringValue,
-                        NumberOfPlayersInGame = _players.Count,
-                        TimeToExplain = _timeToExplain,
-                        WordsToWrite = _wordsToBeWritten
-                    }
-                );
+            await Task.WhenAll(_allMembers.Select(member => member.HandleServerMessage(
+                new HatGameInitialInformationMessage
+                {
+                    ManagerId = _manger?.ClientInteractor.Id,
+                    Role = member.Role.StringValue,
+                    NumberOfPlayersInGame = _players.Count,
+                    TimeToExplain = _timeToExplain,
+                    WordsToWrite = _wordsToBeWritten
+                }
+            )));
         }
 
         private List<int> ValidateWords(IReadOnlyList<string> words)
         {
             var filteredWords = words
-                .Select((word, index) => (word,index))
+                .Select((word, index) => (word, index))
                 .Where(pair => pair.word == "")
                 .Select(pair => pair.index).ToList();
             return filteredWords;
@@ -161,7 +160,8 @@ namespace Server.Domain.Games.TheHat
                 _words.AddRange(words.Select(x => new Word(x, author)));
                 return 1;
             }
-            await author.HandleServerMessage(new HatInvalidWordsSet{WrongWordIds = validationResult});
+
+            await author.HandleServerMessage(new HatInvalidWordsSet {WrongWordIds = validationResult});
             return 0;
         }
 

@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="24dp">
-    <LinearLayout 
+    <LinearLayout
             android:id="@+id/info_lt"
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -14,25 +14,51 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-        <TextView 
-                android:text="expl" 
+        <TextView
+                android:text="expl"
                 android:id="@+id/explainer_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textAlignment="center"/>
-        <TextView 
+        <TextView
                 android:text=" EXPLAINS TO "
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textAlignment="center"/>
-        <TextView 
+        <TextView
                 android:text="undr" android:id="@+id/understander_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textAlignment="center"/>
+    </LinearLayout>
+    <LinearLayout android:orientation="vertical"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/scores_table_header"
+                  app:layout_constraintTop_toBottomOf="@+id/info_lt"
+                  android:layout_marginTop="10dp">
+        <LinearLayout android:orientation="horizontal"
+                      android:layout_height="wrap_content"
+                      android:layout_width="match_parent">
+            <TextView
+                    android:text="Name"
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.80"/>
+            <TextView
+                    android:text="Score"
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.20"
+                    android:textAlignment="textEnd"/>
+        </LinearLayout>
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#c0c0c0"/>
     </LinearLayout>
     <android.support.v7.widget.RecyclerView
             android:id="@+id/score"
@@ -43,10 +69,10 @@
             app:layoutManager="LinearLayoutManager"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/info_lt"
+            app:layout_constraintTop_toBottomOf="@+id/scores_table_header"
             app:layout_constraintVertical_bias="0.5"
     />
-    <Button 
+    <Button
             android:text="Ready"
             android:id="@+id/start_explaining_btn"
             android:layout_width="200dp"
