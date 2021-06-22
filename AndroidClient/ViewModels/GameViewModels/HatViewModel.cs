@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Android.Util; // TODO replace android logging with generic logging
+using Android.Util;
 using Client_lib;
 using Shared.Protos;
-using Shared.Protos.HatSharedClasses;
+using Shared.Protos.HatSharedClasses; // TODO replace android logging with generic logging
 
 namespace AndroidClient.ViewModels.GameViewModels
 {
@@ -39,7 +39,7 @@ namespace AndroidClient.ViewModels.GameViewModels
 
         private bool AmUnderstander => _gameInstance!.PlayerId == Understander;
 
-        public bool AmSpectator => MyRole == HatRoleSpectator.Value;
+        private bool AmSpectator => MyRole == HatRoleSpectator.Value;
 
         public bool AmControllingExplanation => IsManaged ? AmManager : AmExplainer;
 
@@ -157,9 +157,9 @@ namespace AndroidClient.ViewModels.GameViewModels
 
         public async Task SendWords()
         {
-            await _gameInstance!.SendGameEvent(new HatAddWords()
+            await _gameInstance!.SendGameEvent(new HatAddWords
             {
-                Value = WordsInput!.ToList()
+                Value = WordsInput!
             });
         }
 

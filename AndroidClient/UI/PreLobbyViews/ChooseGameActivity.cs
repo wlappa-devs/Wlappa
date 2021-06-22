@@ -11,7 +11,8 @@ using Unity;
 
 namespace AndroidClient.UI.PreLobbyViews
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false, WindowSoftInputMode = SoftInput.AdjustResize)]
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false,
+        WindowSoftInputMode = SoftInput.AdjustResize)]
     public class ChooseGameActivity : AppCompatActivity
     {
         private PreLobbyViewModel _viewModel = null!;
@@ -33,7 +34,7 @@ namespace AndroidClient.UI.PreLobbyViews
             _viewModel.ShouldConfigureGame = ViewModelShouldConfigureGame;
             _viewModel.ShowNotification += ShowNotification;
         }
-        
+
         private void ShowNotification(string text) =>
             Toast.MakeText(ApplicationContext, text, ToastLength.Long)?.Show();
 
@@ -50,6 +51,7 @@ namespace AndroidClient.UI.PreLobbyViews
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
             Finish();
         }
 

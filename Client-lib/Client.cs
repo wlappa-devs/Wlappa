@@ -1,32 +1,32 @@
 ﻿using System;
-using System.Threading.Tasks;
-using ProtoBuf.Grpc.Client;
-using Shared.Protos;
 using System.Threading.Channels;
+using System.Threading.Tasks;
 using Grpc.Core;
 using ProtoBuf.Grpc;
-using Channel = System.Threading.Channels.Channel;
+using ProtoBuf.Grpc.Client;
+using Shared.Protos;
+using Channel = Grpc.Core.Channel;
 
 namespace Client_lib
 {
     public class Client
     {
-        // ReSharper disable once UnusedAutoPropertyAccessor.Global
+        // ReSharper disable twice UnusedAutoPropertyAccessor.Global, MemberCanBePrivate.Global
         public string? Name { get; private set; }
         public Guid Id { get; private set; }
 
 
         private ChannelReader<ServerMessage>? _responseReader;
         private ChannelWriter<ClientMessage>? _requestWriter;
-        private Grpc.Core.Channel? _channel;
+        private Channel? _channel;
 
         public async Task ConnectToServer(string address, int port, string name)
         {
             GrpcClientFactory.AllowUnencryptedHttp2 = true;
-            _channel = new Grpc.Core.Channel(address, port, ChannelCredentials.Insecure);
+            _channel = new Channel(address, port, ChannelCredentials.Insecure);
             await _channel.ConnectAsync(DateTime.Now.ToUniversalTime() + TimeSpan.FromSeconds(1));
             var grpcClient = _channel.CreateGrpcService<IMainServiceContract>();
-            var request = Channel.CreateUnbounded<ClientMessage>();
+            var request = System.Threading.Channels.Channel.CreateUnbounded<ClientMessage>();
             var responseStream = grpcClient.Connect(request.AsAsyncEnumerable());
             _responseReader = responseStream.AsChannelReader();
             _requestWriter = request.Writer;
@@ -36,9 +36,9 @@ namespace Client_lib
         private async Task ReceiveId(string name)
         {
             Name = name;
-            await _requestWriter!.WriteAsync(new Greeting()
+            await _requestWriter!.WriteAsync(new Greeting
             {
-                Name = name,
+                Name = name
             });
 
             var response = await _responseReader!.ReadAsync();
@@ -51,9 +51,9 @@ namespace Client_lib
         {
             if (_requestWriter is null || _responseReader is null)
                 throw new InvalidOperationException();
-            await _requestWriter.WriteAsync(new CreateLobby()
+            await _requestWriter.WriteAsync(new CreateLobby
             {
-                Configuration = configuration,
+                Configuration = configuration
             });
 
             var response = await _responseReader.ReadAsync();
@@ -68,9 +68,9 @@ namespace Client_lib
         {
             if (_requestWriter is null || _responseReader is null)
                 throw new InvalidOperationException();
-            await _requestWriter.WriteAsync(new JoinLobby()
+            await _requestWriter.WriteAsync(new JoinLobby
             {
-                Id = lobbyId,
+                Id = lobbyId
             });
 
             var response = await _responseReader.ReadAsync();
@@ -91,9 +91,9 @@ namespace Client_lib
         public async Task ChangeName(string newName)
         {
             if (_requestWriter != null)
-                await _requestWriter.WriteAsync(new ChangeName()
+                await _requestWriter.WriteAsync(new ChangeName
                 {
-                    NewName = newName,
+                    NewName = newName
                 });
         }
     }

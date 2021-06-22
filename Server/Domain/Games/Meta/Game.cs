@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Server.Application.ChainOfResponsibilityUtils;
+using Server.Domain.ChainOfResponsibilityUtils;
 using Shared.Protos;
 
 namespace Server.Domain.Games.Meta

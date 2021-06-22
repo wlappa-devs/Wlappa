@@ -49,7 +49,7 @@ namespace AndroidClient.UI.GamesViews.Hat
 
             if (!_viewModel.AmSeeingWord)
                 currentWordLayout.Visibility = ViewStates.Gone;
-            
+
             _guessedBtn.Click += async (sender, args) => await _viewModel.GuessWord();
             _cancelBtn.Click += async (sender, args) => await _viewModel.CancelExplanation();
             _scoreRecyclerView.SetAdapter(_scoreAdapter);

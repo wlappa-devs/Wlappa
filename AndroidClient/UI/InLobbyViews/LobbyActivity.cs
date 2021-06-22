@@ -6,6 +6,7 @@ using Android.Graphics;
 using Android.OS;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
+using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
@@ -13,7 +14,6 @@ using AndroidClient.ViewModels;
 using Unity;
 using ZXing;
 using ZXing.Common;
-using RecyclerView = Android.Support.V7.Widget.RecyclerView;
 
 namespace AndroidClient.UI.InLobbyViews
 {
@@ -137,19 +137,19 @@ namespace AndroidClient.UI.InLobbyViews
             RunOnUiThread(() => _adapter.Players = _viewModel.LastLobbyStatus);
         }
 
-        private Bitmap GenerateQrCodeForGuid(Guid guid)
+        private static Bitmap GenerateQrCodeForGuid(Guid guid)
         {
             var text = Convert.ToBase64String(guid.ToByteArray());
-            var options = new EncodingOptions()
+            var options = new EncodingOptions
             {
                 Width = 512,
                 Height = 512,
-                Margin = 0,
+                Margin = 0
             };
             var writer = new BarcodeWriterGeneric
             {
                 Format = BarcodeFormat.QR_CODE,
-                Options = options,
+                Options = options
             };
             var bitMatrix = writer.Encode(text);
             var bitmap = Bitmap.CreateBitmap(512, 512, Bitmap.Config.Argb8888!);

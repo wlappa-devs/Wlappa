@@ -2,21 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 using Server.Domain.Games.Meta;
 using Server.Domain.Games.TheHat;
 using Shared.Protos;
 using Shared.Protos.HatSharedClasses;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace TestServer.GameTests
 {
     public class HatIGameTests
     {
+#pragma warning disable 8618
         private Game _gameInstance;
         private HatGame _hiddenHatGame;
         private HatConfiguration _configuration;
@@ -26,6 +24,7 @@ namespace TestServer.GameTests
         private MockTimer _timer;
         private ICollection<string> _words;
         private ILogger<HatGame> _logger;
+#pragma warning restore 8618
 
         [SetUp]
         public void Setup()
@@ -56,7 +55,7 @@ namespace TestServer.GameTests
             _timer = new MockTimer();
             _hiddenHatGame = new HatGame(
                 _configuration,
-                new GameCreationPayload(_clients.ToDictionary(x => x.Id, x => _factory.DefaultRole), _clients),
+                new GameCreationPayload(_clients.ToDictionary(x => x.Id, _ => _factory.DefaultRole), _clients),
                 () =>
                 {
                     _hasFinished = true;
@@ -156,7 +155,7 @@ namespace TestServer.GameTests
 
         private void GetReadyAndGuessWordsWithTimer(int correctlyGuessed)
         {
-            var (explainer, understander) = GetReady();
+            var (explainer, _) = GetReady();
             for (var _ = 0; _ < correctlyGuessed; _++)
             {
                 _gameInstance.EventHandle(explainer.Id, new HatGuessRight()).Wait();
@@ -165,10 +164,10 @@ namespace TestServer.GameTests
             _gameInstance.EventHandle(null, new HatTimerFinish())
                 .Wait();
         }
-        
+
         private void GetReadyAndGuessWordsWithCancel(int correctlyGuessed)
         {
-            var (explainer, understander) = GetReady();
+            var (explainer, _) = GetReady();
             for (var _ = 0; _ < correctlyGuessed; _++)
             {
                 _gameInstance.EventHandle(explainer.Id, new HatGuessRight()).Wait();
@@ -176,7 +175,7 @@ namespace TestServer.GameTests
 
             _gameInstance.EventHandle(explainer.Id, new HatCancelExplanation()).Wait();
         }
-        
+
         private void FillGameWithWords()
         {
             var wordsPool = new Queue<string>(_words);

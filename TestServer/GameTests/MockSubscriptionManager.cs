@@ -1,12 +1,12 @@
 using System;
-using Server.Application.ChainOfResponsibilityUtils;
+using Server.Domain.ChainOfResponsibilityUtils;
 using Shared.Protos;
 
 namespace TestServer.GameTests
 {
-    public class MockSubscriptionManager<T>: ISubscriptionManager<T> where T: InGameClientMessage
+    public class MockSubscriptionManager<T> : ISubscriptionManager<T> where T : InGameClientMessage
     {
-        public IClientEventSubscriber<T> Subscriber { get; set; }
+        public IClientEventSubscriber<T>? Subscriber { get; private set; }
 
         public void SubscribeForClient(Guid clientId, IClientEventSubscriber<T> subscriber)
         {
@@ -15,7 +15,6 @@ namespace TestServer.GameTests
 
         public void UnsubscribeFromClient(Guid clientId)
         {
-            
         }
     }
 }

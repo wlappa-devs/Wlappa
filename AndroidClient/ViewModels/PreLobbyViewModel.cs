@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Channels;
 using System.Threading.Tasks;
 using AndroidClient.ViewModels.Providers;
 using Client_lib;
@@ -60,6 +59,7 @@ namespace AndroidClient.ViewModels
                 ShowNotification?.Invoke("Failed to connect to server");
                 return;
             }
+
             await _client.ChangeName(Name!);
             _provider.Lobby = await _client.JoinGame(_guid.Value);
             _provider.Configuration = Configuration;
@@ -84,7 +84,7 @@ namespace AndroidClient.ViewModels
                 ShowNotification?.Invoke("Failed to connect to server");
                 return;
             }
-            
+
             _guid = await _client.CreateGame(Configuration);
             await JoinLobby();
         }

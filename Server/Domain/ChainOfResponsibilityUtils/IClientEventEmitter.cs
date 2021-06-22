@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Shared.Protos;
 
-namespace Server.Application.ChainOfResponsibilityUtils
+namespace Server.Domain.ChainOfResponsibilityUtils
 {
     public interface IClientEventEmitter<out T> where T : ClientMessage
     {

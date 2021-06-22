@@ -3,10 +3,10 @@ using Android.App;
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
-using Android.Util;
 using Android.Views;
 using Android.Widget;
 using AndroidClient.ViewModels.GameViewModels;
+using Shared.Protos.HatSharedClasses;
 using Unity;
 
 namespace AndroidClient.UI.GamesViews.Hat.WordsChooser
@@ -36,13 +36,13 @@ namespace AndroidClient.UI.GamesViews.Hat.WordsChooser
             _wordsRecyclerView!.Visibility = ViewStates.Gone;
             _addWordsButton.Click +=
                 async (sender, args) => await _viewModel.SendWords();
-            
+
             DoNetworkRelatedInitialisation();
         }
 
-        public void DoNetworkRelatedInitialisation()
+        private void DoNetworkRelatedInitialisation()
         {
-            if (_viewModel.MyRole != Shared.Protos.HatSharedClasses.HatRolePlayer.Value) return;
+            if (_viewModel.MyRole != HatRolePlayer.Value) return;
             _addWordsButton.Visibility = ViewStates.Visible;
             _wordsRecyclerView!.Visibility = ViewStates.Visible;
             _wordsAdapter = new HatWordsChooserAdapter(_viewModel.WordsInput!);

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ProtoBuf;
-using Google.Protobuf.WellKnownTypes;
 using Shared.Protos.HatSharedClasses;
 
 namespace Shared.Protos
@@ -116,11 +115,11 @@ namespace Shared.Protos
     public abstract class InGameServerMessage : ServerMessage
     {
     }
-    
+
     [DataContract]
     [ProtoContract]
     public class LobbyDestroyed : LobbyServerMessage
     {
-        [ProtoMember(1)]public string Msg { get; set; }
+        [ProtoMember(1)] public string Msg { get; set; }
     }
 }

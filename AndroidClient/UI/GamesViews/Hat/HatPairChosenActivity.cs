@@ -63,7 +63,7 @@ namespace AndroidClient.UI.GamesViews.Hat
 
         protected override void OnStart()
         {
-            Log.Info(nameof(HatPairChosenActivity),"Started");
+            Log.Info(nameof(HatPairChosenActivity), "Started");
             base.OnStart();
             _viewModel.StartExplanation += OnViewModelStartExplanation;
             _viewModel.ScoresUpdated += OnViewModelScoresUpdated;
@@ -72,7 +72,7 @@ namespace AndroidClient.UI.GamesViews.Hat
 
         protected override void OnStop()
         {
-            Log.Info(nameof(HatPairChosenActivity),"Stopped");
+            Log.Info(nameof(HatPairChosenActivity), "Stopped");
             base.OnStop();
             _viewModel.StartExplanation -= OnViewModelStartExplanation;
             _viewModel.ScoresUpdated -= OnViewModelScoresUpdated;

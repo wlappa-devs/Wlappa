@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <android.support.constraint.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="24dp">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="24dp">
     <ImageView
-            android:id="@+id/qr_code"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/lobby_game_id_lt"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-    />
+        android:id="@+id/qr_code"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/lobby_game_id_lt"
+        android:layout_width="match_parent"
+        android:layout_height="0dp" />
     <android.support.design.widget.TextInputLayout
-            android:id="@+id/lobby_game_id_lt"
+        android:id="@+id/lobby_game_id_lt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Game ID"
+        app:helperTextEnabled="true"
+        app:helperText="Tap to copy"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.2"
+        app:errorEnabled="true"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <android.support.design.widget.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Game ID"
-            app:helperTextEnabled="true"
-            app:helperText="Tap to copy"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintVertical_bias="0.2"
-            app:errorEnabled="true"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-        <android.support.design.widget.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="none"
-                android:id="@+id/lobby_game_id"
-                android:textSize="16dp"
-                style="@style/TextInputTheme"/>
+            android:inputType="none"
+            android:id="@+id/lobby_game_id"
+            android:textSize="16dp"
+            style="@style/TextInputTheme" />
     </android.support.design.widget.TextInputLayout>
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                   android:orientation="vertical"
@@ -48,49 +48,46 @@
                       android:layout_width="match_parent"
                       android:layout_marginTop="10dp">
             <TextView
-                    android:text="Name"
-                    android:layout_height="wrap_content"
-                    android:layout_width="0dp"
-                    android:layout_weight="0.50"
-                    android:paddingLeft="10dp"/>
+                android:text="Name"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="0.50"
+                android:paddingLeft="10dp" />
             <TextView
-                    android:text="Role"
-                    android:layout_height="wrap_content"
-                    android:layout_width="0dp"
-                    android:layout_weight="0.40"
-                    android:paddingLeft="8dp"/>
+                android:text="Role"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="0.40"
+                android:paddingLeft="8dp" />
             <TextView
-                    android:text=""
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.10"
-            />
+                android:text=""
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.10" />
         </LinearLayout>
         <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:background="#c0c0c0"/>
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#c0c0c0" />
     </LinearLayout>
     <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constrainedHeight="true"
-            app:layoutManager="LinearLayoutManager"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="0dp"
-            app:layout_constraintTop_toBottomOf="@+id/table_header"
-    />
+        android:id="@+id/recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constrainedHeight="true"
+        app:layoutManager="LinearLayoutManager"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/table_header" />
     <Button
-            android:layout_width="200dp"
-            android:layout_height="75dp"
-            android:id="@+id/start_game_btn"
-            android:text="Start game"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recycler"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintVertical_bias="0.3"
-    />
+        android:layout_width="200dp"
+        android:layout_height="75dp"
+        android:id="@+id/start_game_btn"
+        android:text="Start game"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recycler"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.3" />
 </android.support.constraint.ConstraintLayout>

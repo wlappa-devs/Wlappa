@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Server.Application;
-using Server.Application.ChainOfResponsibilityUtils;
+using Server.Domain.ChainOfResponsibilityUtils;
 using Shared.Protos;
 
 namespace Server.Domain.Games.Meta
@@ -16,7 +15,7 @@ namespace Server.Domain.Games.Meta
             _players = players;
         }
 
-        public Task SendMulticastEvent(InGameServerMessage e) => 
+        public Task SendMulticastEvent(InGameServerMessage e) =>
             Task.WhenAll(_players.Select(player => player.SendMessage(e)));
     }
 }

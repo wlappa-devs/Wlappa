@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <android.support.constraint.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="24dp">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="24dp">
     <LinearLayout android:orientation="horizontal"
                   android:layout_height="wrap_content"
                   android:layout_width="match_parent"
@@ -15,18 +16,16 @@
                   app:layout_constraintTop_toTopOf="parent"
                   app:layout_constraintVertical_bias="0.2">
         <TextView
-                android:text="Current word: "
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:layout_weight="0.40"
-        />
+            android:text="Current word: "
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="0.40" />
         <TextView
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:layout_weight="0.60"
-                android:text="thy word"
-                android:id="@+id/word_to_guess"
-        />
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="0.60"
+            android:text="thy word"
+            android:id="@+id/word_to_guess" />
     </LinearLayout>
 
     <LinearLayout android:orientation="horizontal"
@@ -39,52 +38,48 @@
                   app:layout_constraintBottom_toTopOf="@+id/guess_btn"
                   android:background="@color/primaryBackgroundAccent">
         <TextView
-                android:text="Time Remaining: "
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:layout_weight="0.40"
-        />
+            android:text="Time Remaining: "
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="0.40" />
         <TextView
-                android:text="TIME"
-                android:id="@+id/game_timer"
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:layout_weight="0.60"
-        />
+            android:text="TIME"
+            android:id="@+id/game_timer"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="0.60" />
     </LinearLayout>
 
 
     <Button
-            android:text="Guessed"
-            android:id="@+id/guess_btn"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/timer_lt"
-            android:layout_width="0dp"
-            android:layout_height="100dp"
-            android:layout_marginBottom="24dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginHorizontal="10dp"
-    />
+        android:text="Guessed"
+        android:id="@+id/guess_btn"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/timer_lt"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="10dp" />
     <Button
-            android:text="Rules violation"
-            android:id="@+id/cancel_btn"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/timer_lt"
-            android:layout_width="0dp"
-            android:layout_height="100dp"
-            android:layout_marginBottom="24dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginHorizontal="10dp"
-    />
+        android:text="Rules violation"
+        android:id="@+id/cancel_btn"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/timer_lt"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="10dp" />
 
     <android.support.constraint.Guideline
-            android:id="@+id/guideline"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5"/>
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
 
     <LinearLayout android:orientation="vertical"
                   android:layout_width="match_parent"
@@ -96,33 +91,32 @@
                       android:layout_height="wrap_content"
                       android:layout_width="match_parent">
             <TextView
-                    android:text="Name"
-                    android:layout_height="wrap_content"
-                    android:layout_width="0dp"
-                    android:layout_weight="0.80"/>
+                android:text="Name"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="0.80" />
             <TextView
-                    android:text="Score"
-                    android:layout_height="wrap_content"
-                    android:layout_width="0dp"
-                    android:layout_weight="0.20"
-                    android:textAlignment="textEnd"/>
+                android:text="Score"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="0.20"
+                android:textAlignment="textEnd" />
         </LinearLayout>
         <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:background="#c0c0c0"/>
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#c0c0c0" />
     </LinearLayout>
     <android.support.v7.widget.RecyclerView
-            android:id="@+id/score"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constrainedHeight="true"
-            app:layout_constraintHeight_max="500dp"
-            android:layout_marginTop="0dp"
-            app:layoutManager="LinearLayoutManager"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/scores_table_header"
-            app:layout_constraintVertical_bias="0.5"
-    />
+        android:id="@+id/score"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintHeight_max="500dp"
+        android:layout_marginTop="0dp"
+        app:layoutManager="LinearLayoutManager"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scores_table_header"
+        app:layout_constraintVertical_bias="0.5" />
 </android.support.constraint.ConstraintLayout>

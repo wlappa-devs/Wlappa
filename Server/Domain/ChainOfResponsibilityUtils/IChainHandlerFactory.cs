@@ -1,7 +1,7 @@
 using System;
 using Shared.Protos;
 
-namespace Server.Application.ChainOfResponsibilityUtils
+namespace Server.Domain.ChainOfResponsibilityUtils
 {
     public interface IChainHandlerFactory
     {

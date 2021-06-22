@@ -5,7 +5,6 @@ namespace Shared.Protos.HatSharedClasses
     public interface IHatRole
     {
         public string StringValue { get; }
-        public static string Value => "player";
 
         public static IHatRole GetRoleByString(string role) => role switch
         {
@@ -16,7 +15,7 @@ namespace Shared.Protos.HatSharedClasses
             _ => throw new ArgumentOutOfRangeException(role, "Unexpected role")
         };
     }
-    
+
     public struct HatRolePlayer : IHatRole
     {
         public static string Value => "player";
@@ -31,6 +30,7 @@ namespace Shared.Protos.HatSharedClasses
 
     public struct HatRoleObserver : IHatRole
     {
+        // ReSharper disable once MemberCanBePrivate.Global
         public static string Value => "observer";
         public string StringValue => Value;
     }

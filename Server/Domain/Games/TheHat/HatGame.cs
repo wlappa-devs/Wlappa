@@ -66,31 +66,38 @@ namespace Server.Domain.Games.TheHat
             foreach (var player in players)
             {
                 var playerRole = IHatRole.GetRoleByString(payload.PlayerToRole[player.Id]);
-                if (playerRole is HatRolePlayer hatRolePlayer)
+                switch (playerRole)
                 {
-                    var member = new HatPlayer(player, index, hatRolePlayer);
-                    index++;
-                    _players.Add(member);
-                    _allMembers.Add(member);
-                }
-                else if (playerRole is HatRoleObserver hatRoleObserver)
-                {
-                    var member = new HatMember(player, hatRoleObserver);
-                    _allMembers.Add(member);
-                }
-                else if (playerRole is HatRoleSpectator hatRoleKukold)
-                {
-                    var member = new HatMember(player, hatRoleKukold);
-                    _allMembers.Add(member);
-                    listOfPlayersWhoNeedToKnowTheWordExceptExplainer.Add(member);
-                }
-                else if (playerRole is HatRoleManager hatRoleManager)
-                {
-                    logger.Log(LogLevel.Information, $"Manager appeared in payload {player.Id}");
-                    var member = new HatMember(player, hatRoleManager);
-                    _manger = member;
-                    _allMembers.Add(member);
-                    listOfPlayersWhoNeedToKnowTheWordExceptExplainer.Add(member);
+                    case HatRolePlayer hatRolePlayer:
+                    {
+                        var member = new HatPlayer(player, index, hatRolePlayer);
+                        index++;
+                        _players.Add(member);
+                        _allMembers.Add(member);
+                        break;
+                    }
+                    case HatRoleObserver hatRoleObserver:
+                    {
+                        var member = new HatMember(player, hatRoleObserver);
+                        _allMembers.Add(member);
+                        break;
+                    }
+                    case HatRoleSpectator hatRoleKukold:
+                    {
+                        var member = new HatMember(player, hatRoleKukold);
+                        _allMembers.Add(member);
+                        listOfPlayersWhoNeedToKnowTheWordExceptExplainer.Add(member);
+                        break;
+                    }
+                    case HatRoleManager hatRoleManager:
+                    {
+                        logger.Log(LogLevel.Information, $"Manager appeared in payload {player.Id}");
+                        var member = new HatMember(player, hatRoleManager);
+                        _manger = member;
+                        _allMembers.Add(member);
+                        listOfPlayersWhoNeedToKnowTheWordExceptExplainer.Add(member);
+                        break;
+                    }
                 }
             }
 
@@ -228,10 +235,12 @@ namespace Server.Domain.Games.TheHat
                 return;
             }
 
-            if (_mode is HatCircleChoosingModeConfiguration)
-                CurrentPair = GetNextPairCircle();
-            if (_mode is HatPairChoosingModeConfiguration)
-                CurrentPair = GetNextPairPairs();
+            CurrentPair = _mode switch
+            {
+                HatCircleChoosingModeConfiguration => GetNextPairCircle(),
+                HatPairChoosingModeConfiguration => GetNextPairPairs(),
+                _ => CurrentPair
+            };
         }
 
         private async Task FinishGame(HatFinishMessage message)

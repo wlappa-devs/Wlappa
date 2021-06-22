@@ -40,11 +40,10 @@ namespace AndroidClient.UI.InLobbyViews
             viewHolder!.RoleSelector.SetSelection(_roles.IndexOf(player.Role));
             viewHolder!.PlayerId = player.Id;
             viewHolder!.ReadyCheck.Checked = player.IsReady;
-            if (!_amHost)
-            {
-                viewHolder!.RoleSelector.Enabled = false;
-                viewHolder!.RoleSelector.Background!.SetColorFilter(new PorterDuffColorFilter(Color.Transparent, PorterDuff.Mode.Clear!));
-            }
+            if (_amHost) return;
+            viewHolder!.RoleSelector.Enabled = false;
+            viewHolder!.RoleSelector.Background!.SetColorFilter(
+                new PorterDuffColorFilter(Color.Transparent, PorterDuff.Mode.Clear!));
         }
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)

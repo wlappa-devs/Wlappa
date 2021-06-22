@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
-using Server.Application.ChainOfResponsibilityUtils;
+using Server.Domain.ChainOfResponsibilityUtils;
 using Shared.Protos;
 
 namespace Server.Domain.Lobby
@@ -42,7 +42,7 @@ namespace Server.Domain.Lobby
                 _lock.ExitWriteLock();
             }
         }
-        
+
         public void ChangePlayerReadyStatus(Guid id, bool oneWayReady)
         {
             _lock.EnterWriteLock();
@@ -64,7 +64,7 @@ namespace Server.Domain.Lobby
             _lock.EnterWriteLock();
             try
             {
-                _playersToReadyStatus = _playersToReadyStatus.ToDictionary(kv => kv.Key, _ => false);;
+                _playersToReadyStatus = _playersToReadyStatus.ToDictionary(kv => kv.Key, _ => false);
             }
             finally
             {
@@ -89,12 +89,14 @@ namespace Server.Domain.Lobby
         }
 
         public T ReadWithLock<T>(
-            Func<IReadOnlyList<IChannelToClient<LobbyServerMessage>>, IReadOnlyDictionary<Guid, string>, IReadOnlyDictionary<Guid, bool>, T> function)
+            Func<IReadOnlyList<IChannelToClient<LobbyServerMessage>>, IReadOnlyDictionary<Guid, string>,
+                IReadOnlyDictionary<Guid, bool>, T> function)
         {
             _lock.EnterReadLock();
             try
             {
-                return function(_players.ToImmutableArray(), _playersToRoles.ToImmutableDictionary(), _playersToReadyStatus.ToImmutableDictionary());
+                return function(_players.ToImmutableArray(), _playersToRoles.ToImmutableDictionary(),
+                    _playersToReadyStatus.ToImmutableDictionary());
             }
             finally
             {

@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Shared.Protos;
 
-namespace Server.Application.ChainOfResponsibilityUtils
+namespace Server.Domain.ChainOfResponsibilityUtils
 {
     public class ChainHandlerManager<T> : IChainHandlerFactory, IClientEventEmitterResolver<T> where T : ClientMessage
     {

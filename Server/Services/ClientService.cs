@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using ProtoBuf.Grpc;
 using Server.Application;
-using Server.Application.ChainOfResponsibilityUtils;
+using Server.Domain.ChainOfResponsibilityUtils;
 using Shared.Protos;
 
 namespace Server.Services

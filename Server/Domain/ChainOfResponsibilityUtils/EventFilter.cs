@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Shared.Protos;
 
-namespace Server.Application.ChainOfResponsibilityUtils
+namespace Server.Domain.ChainOfResponsibilityUtils
 {
     public class EventFilter<T> : IClientEventSubscriber<ClientMessage>, IClientEventEmitter<T>
         where T : ClientMessage

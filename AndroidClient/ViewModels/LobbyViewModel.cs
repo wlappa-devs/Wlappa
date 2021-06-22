@@ -16,6 +16,7 @@ namespace AndroidClient.ViewModels
         public Action<string>? MakeSnackBar { private get; set; }
 
         public Action<string>? LobbyDestroyed { private get; set; }
+
         // Left in case we need to change configuration from lobby
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         // ReSharper disable once MemberCanBePrivate.Global
@@ -60,7 +61,7 @@ namespace AndroidClient.ViewModels
                 await DisconnectFromLobby();
                 LobbyDestroyed?.Invoke(msg);
             };
-            
+
             try
             {
                 await _lobby.StartProcessing();

@@ -10,7 +10,8 @@ using Unity;
 namespace AndroidClient.UI.PreLobbyViews
 {
     //Todo name representation shortification
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = true, WindowSoftInputMode = SoftInput.AdjustResize)]
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = true,
+        WindowSoftInputMode = SoftInput.AdjustResize)]
     public class MainActivity : AppCompatActivity
     {
         private PreLobbyViewModel _viewModel = null!;
@@ -22,7 +23,7 @@ namespace AndroidClient.UI.PreLobbyViews
             var app = Application as App;
             _viewModel = app!.Container.Resolve<PreLobbyViewModel>();
             SetContentView(Resource.Layout.activity_main);
-            
+
             _nicknameLayout = FindViewById<TextInputLayout>(Resource.Id.nickname_lt)!;
             var joinLobbyButton = FindViewById<Button>(Resource.Id.join_server_btn);
             joinLobbyButton!.Click +=
@@ -37,7 +38,7 @@ namespace AndroidClient.UI.PreLobbyViews
                     _nicknameLayout.Error = null;
                     _viewModel.Name = string.Concat(args.Text!).Trim();
                 };
-            
+
             SupportActionBar.Hide();
         }
 
@@ -48,7 +49,7 @@ namespace AndroidClient.UI.PreLobbyViews
             _viewModel.LobbyCreated = OnViewModelOnLobbyCreated;
             _viewModel.ShowNotification += ShowNotification;
         }
-        
+
         private void ShowNotification(string text)
         {
             _nicknameLayout.Error = text;

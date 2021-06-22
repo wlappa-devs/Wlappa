@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Server.Application.ChainOfResponsibilityUtils;
+using Server.Domain.ChainOfResponsibilityUtils;
 using Server.Domain.Games.Meta;
 using Shared.Protos;
 
@@ -48,7 +48,7 @@ namespace Server.Domain.Lobby
             if (player.Id == _hostId) _host = player;
             _playersState.AddPlayerWithRole(player, _factory.DefaultRole);
 
-            await player.SendMessage(new JoinedLobby()
+            await player.SendMessage(new JoinedLobby
             {
                 Type = Type,
                 IsHost = player.Id == _hostId,
@@ -64,9 +64,10 @@ namespace Server.Domain.Lobby
             if (playersToReadyState.Any(kw => kw.Value == false))
             {
                 if (_host is not null)
-                    await _host.SendMessage(new GameStartingProblems{Message = "Players are not ready"});
+                    await _host.SendMessage(new GameStartingProblems {Message = "Players are not ready"});
                 return;
             }
+
             var payload = new GameCreationPayload(playersToRoles,
                 players.Select(e => e.AsNewHandler<InGameServerMessage>()).ToArray());
             var message = _factory.ValidateConfig(_config, payload);
@@ -83,7 +84,7 @@ namespace Server.Domain.Lobby
             }
 
             if (_host is not null)
-                await _host.SendMessage(new GameStartingProblems()
+                await _host.SendMessage(new GameStartingProblems
                 {
                     Message = message
                 });
@@ -152,22 +153,22 @@ namespace Server.Domain.Lobby
 
         private async Task NotifyLobbyUpdate()
         {
-            var (message, players) = 
-                _playersState.ReadWithLock((playersInState, playersToRoles, playersToReadyStatus) => (new LobbyUpdate()
-            {
-                Players = playersInState.Select(p =>
+            var (message, players) =
+                _playersState.ReadWithLock((playersInState, playersToRoles, playersToReadyStatus) => (new LobbyUpdate
                 {
-                    var role = playersToRoles.ContainsKey(p.Id) ? playersToRoles[p.Id] : "";
-                    var readiness = playersToReadyStatus.GetValueOrDefault(p.Id);
-                    return new PlayerInLobby()
+                    Players = playersInState.Select(p =>
                     {
-                        Id = p.Id,
-                        Name = p.Name,
-                        Role = role,
-                        IsReady = readiness
-                    };
-                }).ToArray()
-            }, playersInState));
+                        var role = playersToRoles.ContainsKey(p.Id) ? playersToRoles[p.Id] : "";
+                        var readiness = playersToReadyStatus.GetValueOrDefault(p.Id);
+                        return new PlayerInLobby
+                        {
+                            Id = p.Id,
+                            Name = p.Name,
+                            Role = role,
+                            IsReady = readiness
+                        };
+                    }).ToArray()
+                }, playersInState));
             await Task.WhenAll(players.Select(p => p.SendMessage(message)));
         }
     }

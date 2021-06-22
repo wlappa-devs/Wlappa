@@ -1,4 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
               xmlns:tools="http://schemas.android.com/tools"
@@ -12,16 +13,16 @@
                   android:text="name"
                   android:layout_height="wrap_content"
                   android:layout_width="0dp"
-                  android:layout_weight="0.80"/>
+                  android:layout_weight="0.80" />
         <TextView android:id="@+id/score_tf"
                   android:text="score"
                   android:layout_height="wrap_content"
                   android:layout_width="0dp"
                   android:layout_weight="0.20"
-                  android:textAlignment="textEnd"/>
+                  android:textAlignment="textEnd" />
     </LinearLayout>
     <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="#c0c0c0"/>
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#c0c0c0" />
 </LinearLayout>

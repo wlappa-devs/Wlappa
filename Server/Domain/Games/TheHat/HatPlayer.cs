@@ -1,6 +1,4 @@
-using Server.Application;
-using Server.Application.ChainOfResponsibilityUtils;
-using Server.Domain.Games.Meta;
+using Server.Domain.ChainOfResponsibilityUtils;
 using Shared.Protos;
 using Shared.Protos.HatSharedClasses;
 
@@ -18,7 +16,9 @@ namespace Server.Domain.Games.TheHat
             Score = 0;
         }
 
+        // ReSharper disable once UnusedMethodReturnValue.Global
         public int IncrementScore() => ++Score;
+        // ReSharper disable once UnusedMember.Global
         public int DecrementScore() => Score == 0 ? 0 : --Score;
     }
 }

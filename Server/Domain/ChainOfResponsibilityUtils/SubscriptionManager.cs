@@ -1,9 +1,9 @@
 using System;
 using Shared.Protos;
 
-namespace Server.Application.ChainOfResponsibilityUtils
+namespace Server.Domain.ChainOfResponsibilityUtils
 {
-    public class SubscriptionManager<T>: ISubscriptionManager<T> where T : ClientMessage
+    public class SubscriptionManager<T> : ISubscriptionManager<T> where T : ClientMessage
     {
         private readonly IClientEventEmitterResolver<T> _resolver;
 

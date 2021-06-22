@@ -22,7 +22,7 @@ namespace Server.Domain.Games.TheHat.HatIGameStates
         {
             if (client is not HatPlayer player) throw new ArgumentOutOfRangeException(nameof(e), "Unexpected command");
             if (e is not HatClientIsReady) throw new ArgumentOutOfRangeException(nameof(e), "Unexpected command");
-            
+
             if (player.Id == _game.CurrentPair.explainerIndex)
             {
                 if (_understanderIsReady) return await BothAreReady();

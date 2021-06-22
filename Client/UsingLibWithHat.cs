@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Client_lib;
-using ProtoBuf.WellKnownTypes;
 using Shared.Protos;
 using Shared.Protos.HatSharedClasses;
 
@@ -12,7 +10,7 @@ namespace Client
 {
     public class UsingLibWithHat
     {
-        private static Client_lib.Client _client;
+        private static Client_lib.Client? _client;
         private static Dictionary<Guid, string> _clients = new();
         private static Lobby? _lobby;
 
@@ -79,7 +77,7 @@ namespace Client
             {
                 await Task.WhenAll(HandleBeingHost(_lobby), _lobby.StartProcessing()).ConfigureAwait(false);
             }
-            catch (OperationCanceledException _)
+            catch (OperationCanceledException)
             {
             }
         }

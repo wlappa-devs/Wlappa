@@ -24,17 +24,25 @@ namespace Shared.Protos.HatSharedClasses
 
     [DataContract]
     [ProtoContract]
-    public class HatClientIsReady : HatClientMessage { }
-    
-    [DataContract]
-    [ProtoContract]
-    public class HatGuessRight : HatClientMessage { }
-    
-    [DataContract]
-    [ProtoContract]
-    public class HatTimerFinish : HatClientMessage { }
+    public class HatClientIsReady : HatClientMessage
+    {
+    }
 
     [DataContract]
     [ProtoContract]
-    public class HatCancelExplanation : HatClientMessage { }
+    public class HatGuessRight : HatClientMessage
+    {
+    }
+
+    [DataContract]
+    [ProtoContract]
+    public class HatTimerFinish : HatClientMessage
+    {
+    }
+
+    [DataContract]
+    [ProtoContract]
+    public class HatCancelExplanation : HatClientMessage
+    {
+    }
 }

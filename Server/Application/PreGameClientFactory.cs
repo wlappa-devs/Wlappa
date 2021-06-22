@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Logging;
-using Server.Application.ChainOfResponsibilityUtils;
+using Server.Domain.ChainOfResponsibilityUtils;
 using Shared.Protos;
 
 namespace Server.Application
@@ -16,6 +16,7 @@ namespace Server.Application
             _clientRouter = clientRouter;
         }
 
-        public PreGameClient Create(IChannelToClient<PreGameServerMessage> channelToClient) => new(_logger, channelToClient, _clientRouter);
+        public PreGameClient Create(IChannelToClient<PreGameServerMessage> channelToClient) =>
+            new(_logger, channelToClient, _clientRouter);
     }
 }

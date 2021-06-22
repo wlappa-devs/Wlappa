@@ -2,8 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Server.Application;
-using Server.Application.ChainOfResponsibilityUtils;
+using Server.Domain.ChainOfResponsibilityUtils;
 using Server.Domain.Games.Meta;
 using Shared.Protos;
 
@@ -19,7 +18,8 @@ namespace Server.Domain.Games.Clicker
         private readonly MulticastGroup _allPlayers;
 
         public ClickGame(ClickGameConfiguration config, ITimer timer,
-            IReadOnlyCollection<IChannelToClient<InGameServerMessage>> players, Func<Task> finished, ILogger<ClickGame> logger)
+            IReadOnlyCollection<IChannelToClient<InGameServerMessage>> players, Func<Task> finished,
+            ILogger<ClickGame> logger)
         {
             _config = config;
             _timer = timer;
@@ -38,7 +38,7 @@ namespace Server.Domain.Games.Clicker
                     break;
                 case ClickerTimePassedEvent:
                     _currentValue += _config.IncrementValue;
-                    await _allPlayers.SendMulticastEvent(new ClickerNewValueEvent()
+                    await _allPlayers.SendMulticastEvent(new ClickerNewValueEvent
                     {
                         Value = _currentValue
                     });

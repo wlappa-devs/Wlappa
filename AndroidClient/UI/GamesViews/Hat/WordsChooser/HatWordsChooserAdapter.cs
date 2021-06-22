@@ -11,27 +11,19 @@ namespace AndroidClient.UI.GamesViews.Hat.WordsChooser
         private event Action<int, string>? WordErrored;
         private event Action? InputLocked;
         private event Action? InputUnlocked;
-        private string[]? _words;
+        private readonly string[]? _words;
         private readonly Dictionary<int, string> _positionToError = new Dictionary<int, string>();
         private bool _doingBinding;
 
-        public string[]? Words
-        {
-            set
-            {
-                _words = value;
-                NotifyDataSetChanged();
-            }
-        }
-
         public HatWordsChooserAdapter(string[] words)
         {
-            Words = words;
+            _words = words;
         }
-        
+
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
-            Log.Info(nameof(HatWordsChooserViewHolder), $"Position: {position}, Error: {_positionToError.GetValueOrDefault(position)}");
+            Log.Info(nameof(HatWordsChooserViewHolder),
+                $"Position: {position}, Error: {_positionToError.GetValueOrDefault(position)}");
             _doingBinding = true;
             var viewHolder = holder as HatWordsChooserViewHolder;
             viewHolder!.Index = position;

@@ -32,12 +32,12 @@ namespace Server.Domain.Games.TheHat.HatIGameStates
                     {
                         await _game.SendMulticastMessage(new HatStartGame());
                         _game.CurrentPair = (0, 1);
-                        
+
                         await _game.AnnounceScores();
-                        
+
                         await _game.AnnounceCurrentPair();
-                        
-                        
+
+
                         return new WaitingForPLayersToGetReady(false, false, _game);
                     }
 
@@ -49,6 +49,4 @@ namespace Server.Domain.Games.TheHat.HatIGameStates
             throw new ArgumentOutOfRangeException(nameof(e), "Unexpected command");
         }
     }
-
-
 }

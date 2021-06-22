@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Shared.Protos;
 
-namespace Server.Application.ChainOfResponsibilityUtils
+namespace Server.Domain.ChainOfResponsibilityUtils
 {
     public class ChainResolver
     {

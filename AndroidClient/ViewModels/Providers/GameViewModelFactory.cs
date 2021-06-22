@@ -11,13 +11,14 @@ namespace AndroidClient.ViewModels.Providers
     {
         private static readonly Dictionary<Type, Func<Game, IReadOnlyCollection<PlayerInLobby>, IGameViewModel>>
             Mapping =
-                new Dictionary<Type, Func<Game, IReadOnlyCollection<PlayerInLobby>, IGameViewModel>>()
+                new Dictionary<Type, Func<Game, IReadOnlyCollection<PlayerInLobby>, IGameViewModel>>
                 {
                     {typeof(HatViewModel), (game, players) => new HatViewModel(game, players)}
                 };
 
         // ReSharper disable once MemberCanBeMadeStatic.Global
-        public Func<Game, IReadOnlyCollection<PlayerInLobby>, IGameViewModel> GetFactoryForType<T>() where T : IGameViewModel =>
+        public Func<Game, IReadOnlyCollection<PlayerInLobby>, IGameViewModel> GetFactoryForType<T>()
+            where T : IGameViewModel =>
             Mapping[typeof(T)];
     }
 

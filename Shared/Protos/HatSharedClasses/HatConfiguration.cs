@@ -1,7 +1,6 @@
 using System;
 using System.Runtime.Serialization;
 using ProtoBuf;
-using ProtoBuf.WellKnownTypes;
 
 namespace Shared.Protos.HatSharedClasses
 {

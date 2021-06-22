@@ -17,7 +17,7 @@ namespace Client_lib
         public GameTypes Type { get; }
         public IReadOnlyList<string> AvailableRoles { get; }
         public bool AmHost { get; }
-        
+
         public event Action? LobbyUpdate;
         public event Action? GameFinished;
         public event Action<Game>? HandleGameStart;
@@ -27,8 +27,10 @@ namespace Client_lib
 
         public IReadOnlyCollection<PlayerInLobby>? LastLobbyStatus { get; private set; }
         public bool GameIsGoing { get; private set; }
-        
+
         public Guid LobbyId { get; }
+
+        // ReSharper disable once MemberCanBePrivate.Global
         public Guid ClientId { get; }
 
         public Lobby(GameTypes type, IReadOnlyList<string> availableRoles, bool amHost,
@@ -77,10 +79,10 @@ namespace Client_lib
         public async Task ChangeRole(Guid playerId, string newRole)
         {
             if (!AmHost) throw new InvalidOperationException();
-            await _request.WriteAsync(new ChangeRole()
+            await _request.WriteAsync(new ChangeRole
             {
                 PlayerId = playerId,
-                NewRole = newRole,
+                NewRole = newRole
             });
         }
 
@@ -92,7 +94,7 @@ namespace Client_lib
 
         public async Task ReadyChecked(bool oneWayReady)
         {
-            await _request.WriteAsync(new ReadyChecked{OneWayReady = oneWayReady});
+            await _request.WriteAsync(new ReadyChecked {OneWayReady = oneWayReady});
         }
 
         private void HandleLobbyEvent(LobbyServerMessage message)
@@ -106,7 +108,7 @@ namespace Client_lib
                     LastLobbyStatus = update.Players;
                     LobbyUpdate?.Invoke();
                     return;
-                case GameStartingProblems msg :
+                case GameStartingProblems msg:
                     GameStartingProblems?.Invoke(msg.Message);
                     return;
                 case GameFinished _:

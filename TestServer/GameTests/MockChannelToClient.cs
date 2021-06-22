@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Server.Application;
-using Server.Application.ChainOfResponsibilityUtils;
+using Server.Domain.ChainOfResponsibilityUtils;
 using Shared.Protos;
 
 namespace TestServer.GameTests
 {
     public class MockChannelToClient : IChannelToClient<ServerMessage>
     {
-        public IReadOnlyList<ServerMessage> Messages => _messages;
+        public List<ServerMessage> Messages { get; } = new();
 
-        private readonly List<ServerMessage> _messages;
         public Guid Id { get; }
         public string? Name { get; set; }
 
@@ -19,12 +17,11 @@ namespace TestServer.GameTests
         {
             Id = Guid.NewGuid();
             Name = name;
-            _messages = new List<ServerMessage>();
         }
 
         public Task SendMessage(ServerMessage message)
         {
-            _messages.Add(message);
+            Messages.Add(message);
             return Task.CompletedTask;
         }
 

@@ -1,107 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <!--suppress AndroidElementNotAllowed -->
 <android.support.constraint.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/main_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <!--app:layout_constraint{X}_to{Y}Of="{Z}" xamarin - jopa-->
 
     <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:background="@color/primaryColor"
-            android:gravity="center"
-            android:id="@+id/greetings_lt"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="@color/primaryColor"
+        android:gravity="center"
+        android:id="@+id/greetings_lt"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
         <ImageView android:id="@+id/logo"
                    android:layout_width="512dp"
                    android:layout_height="512dp"
                    android:src="@drawable/wlapa"
                    android:layout_marginStart="24dp"
-                   android:layout_weight="0.65"/>
+                   android:layout_weight="0.65" />
         <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:text="Wlappa"
-                android:textColor="@color/primaryTextColor"
-                android:textAllCaps="false"
-                android:textSize="40dp"
-                android:textAlignment="center"
-                android:gravity="center"
-                android:id="@+id/greetings_msg"
-                android:layout_weight="0.35"
-        />
-    </LinearLayout>
-
-    
-    <android.support.constraint.ConstraintLayout
-            android:id="@+id/inner_main_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:text="Wlappa"
+            android:textColor="@color/primaryTextColor"
+            android:textAllCaps="false"
+            android:textSize="40dp"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:id="@+id/greetings_msg"
+            android:layout_weight="0.35" />
+    </LinearLayout>
+
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/inner_main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/greetings_lt"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_margin="24dp">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/nickname_lt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nickname"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/greetings_lt"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_margin="24dp">
-        
-        <android.support.design.widget.TextInputLayout
-                android:id="@+id/nickname_lt"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/choose_game_btn"
+            app:errorEnabled="true"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            <android.support.design.widget.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Nickname"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/choose_game_btn"
-                app:errorEnabled="true"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-            <android.support.design.widget.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/nickname_tf"
-                    android:focusedByDefault="true"
-                    style="@style/TextInputTheme"/>
+                android:id="@+id/nickname_tf"
+                android:focusedByDefault="true"
+                style="@style/TextInputTheme" />
         </android.support.design.widget.TextInputLayout>
         <Button
-                android:text="Create\nLobby"
-                android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:id="@+id/choose_game_btn"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@+id/guideline"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/nickname_lt"
-                android:layout_marginBottom="24dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginHorizontal="10dp"
-        />
-        
+            android:text="Create\nLobby"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:id="@+id/choose_game_btn"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/guideline"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/nickname_lt"
+            android:layout_marginBottom="24dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="10dp" />
+
         <android.support.constraint.Guideline
-                android:id="@+id/guideline"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.5" />
-        
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
         <Button
-                android:text="Join\nLobby"
-                android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:id="@+id/join_server_btn"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintLeft_toRightOf="@+id/guideline"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/nickname_lt"
-                android:layout_marginBottom="24dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginHorizontal="10dp"
-        />
+            android:text="Join\nLobby"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:id="@+id/join_server_btn"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/guideline"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/nickname_lt"
+            android:layout_marginBottom="24dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="10dp" />
     </android.support.constraint.ConstraintLayout>
 </android.support.constraint.ConstraintLayout>

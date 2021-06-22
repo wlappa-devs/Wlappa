@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Server.Application.ChainOfResponsibilityUtils;
+using Server.Domain.ChainOfResponsibilityUtils;
 using Shared.Protos;
 
 namespace Server.Application
@@ -27,14 +27,14 @@ namespace Server.Application
             {
                 case Greeting m:
                     _channelToClient.Name = m.Name;
-                    await _channelToClient.SendMessage(new GreetingSuccessful()
+                    await _channelToClient.SendMessage(new GreetingSuccessful
                     {
                         Guid = _channelToClient.Id
                     });
                     return;
                 case CreateLobby m:
                     var gameId = _clientRouter.CreateLobby(_channelToClient.Id, m.Configuration);
-                    await _channelToClient.SendMessage(new LobbyCreated()
+                    await _channelToClient.SendMessage(new LobbyCreated
                     {
                         Guid = gameId
                     });

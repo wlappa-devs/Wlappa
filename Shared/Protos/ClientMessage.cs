@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
-using Shared.Protos.HatSharedClasses;
 using ProtoBuf;
+using Shared.Protos.HatSharedClasses;
 
 namespace Shared.Protos
 {
