@@ -97,5 +97,10 @@ namespace AndroidClient.ViewModels
             GameStarted = null;
             _processingLobbyEvents = false;
         }
+
+        public void InvalidateGameInstance()
+        {
+            _gameProvider.InvalidateGameInstance();
+        }
     }
 }

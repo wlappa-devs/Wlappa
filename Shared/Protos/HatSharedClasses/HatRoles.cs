@@ -12,7 +12,7 @@ namespace Shared.Protos.HatSharedClasses
             "player" => new HatRolePlayer(),
             "manager" => new HatRoleManager(),
             "observer" => new HatRoleObserver(),
-            "kukold" => new HatRoleKukold(),
+            "spectator" => new HatRoleSpectator(),
             _ => throw new ArgumentOutOfRangeException(role, "Unexpected role")
         };
     }
@@ -35,9 +35,9 @@ namespace Shared.Protos.HatSharedClasses
         public string StringValue => Value;
     }
 
-    public struct HatRoleKukold : IHatRole
+    public struct HatRoleSpectator : IHatRole
     {
-        public static string Value => "kukold";
+        public static string Value => "spectator";
         public string StringValue => Value;
     }
 }

@@ -37,7 +37,41 @@
                 android:textSize="16dp"
                 style="@style/TextInputTheme"/>
     </android.support.design.widget.TextInputLayout>
-    <android.support.v7.widget.RecyclerView 
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:orientation="vertical"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/table_header"
+                  app:layout_constraintTop_toBottomOf="@+id/lobby_game_id_lt">
+        <LinearLayout android:orientation="horizontal"
+                      android:layout_height="wrap_content"
+                      android:layout_width="match_parent"
+                      android:layout_marginTop="10dp">
+            <TextView
+                    android:text="Name"
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.50"
+                    android:paddingLeft="10dp"/>
+            <TextView
+                    android:text="Role"
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.40"
+                    android:paddingLeft="8dp"/>
+            <TextView
+                    android:text=""
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.10"
+            />
+        </LinearLayout>
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#c0c0c0"/>
+    </LinearLayout>
+    <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -45,8 +79,8 @@
             app:layoutManager="LinearLayoutManager"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="20dp"
-            app:layout_constraintTop_toBottomOf="@+id/lobby_game_id_lt"
+            android:layout_marginTop="0dp"
+            app:layout_constraintTop_toBottomOf="@+id/table_header"
     />
     <Button
             android:layout_width="200dp"

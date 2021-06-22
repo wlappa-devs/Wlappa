@@ -39,22 +39,27 @@ namespace AndroidClient.ViewModels.GameViewModels
 
         private bool AmUnderstander => _gameInstance!.PlayerId == Understander;
 
+        public bool AmSpectator => MyRole == HatRoleSpectator.Value;
+
         public bool AmControllingExplanation => IsManaged ? AmManager : AmExplainer;
+
+        public bool AmSeeingWord => AmExplainer || AmManager || AmSpectator;
 
         private DateTime _timerStartMoment = DateTime.Now;
         private TimeSpan _timeToExplain = TimeSpan.Zero;
+
         public string TimerString
         {
             get
             {
                 var output = (_timeToExplain - (DateTime.Now - _timerStartMoment)).TotalSeconds;
-                return output > 0 ? $"{output:00.00}": "00.00";
+                return output > 0 ? $"{output:00.00}" : "00.00";
             }
         }
 
         public string[]? WordsInput { get; private set; }
         public string? CurrentWord { get; private set; }
-        
+
         public event Action? WordsSuccessfullyAddedByMe;
         public event Action? WordsSuccessfullyAddedBySomeOne;
         public event Action? AnnouncedNextPair;

@@ -36,6 +36,7 @@ namespace AndroidClient.UI.GamesViews.Hat.WordsChooser
             _wordsRecyclerView!.Visibility = ViewStates.Gone;
             _addWordsButton.Click +=
                 async (sender, args) => await _viewModel.SendWords();
+            
             DoNetworkRelatedInitialisation();
         }
 

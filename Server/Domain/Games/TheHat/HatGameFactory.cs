@@ -35,7 +35,13 @@ namespace Server.Domain.Games.TheHat
         }
 
         public IReadOnlyList<string> Roles =>
-            new[] {HatRolePlayer.Value, HatRoleManager.Value, HatRoleObserver.Value, HatRoleKukold.Value};
+            new[]
+            {
+                HatRolePlayer.Value,
+                HatRoleManager.Value,
+                // HatRoleObserver.Value,
+                HatRoleSpectator.Value
+            };
 
         public GameTypes Type => GameTypes.TheHat;
 

@@ -23,7 +23,7 @@ namespace AndroidClient.UI.GamesViews.Hat.GameScore
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
             var viewHolder = holder as HatGameScoreViewHolder;
-            viewHolder!.ScoreInputLayout.Hint = Score![position].Name;
+            viewHolder!.ScoreInputLayout.Text = Score![position].Name;
             viewHolder!.ScoreInputField.Text = Score![position].Value.ToString();
         }
 

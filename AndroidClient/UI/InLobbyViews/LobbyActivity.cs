@@ -45,11 +45,11 @@ namespace AndroidClient.UI.InLobbyViews
             _idView!.Text = _viewModel.LobbyId.ToString();
             _idView!.Focusable = false;
             _idView!.Clickable = true;
-
+            var clipboard = (ClipboardManager?) GetSystemService(ClipboardService);
             _idView.Click += (sender, args) =>
             {
                 Log.Info(nameof(LobbyActivity), "Copying GUID");
-                var clipboard = (ClipboardManager?) GetSystemService(ClipboardService);
+
                 var clip = ClipData.NewPlainText(_viewModel.LobbyId.ToString(), _viewModel.LobbyId.ToString());
                 clipboard!.PrimaryClip = clip;
                 Snackbar.Make(_idView, "Copied to clipboard", 2000).Show();
@@ -102,6 +102,7 @@ namespace AndroidClient.UI.InLobbyViews
             if (!(_viewModel.LastLobbyStatus is null))
                 OnViewModelLobbyUpdate();
             _viewModel.StartProcessingEvents();
+            _viewModel.InvalidateGameInstance();
         }
 
         private async void OnViewModelLobbyDestroyed(string msg)
