@@ -20,7 +20,7 @@ namespace TestServer.GameTests
         private Game _gameInstance;
         private HatGame _hiddenHatGame;
         private HatConfiguration _configuration;
-        private List<MockInGameClientInteractor> _clients;
+        private List<MockChannelToClient> _clients;
         private bool _hasFinished;
         private HatGameFactory _factory;
         private MockTimer _timer;
@@ -46,7 +46,7 @@ namespace TestServer.GameTests
                 HatGameModeConfiguration = new HatCircleChoosingModeConfiguration(),
                 WordsToBeWritten = 2
             };
-            _clients = new List<MockInGameClientInteractor>
+            _clients = new List<MockChannelToClient>
             {
                 new("Shrek"),
                 new("Shrek2"),
@@ -141,7 +141,7 @@ namespace TestServer.GameTests
             Assert.IsTrue(_hasFinished);
         }
 
-        private (MockInGameClientInteractor explainer, MockInGameClientInteractor understander) GetReady()
+        private (MockChannelToClient explainer, MockChannelToClient understander) GetReady()
         {
             var currentPair = GetCurrentPair();
             var currentExplainer = _clients.First(client => client.Id == currentPair.Explainer);

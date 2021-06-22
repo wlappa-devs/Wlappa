@@ -11,9 +11,9 @@ namespace Server.Domain.Lobby
     public class LobbyFactory
     {
         private readonly ILogger<Lobby> _logger;
-        private readonly SubscriptionManager<InGameClientMessage> _subscriptionManager;
+        private readonly ISubscriptionManager<InGameClientMessage> _subscriptionManager;
 
-        public LobbyFactory(ILogger<Lobby> logger, SubscriptionManager<InGameClientMessage> subscriptionManager)
+        public LobbyFactory(ILogger<Lobby> logger, ISubscriptionManager<InGameClientMessage> subscriptionManager)
         {
             _logger = logger;
             _subscriptionManager = subscriptionManager;

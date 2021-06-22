@@ -3,7 +3,7 @@ using Shared.Protos;
 
 namespace Server.Application.ChainOfResponsibilityUtils
 {
-    public class SubscriptionManager<T> where T : ClientMessage
+    public class SubscriptionManager<T>: ISubscriptionManager<T> where T : ClientMessage
     {
         private readonly IClientEventEmitterResolver<T> _resolver;
 

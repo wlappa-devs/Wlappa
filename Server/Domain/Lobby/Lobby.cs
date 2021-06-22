@@ -19,7 +19,7 @@ namespace Server.Domain.Lobby
         // ReSharper disable once NotAccessedField.Local
         private readonly ILogger _logger;
         private readonly Action<IReadOnlyCollection<Guid>>? _finished;
-        private readonly SubscriptionManager<InGameClientMessage> _subscriptionManager;
+        private readonly ISubscriptionManager<InGameClientMessage> _subscriptionManager;
         private readonly Guid _hostId;
         private Game? _game;
         private bool _hasFinished;
@@ -27,7 +27,7 @@ namespace Server.Domain.Lobby
         private IChannelToClient<LobbyServerMessage>? _host;
 
         public Lobby(IGameFactory factory, GameConfiguration config, Guid initialHostId, ILogger logger,
-            Action<IReadOnlyCollection<Guid>>? finished, SubscriptionManager<InGameClientMessage> subscriptionManager)
+            Action<IReadOnlyCollection<Guid>>? finished, ISubscriptionManager<InGameClientMessage> subscriptionManager)
         {
             _factory = factory;
             _config = config;
