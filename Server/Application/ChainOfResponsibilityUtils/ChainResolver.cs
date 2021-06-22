@@ -9,11 +9,11 @@ namespace Server.Application.ChainOfResponsibilityUtils
 {
     public class ChainResolver
     {
-        private readonly IEnumerable<IChainHandlerFactory> _factories;
+        private readonly IReadOnlyCollection<IChainHandlerFactory> _factories;
 
         public ChainResolver(IEnumerable<IChainHandlerFactory> factories)
         {
-            _factories = factories;
+            _factories = factories.ToArray();
         }
 
         public Func<ClientMessage, Task> GetChainForClient(Guid id)

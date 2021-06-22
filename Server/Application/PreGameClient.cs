@@ -20,10 +20,10 @@ namespace Server.Application
             _clientRouter = clientRouter;
         }
 
-        public async Task EventHandle(Guid? clientId, PreGameClientMessage message)
+        public async Task EventHandle(Guid? clientId, PreGameClientMessage clientMessage)
         {
-            _logger.LogInformation(message.ToString());
-            switch (message)
+            _logger.LogInformation(clientMessage.ToString());
+            switch (clientMessage)
             {
                 case Greeting m:
                     _channelToClient.Name = m.Name;
@@ -33,7 +33,7 @@ namespace Server.Application
                     });
                     return;
                 case CreateLobby m:
-                    var gameId = _clientRouter.CreateGame(_channelToClient.Id, m.Configuration);
+                    var gameId = _clientRouter.CreateLobby(_channelToClient.Id, m.Configuration);
                     await _channelToClient.SendMessage(new LobbyCreated()
                     {
                         Guid = gameId

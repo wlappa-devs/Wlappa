@@ -30,8 +30,8 @@ namespace Server.Domain.Games.Meta
 
         public Task Initialize() => PerformLockOperation(UnsafeInitialize);
 
-        public Task EventHandle(Guid? client, InGameClientMessage e) =>
-            PerformLockOperation(() => UnsafeHandleEvent(client, e));
+        public Task EventHandle(Guid? client, InGameClientMessage clientMessage) =>
+            PerformLockOperation(() => UnsafeHandleEvent(client, clientMessage));
     }
 
     public interface IValidationPayload
