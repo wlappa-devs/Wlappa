@@ -16,10 +16,10 @@ namespace Server.Services
 
         private readonly ClientInteractorFactory _clientInteractorFactory;
         private readonly PreGameClientFactory _preGameClientFactory;
-        private readonly SubscriptionManager<PreGameClientMessage> _subscriptionManager;
+        private readonly ISubscriptionManager<PreGameClientMessage> _subscriptionManager;
 
         public ClientService(ILogger<ClientService> logger, ClientInteractorFactory clientInteractorFactory,
-            PreGameClientFactory preGameClientFactory, SubscriptionManager<PreGameClientMessage> subscriptionManager)
+            PreGameClientFactory preGameClientFactory, ISubscriptionManager<PreGameClientMessage> subscriptionManager)
         {
             _logger = logger;
             _clientInteractorFactory = clientInteractorFactory;

@@ -15,11 +15,11 @@ namespace Server.Application
         private readonly ILogger<ClientRouter> _logger;
         private readonly GameFactoryResolver _gameFactoryResolver;
         private readonly LobbyFactory _lobbyFactory;
-        private readonly SubscriptionManager<LobbyClientMessage> _subscriptionManager;
+        private readonly ISubscriptionManager<LobbyClientMessage> _subscriptionManager;
         private readonly ConcurrentDictionary<Guid, Lobby> _lobbies = new();
 
         public ClientRouter(ILogger<ClientRouter> logger, GameFactoryResolver gameFactoryResolver,
-            LobbyFactory lobbyFactory, SubscriptionManager<LobbyClientMessage> subscriptionManager)
+            LobbyFactory lobbyFactory, ISubscriptionManager<LobbyClientMessage> subscriptionManager)
         {
             _logger = logger;
             _gameFactoryResolver = gameFactoryResolver;

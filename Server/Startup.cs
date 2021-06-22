@@ -26,7 +26,7 @@ namespace Server
             services.AddSingleton<IChainHandlerFactory>(p => p.GetService<ChainHandlerManager<T>>()!);
             services.AddSingleton<IClientEventEmitterResolver<T>>(p =>
                 p.GetService<ChainHandlerManager<T>>()!);
-            services.AddSingleton<SubscriptionManager<T>>();
+            services.AddSingleton<ISubscriptionManager<T>, SubscriptionManager<T>>();
         }
     }
 
