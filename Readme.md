@@ -1,4 +1,5 @@
-﻿# Общий концепт
+![dem_60d2438abaa37](https://user-images.githubusercontent.com/33155080/122998103-11c46100-d3c6-11eb-86b2-f8d4a72bc623.png)
+# Общий концепт
 
 ## Шляпа
 
